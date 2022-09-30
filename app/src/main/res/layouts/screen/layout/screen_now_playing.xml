@@ -5,7 +5,7 @@
     android:id="@+id/root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.ldt.musicr.ui.nowplaying.NowPlayingLayerFragment">
+    tools:context="com.ldt.dancemusic.ui.nowplaying.NowPlayingLayerFragment">
 
     <androidx.constraintlayout.motion.widget.MotionLayout
         android:id="@+id/constraint_root"
@@ -205,7 +205,7 @@
             tools:ignore="SmallSp"
             tools:text="02:38 | 04:07" />
 
-        <com.ldt.musicr.ui.widget.avsb.AudioVisualSeekBar
+        <com.ldt.dancemusic.ui.widget.avsb.AudioVisualSeekBar
             android:id="@+id/visual_seek_bar"
             android:layout_width="0dp"
             android:layout_height="120dp"

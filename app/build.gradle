@@ -5,7 +5,7 @@ apply plugin: 'kotlin-android'
 android {
     compileSdkVersion 30
     defaultConfig {
-        applicationId "com.ldt.musicr"
+        applicationId "com.ldt.dancemusic"
         minSdkVersion 29
         targetSdkVersion 30
         versionCode 4

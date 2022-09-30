@@ -41,7 +41,7 @@
     </com.ldt.springback.view.SpringBackLayout>
 
 
-    <com.ldt.musicr.ui.widget.view.MPSearchLikelyView
+    <com.ldt.dancemusic.ui.widget.view.MPSearchLikelyView
         android:id="@+id/search_view2"
         android:layout_width="0dp"
         android:layout_height="45dp"

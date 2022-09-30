@@ -56,7 +56,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/status_bar" />
 
-                <com.ldt.musicr.ui.widget.rangeseekbar.RangeSeekBar
+                <com.ldt.dancemusic.ui.widget.rangeseekbar.RangeSeekBar
                     android:id="@+id/in_app_volume_seek_bar"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
@@ -98,7 +98,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/in_app_volume_seek_bar" />
 
-                <com.ldt.musicr.ui.widget.rangeseekbar.RangeSeekBar
+                <com.ldt.dancemusic.ui.widget.rangeseekbar.RangeSeekBar
                     android:id="@+id/left_right_balance_seek_bar"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"

@@ -32,7 +32,7 @@
         app:layout_constraintBottom_toBottomOf="@id/image"
         android:background="@color/backward_color"/>
 
-  <com.ldt.musicr.ui.widget.SeeThroughTranslucentTextView
+  <com.ldt.dancemusic.ui.widget.SeeThroughTranslucentTextView
         android:id="@+id/title"
         android:layout_width="match_parent"
         android:layout_height="60dp"
@@ -42,7 +42,7 @@
         android:gravity="center"
         android:textSize="18sp"
         android:textStyle="bold"/>
-    <com.ldt.musicr.ui.widget.SeeThroughTranslucentTextView
+    <com.ldt.dancemusic.ui.widget.SeeThroughTranslucentTextView
         android:id="@+id/detail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
