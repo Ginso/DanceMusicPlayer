@@ -73,7 +73,7 @@ public class FilterConfigurationFragment extends NavigationFragment {
             o.put(Constants.FIELD_TYPE2, 0);
             o.put(Constants.FIELD_TEXT, "Rating");
             o.put(Constants.FIELD_LENGTH, 3);
-            o.put(Constants.FIELD_TEXTSIZE, 14);
+            o.put(Constants.FIELD_TEXTSIZE, 19);
             line.put(o);
 
             o = new JSONObject();
@@ -83,7 +83,7 @@ public class FilterConfigurationFragment extends NavigationFragment {
             o.put(Constants.FIELD_TYPE2, 0);
             o.put(Constants.FIELD_TEXT, "Title");
             o.put(Constants.FIELD_LENGTH, 3);
-            o.put(Constants.FIELD_TEXTSIZE, 14);
+            o.put(Constants.FIELD_TEXTSIZE, 19);
             line.put(o);
 
             arr.put(line);
@@ -97,7 +97,7 @@ public class FilterConfigurationFragment extends NavigationFragment {
             o.put(Constants.FIELD_TYPE2, 0);
             o.put(Constants.FIELD_TEXT, "TPM");
             o.put(Constants.FIELD_LENGTH, 3);
-            o.put(Constants.FIELD_TEXTSIZE, 14);
+            o.put(Constants.FIELD_TEXTSIZE, 19);
             line.put(o);
 
             o = new JSONObject();
@@ -107,7 +107,7 @@ public class FilterConfigurationFragment extends NavigationFragment {
             o.put(Constants.FIELD_TYPE2, 0);
             o.put(Constants.FIELD_TEXT, "Name");
             o.put(Constants.FIELD_LENGTH, 3);
-            o.put(Constants.FIELD_TEXTSIZE, 14);
+            o.put(Constants.FIELD_TEXTSIZE, 19);
             line.put(o);
 
             o = new JSONObject();
@@ -117,7 +117,7 @@ public class FilterConfigurationFragment extends NavigationFragment {
             o.put(Constants.FIELD_TYPE2, 0);
             o.put(Constants.FIELD_TEXT, "Rating");
             o.put(Constants.FIELD_LENGTH, 3);
-            o.put(Constants.FIELD_TEXTSIZE, 14);
+            o.put(Constants.FIELD_TEXTSIZE, 19);
             line.put(o);
 
             arr.put(line);
@@ -156,7 +156,7 @@ public class FilterConfigurationFragment extends NavigationFragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mUnbinder = ButterKnife.bind(this,view);
-        widgetFactory = new WidgetFactory(getContext());
+        widgetFactory = new WidgetFactory(getContext(), 20);
         lines = getConfiguration();
         updateLines();
     }
@@ -319,7 +319,7 @@ public class FilterConfigurationFragment extends NavigationFragment {
 
                 LinearLayout tagLayout = widgetFactory.createLinearLayout(WRAP_CONTENT, WRAP_CONTENT, HORIZONTAL);
                 layout.addView(tagLayout);
-                tagLayout.addView(widgetFactory.createTextView("Tag:",14));
+                tagLayout.addView(widgetFactory.createTextView("Tag:"));
                 final int selected = tagNames.indexOf(tagName);
                 tagLayout.addView(widgetFactory.createSpinner(tagNames, selected, false, n -> {
                     if(n == selected) return;
@@ -329,7 +329,7 @@ public class FilterConfigurationFragment extends NavigationFragment {
                     loadLine();
                 }));
 
-                final LinearLayout nameView = widgetFactory.createEditText("Name:", obj.optString(Constants.FIELD_TEXT, ""), 8, InputType.TYPE_CLASS_TEXT,14, name -> {
+                final LinearLayout nameView = widgetFactory.createEditText("Name:", obj.optString(Constants.FIELD_TEXT, ""), 8, InputType.TYPE_CLASS_TEXT, name -> {
                     putIntoCurrentLine(idx, Constants.FIELD_TEXT, name);
                     save();
                     updateLines();
@@ -367,7 +367,7 @@ public class FilterConfigurationFragment extends NavigationFragment {
                 } else {
                     layout.addView(nameView);
                 }
-                layout.addView(widgetFactory.createSizeControl("Text size", obj.optInt(Constants.FIELD_TEXTSIZE,14), size -> {
+                layout.addView(widgetFactory.createSizeControl("Text size", obj.optInt(Constants.FIELD_TEXTSIZE,19), size -> {
                     putIntoCurrentLine(idx, Constants.FIELD_TEXTSIZE, size);
                     updateLines();
                     save();
@@ -383,7 +383,7 @@ public class FilterConfigurationFragment extends NavigationFragment {
                     o.put(Constants.FIELD_TYPE2, 0);
                     o.put(Constants.FIELD_TEXT, "");
                     o.put(Constants.FIELD_LENGTH, 5);
-                    o.put(Constants.FIELD_TEXTSIZE, 14);
+                    o.put(Constants.FIELD_TEXTSIZE, 19);
                     line.put(o);
                     lines.put(selectedLine, line);
                     save();

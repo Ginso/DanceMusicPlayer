@@ -115,7 +115,8 @@ public class AppActivity extends MusicServiceActivity {
         if (mPermissionListener != null) mPermissionListener.onPermissionGranted();
         try {
             if (!SongLoader.tagsFile.exists()) SongLoader.tagsFile.createNewFile();
-            if (!SongLoader.courseFile.exists()) SongLoader.courseFile.createNewFile();
+            if (!FilterConfigurationFragment.file.exists()) FilterConfigurationFragment.file.createNewFile();
+            if (!SonglistConfigurationFragment.file.exists()) SonglistConfigurationFragment.file.createNewFile();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -131,7 +132,6 @@ public class AppActivity extends MusicServiceActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         SongLoader.tagsFile = new File(getApplicationContext().getFilesDir(), "DancePlayerTags.json");
-        SongLoader.courseFile = new File(getApplicationContext().getFilesDir(), "DancePlayerTags.json");
         FilterConfigurationFragment.file = new File(getApplicationContext().getFilesDir(), "FilterHeader.json");
         SonglistConfigurationFragment.file = new File(getApplicationContext().getFilesDir(), "songItem.json");
 

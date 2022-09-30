@@ -39,7 +39,6 @@ public final class PreferenceUtil {
     public static final String BALANCE_VALUE = "balance_value";
 
     public static final String SHOW_ON_LOCK = "show_on_lock";
-    public static final String CURRENT_COURSE = "current_course";
 
     public static final String ROOT_FOLDER = "root_folder";
     public static final String SEARCH_TAGS = "search_tags";
@@ -182,16 +181,6 @@ public final class PreferenceUtil {
 
     public final boolean showOnLock() {
         return mPreferences.getBoolean(SHOW_ON_LOCK,false);
-    }
-
-    public final void setCurrentCourse(int value) {
-        final SharedPreferences.Editor editor = mPreferences.edit();
-        editor.putInt(CURRENT_COURSE,value);
-        editor.apply();
-    }
-
-    public final int getCurrentCourse() {
-        return mPreferences.getInt(CURRENT_COURSE,-1);
     }
 
     public final void setRootFolder(String value) {

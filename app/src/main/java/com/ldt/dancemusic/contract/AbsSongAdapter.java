@@ -388,25 +388,6 @@ public abstract class AbsSongAdapter extends AbsMediaAdapter<AbsBindAbleHolder, 
         @Override
         public void onClick(View view) {
             playAll(getDataPosition(getAdapterPosition()), true);
-            JSONObject courseInfo = SongLoader.getCurrentCourseInfo();
-            if (courseInfo == null) return;
-            JSONObject songs = courseInfo.optJSONObject("songs");
-            if(songs == null) songs = new JSONObject();
-            JSONObject song = songs.optJSONObject(mSong.key);
-            try {
-                if(song == null) {
-                    song = new JSONObject();
-                    song.put("count", 1);
-                } else {
-                    song.put("count", song.getInt("count")+1);
-                }
-                song.put("last",new Date().getTime());
-                songs.put(mSong.key, song);
-                courseInfo.put("songs", songs);
-                SongLoader.saveCourseInfo(courseInfo);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
         }
 
 

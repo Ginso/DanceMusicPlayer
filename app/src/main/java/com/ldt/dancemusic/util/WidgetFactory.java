@@ -83,7 +83,7 @@ public class WidgetFactory {
         final String strVal = oVal instanceof String ? (String)oVal : "";
         final Long intVal2 = Util.castLong(o.opt("value2"));
         try {
-            int textsize = (int)(o.optInt(Constants.FIELD_TEXTSIZE,14)*density);
+            int textsize = (int)(o.optInt(Constants.FIELD_TEXTSIZE,19));
             String text = o.optString(Constants.FIELD_TEXT);
             TextView titleView = createTextView(text, textsize);
             if(o.getBoolean(Constants.FIELD_FILTER)) {
@@ -487,7 +487,7 @@ public class WidgetFactory {
     public TextView createTextView(String text) {return createTextView(text, defaultTextSize);}
     public TextView createTextView(String text, int textSize) {
         TextView tv = new TextView(context);
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT);
         params.gravity = Gravity.CENTER_VERTICAL;
         tv.setLayoutParams(params);
         tv.setText(text);
@@ -632,7 +632,7 @@ public class WidgetFactory {
     }
 
     public LinearLayout createSizeControl(String text, int size, Consumer<Integer> onChange) {
-        final TextView textView = createTextView(Util.toString(size),14);
+        final TextView textView = createTextView(Util.toString(size));
         LinearLayout layout = createLinearLayout(WRAP_CONTENT, WRAP_CONTENT, HORIZONTAL);
         if(text != null) layout.addView(createTextView(text));
         Button btn = new Button(context);

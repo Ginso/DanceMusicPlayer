@@ -58,9 +58,7 @@ public class SongLoader {
     private static JSONObject songInfo = null;
     private static JSONObject json = null;
 
-    private static JSONArray courseInfo = null;
     public static File tagsFile;
-    public static File courseFile;
 
     public static List<Song> allSongs = new ArrayList<>();
     public static List<Dance> allDances = new ArrayList<>();
@@ -219,45 +217,6 @@ public class SongLoader {
             getJSON();
         }
         return tagNames;
-    }
-
-
-    public static JSONArray getCourseInfo() {
-        if (courseInfo == null) {
-            try {
-                String s = new String(Files.readAllBytes(courseFile.toPath()));
-                courseInfo = new JSONArray(s);
-            } catch(Exception e) {
-                courseInfo = new JSONArray();
-            }
-        }
-        return courseInfo;
-    }
-
-    public static JSONObject getCurrentCourseInfo() {
-        int currentCourse = App.getInstance().getPreferencesUtility().getCurrentCourse();
-        if (currentCourse < 0) return null;
-        return getCourseInfo().optJSONObject(currentCourse);
-    }
-
-    public static void saveCourseInfo(JSONObject course) {
-        try {
-            int currentCourse = App.getInstance().getPreferencesUtility().getCurrentCourse();
-            courseInfo.put(currentCourse, course);
-            saveCourseInfo();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static void saveCourseInfo() {
-        try {
-            FileWriter fw = new FileWriter(courseFile);
-            fw.write(courseInfo.toString(2));
-            fw.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     public static void loadAllSongs(@NonNull Context context) {

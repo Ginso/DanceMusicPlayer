@@ -87,7 +87,7 @@
             <TextView
                 android:id="@+id/note"
                 android:layout_width="0dp"
-                android:layout_height="46dp"
+                android:layout_height="wrap_content"
                 android:layout_marginStart="24dp"
                 android:layout_marginTop="24dp"
                 android:layout_marginEnd="24dp"
@@ -170,21 +170,25 @@
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/customTags" />
+            <Spinner
+                android:id="@+id/tagSpinner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="24sp"
+                android:layout_marginLeft="24dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/newTagLbl">
+            </Spinner>
             <LinearLayout
+                android:id="@+id/newTagContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_margin="24dp"
+                android:layout_marginLeft="24dp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/newTagLbl"
+                app:layout_constraintTop_toBottomOf="@id/tagSpinner"
                 app:layout_constraintEnd_toEndOf="parent">
-                <Spinner
-                    android:id="@+id/tagSpinner"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="24sp"
-                    android:gravity="bottom">
-                </Spinner>
+
                 <EditText
                     android:id="@+id/editText"
                     android:layout_width="0dp"
@@ -194,8 +198,7 @@
                     android:textColor="@color/FlatWhite"
                     android:textSize="24sp"
                     android:text="name"
-                    android:gravity="bottom"
-                    android:layout_marginStart="24dp"/>
+                    android:gravity="bottom"/>
                 <TextView
                     android:id="@+id/netTagArgLbl"
                     android:layout_width="wrap_content"
@@ -223,15 +226,17 @@
                     android:textSize="24sp"
                     android:text="5"
                     android:visibility="gone"/>
-                <Button
-                    android:id="@+id/saveTag"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="24dp"
-                    android:text="@string/save">
-
-                </Button>
             </LinearLayout>
+            <Button
+                android:id="@+id/saveTag"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:text="@string/save"
+                app:layout_constraintTop_toBottomOf="@id/newTagContainer"
+                app:layout_constraintStart_toStartOf="parent">
+
+            </Button>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>

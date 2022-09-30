@@ -72,14 +72,8 @@ public class SettingTabFragment extends MusicServiceNavigationFragment implement
     @BindView(R.id.showOnLock)
     SwitchCompat mShowOnLock;
 
-    @BindView(R.id.courseSelection)
-    LinearLayout mCourseSelection;
-
     @BindView(R.id.explorer)
     LinearLayout mExplorer;
-
-    @BindView(R.id.newCourseName)
-    EditText mNewCourseName;
 
     @BindView(R.id.root_name)
     TextView mRootName;
@@ -134,19 +128,6 @@ public class SettingTabFragment extends MusicServiceNavigationFragment implement
         refreshBalanceValue();
         mShowOnLock.setChecked(App.getInstance().getPreferencesUtility().showOnLock());
 
-        JSONArray courseInfo = SongLoader.getCourseInfo();
-        mCourseSelection.removeAllViews();
-        int curr = App.getInstance().getPreferencesUtility().getCurrentCourse();
-        addCourse("none", -1, curr == -1);
-        for(int i = 0; i < courseInfo.length(); i++) {
-            try {
-                JSONObject course = courseInfo.getJSONObject(i);
-                addCourse(course.getString("name"), i, curr == i);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-
         String root = App.getInstance().getPreferencesUtility().getRootFolder(null);
         if(root == null) {
             mRootName.setText("none");
@@ -157,38 +138,6 @@ public class SettingTabFragment extends MusicServiceNavigationFragment implement
         }
     }
 
-    private void addCourse(String name, int idx, boolean selected) {
-        TextView tv = new TextView(getContext());
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, 100);
-        tv.setLayoutParams(params);
-        tv.setText(name);
-        if (selected) tv.setTextColor(-16711681);
-        tv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                App.getInstance().getPreferencesUtility().setCurrentCourse(idx);
-                refreshData();
-            }
-        });
-        mCourseSelection.addView(tv);
-    }
-
-
-    @OnClick(R.id.addNewCourse)
-    public void newCourse() {
-        String name = mNewCourseName.getText().toString();
-        JSONArray courseInfo = SongLoader.getCourseInfo();
-        JSONObject o = new JSONObject();
-        try {
-            o.put("name", name);
-            courseInfo.put(o);
-            SongLoader.saveCourseInfo();
-            refreshData();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-    }
 
     @Override
     public void onSetStatusBarMargin(int value) {
