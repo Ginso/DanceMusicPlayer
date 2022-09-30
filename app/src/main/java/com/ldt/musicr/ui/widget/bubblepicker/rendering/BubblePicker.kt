@@ -26,7 +26,6 @@ class BubblePicker : GLTextureView {
         set(value) {
             field = value
             renderer.adapter = value
-            value?.attach(this)
         }
 
     var maxSelectedCount: Int? = null

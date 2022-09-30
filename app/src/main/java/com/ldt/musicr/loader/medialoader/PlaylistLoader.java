@@ -37,40 +37,6 @@ public class PlaylistLoader {
     }
 
     @NonNull
-    public static Playlist getPlaylist(@NonNull final Context context, final int playlistId) {
-        return getPlaylist(makePlaylistCursor(
-                context,
-                BaseColumns._ID + "=?",
-                new String[]{
-                        String.valueOf(playlistId)
-                }
-        ));
-    }
-
-    @NonNull
-    public static Playlist getPlaylist(@NonNull final Context context, final String playlistName) {
-        return getPlaylist(makePlaylistCursor(
-                context,
-                PlaylistsColumns.NAME + "=?",
-                new String[]{
-                        playlistName
-                }
-        ));
-    }
-
-    @NonNull
-    public static Playlist getPlaylist(@Nullable final Cursor cursor) {
-        Playlist playlist = new Playlist();
-
-        if (cursor != null && cursor.moveToFirst()) {
-            playlist = getPlaylistFromCursorImpl(cursor);
-        }
-        if (cursor != null)
-            cursor.close();
-        return playlist;
-    }
-
-    @NonNull
     public static ArrayList<Playlist> getAllPlaylists(@Nullable final Cursor cursor) {
         ArrayList<Playlist> playlists = new ArrayList<>();
 

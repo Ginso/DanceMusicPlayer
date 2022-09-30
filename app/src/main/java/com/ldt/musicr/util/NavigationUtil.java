@@ -16,23 +16,17 @@ package com.ldt.musicr.util;
 
 
 import android.app.Activity;
-import android.content.Intent;
-import android.media.audiofx.AudioEffect;
+
 import androidx.annotation.NonNull;
 
-import com.ldt.musicr.R;
-import com.ldt.musicr.common.MediaManager;
-import com.ldt.musicr.loader.medialoader.ArtistLoader;
-import com.ldt.musicr.model.Genre;
 import com.ldt.musicr.model.Playlist;
-import com.ldt.musicr.service.MusicPlayerRemote;
 import com.ldt.musicr.ui.AppActivity;
 import com.ldt.musicr.ui.CardLayerController;
-import com.ldt.musicr.ui.maintab.library.LibraryTabFragment;
-import com.ldt.musicr.ui.maintab.subpages.ViewArtistFragment;
-import com.ldt.musicr.ui.maintab.subpages.viewplaylist.ViewPlaylistFragment;
-
-import es.dmoral.toasty.Toasty;
+import com.ldt.musicr.ui.page.librarypage.LibraryPagerAdapter;
+import com.ldt.musicr.ui.page.librarypage.LibraryTabFragment;
+import com.ldt.musicr.ui.page.subpages.DancePagerFragment;
+import com.ldt.musicr.ui.page.subpages.singleplaylist.SinglePlaylistFragment;
+import com.ldt.musicr.ui.widget.fragmentnavigationcontroller.NavigationFragment;
 
 public class NavigationUtil {
 
@@ -70,28 +64,6 @@ public class NavigationUtil {
         }
     }
 
-    public static void navigateToPlayingQueueController(@NonNull final AppActivity activity) {
-        final CardLayerController.CardLayerAttribute playingQueueAttr = activity.getCardLayerController().getMyAttr(activity.getPlayingQueueLayerFragment());
-        final CardLayerController.CardLayerAttribute nowPlayingAttr = activity.getCardLayerController().getMyAttr(activity.getNowPlayingController());
-
-        if (playingQueueAttr.getState() == CardLayerController.CardLayerAttribute.MINIMIZED) {
-            // playing queue is minimize, while now playing is maximize
-            playingQueueAttr.animateToMax();
-        }
-    }
-
-    public static void navigateToArtist(@NonNull final Activity activity, final int artistId) {
-        if (activity instanceof AppActivity) {
-            final AppActivity appActivity = (AppActivity) activity;
-
-            LibraryTabFragment fragment = appActivity.getBackStackController().navigateToLibraryTab(true);
-            if (fragment != null)
-                fragment.getNavigationController().presentFragment(ViewArtistFragment.newInstance(MediaManager.INSTANCE.getArtist(artistId)));
-
-            navigateToBackStackController(appActivity);
-        }
-    }
-
     public static LibraryTabFragment getLibraryTab( Activity activity) {
         if(activity instanceof AppActivity) {
             final AppActivity appActivity = (AppActivity) activity;
@@ -100,12 +72,17 @@ public class NavigationUtil {
         return null;
     }
 
-    public static void navigateToAlbum(@NonNull final Activity activity, final int albumId) {
-
-    }
-
-    public static void navigateToGenre(@NonNull final Activity activity, final Genre genre) {
-
+    public static void updateSongs(Activity activity) {
+        LibraryTabFragment libraryTab = NavigationUtil.getLibraryTab(activity);
+        LibraryPagerAdapter pagerAdapter = libraryTab.getPagerAdapter();
+        pagerAdapter.getSongChildTab().refreshData();
+        pagerAdapter.getDanceChildTab().refreshData();
+        NavigationFragment topFragment = libraryTab.getNavigationController().getTopFragment();
+        if(topFragment instanceof SinglePlaylistFragment) {
+            ((SinglePlaylistFragment)topFragment).refreshData();
+        } else if(topFragment instanceof DancePagerFragment) {
+            ((DancePagerFragment)topFragment).refreshData();
+        }
     }
 
     public static void navigateToPlaylist(@NonNull final Activity activity, final Playlist playlist) {
@@ -114,25 +91,9 @@ public class NavigationUtil {
 
             LibraryTabFragment fragment = appActivity.getBackStackController().navigateToLibraryTab(true);
             if (fragment != null)
-                fragment.getNavigationController().presentFragment(ViewPlaylistFragment.newInstance(playlist,null));
+                fragment.getNavigationController().presentFragment(SinglePlaylistFragment.newInstance(playlist,null));
             navigateToBackStackController(appActivity);
         }
     }
 
-    public static void openEqualizer(@NonNull final Activity activity) {
-        final int sessionId = MusicPlayerRemote.getAudioSessionId();
-        if (sessionId == AudioEffect.ERROR_BAD_VALUE) {
-            Toasty.error(activity, activity.getResources().getString(R.string.no_audio_ID)).show();
-        } else {
-            try {
-                final Intent effects = new Intent(AudioEffect.ACTION_DISPLAY_AUDIO_EFFECT_CONTROL_PANEL);
-                effects.putExtra(AudioEffect.EXTRA_AUDIO_SESSION, sessionId);
-                effects.putExtra(AudioEffect.EXTRA_CONTENT_TYPE, AudioEffect.CONTENT_TYPE_MUSIC);
-                activity.startActivityForResult(effects, 0);
-            } catch (@NonNull final Exception notFound) {
-                notFound.printStackTrace();
-                Toasty.error(activity, activity.getResources().getString(R.string.no_equalizer)).show();
-            }
-        }
-    }
 }

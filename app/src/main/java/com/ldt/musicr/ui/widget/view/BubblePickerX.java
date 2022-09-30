@@ -33,7 +33,6 @@ public class BubblePickerX extends TextureView implements TextureView.SurfaceTex
     private Paint mStrokePaint;
     private int mBallColor;
     private float mMinBallSize;
-    private float mMaxBallSize;
 
     public BubblePickerX(Context context) {
         super(context);
@@ -51,7 +50,6 @@ public class BubblePickerX extends TextureView implements TextureView.SurfaceTex
     }
 
     private int mBallNumber = 16;
-    private float mBallDistance;
     private float mGravityPosition = 0.5f;
     private float oneDp = 4;
 
@@ -61,8 +59,6 @@ public class BubblePickerX extends TextureView implements TextureView.SurfaceTex
             mBallNumber = t.getInteger(R.styleable.JBubblePicker_ballNumber,16);
             mBallColor = t.getInteger(R.styleable.JBubblePicker_ballColor,context.getResources().getColor(R.color.flatOrange));
             mMinBallSize = t.getDimension(R.styleable.JBubblePicker_minBallSize,context.getResources().getDimension(R.dimen._24dp));
-            mMaxBallSize = t.getDimension(R.styleable.JBubblePicker_maxBallSize,mMinBallSize * 2);
-            mBallDistance = t.getDimension(R.styleable.JBubblePicker_ballDistance,mMinBallSize/8);
             mGravityPosition = t.getFloat(R.styleable.JBubblePicker_gravityPosition,0.5f);
 
             t.recycle();
@@ -70,16 +66,12 @@ public class BubblePickerX extends TextureView implements TextureView.SurfaceTex
             mBallNumber = 16;
             mBallColor = 0xFFFF9500;
             mMinBallSize = context.getResources().getDimension(R.dimen._48dp);
-            mMaxBallSize = 2 * mMinBallSize;
-            mBallDistance = mMinBallSize /8;
             mGravityPosition = 0.5f;
             oneDp = context.getResources().getDimension(R.dimen.oneDP);
         } else {
             mBallNumber = 16;
             mBallColor = 0xFFFF9500;
             mMinBallSize =100;
-            mMaxBallSize = 200;
-            mBallDistance = mMinBallSize /8;
             mGravityPosition = 0.5f;
         }
 
@@ -91,7 +83,6 @@ public class BubblePickerX extends TextureView implements TextureView.SurfaceTex
         mStrokePaint.setStyle(Paint.Style.STROKE);
         mStrokePaint.setColor(getResources().getColor(R.color.flatPurple));
 
-        mBallRadius = getResources().getDimension(R.dimen._24dp);
 
         setOpaque(false);
         setSurfaceTextureListener(this);
@@ -171,15 +162,6 @@ public class BubblePickerX extends TextureView implements TextureView.SurfaceTex
     private int mDrawRight;
     private int mDrawHeight;
     private int mDrawWidth;
-
-    public int getFps() {
-        long delta = System.currentTimeMillis() - mStartTime;
-        if(delta<1000) return 0;
-        return (int) (mFrames/(delta /1000));
-    }
-
-    private float mBallPosition = 0;
-    private float mBallRadius;
 
     private PointF mGravityPoint = new PointF(0,0);
 

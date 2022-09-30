@@ -87,16 +87,6 @@ public class CircularPlayPauseProgressBar extends View {
         return mMode;
     }
 
-    public void setProgress(int percent) {
-        mAnimateValue = percent;
-        mMode = PLAYING;
-        invalidate();
-    }
-
-    public void startProgress(int duration) {
-        syncProgress(duration,0);
-    }
-
     public void syncProgress(int duration, int played) {
         if(mValueAnimator!=null&&mValueAnimator.isRunning()) mValueAnimator.cancel();
 

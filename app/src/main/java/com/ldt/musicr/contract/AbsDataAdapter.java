@@ -6,18 +6,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class AbsDataAdapter<VH extends AbsBindAbleHolder, I> extends RecyclerView.Adapter<VH> {
-    private static final String TAG = "AbsDataAdapter";
 
+    private final List<I> mDisplayedData = new ArrayList<>();
     private final List<I> mData = new ArrayList<>();
 
     public final List<I> getData() {
+        return mDisplayedData;
+    }
+
+    public final List<I> getAllData() {
         return mData;
     }
 
     public final void setData(List<I> data) {
+        mDisplayedData.clear();
         mData.clear();
 
         if (data != null) {
+            mDisplayedData.addAll(data);
             mData.addAll(data);
         }
 
@@ -25,42 +31,32 @@ public abstract class AbsDataAdapter<VH extends AbsBindAbleHolder, I> extends Re
         notifyDataSetChanged();
     }
 
+    public final void modifyData(List<I> data) {
+        if(data != mDisplayedData) {
+            mDisplayedData.clear();
+            if (data != null) {
+                mDisplayedData.addAll(data);
+            }
+        }
+        notifyDataSetChanged();
+    }
+
     @Override
     public int getItemCount() {
-        return mData.size();
+        return mDisplayedData.size();
     }
 
     protected abstract void onDataSet();
 
     public void destroy() {
-        mData.clear();
+        mDisplayedData.clear();
     }
 
     public I getDataItem(int i) {
-        return mData.get(i);
+        return mDisplayedData.get(i);
     }
 
-    public void addDataItem(int i, I item) {
-        if (item != null) {
-            int pos = (i < 0) ? 0 : (i >= mData.size()) ? mData.size() : i;
-            mData.add(pos, item);
-            notifyItemChanged(pos);
-        }
-    }
-
-    public void addItem(I item) {
-        if (item != null) {
-            mData.add(item);
-            notifyItemChanged(mData.size() - 1);
-        }
-    }
-
-    public void removeSongAt(int i) {
-        mData.remove(i);
-        notifyItemRemoved(i);
-    }
-
-    public int getMediaHolderPosition(int dataPosition) {
+    protected int getMediaHolderPosition(int dataPosition) {
         return dataPosition;
     }
 

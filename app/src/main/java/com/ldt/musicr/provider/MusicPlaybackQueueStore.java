@@ -17,7 +17,6 @@ package com.ldt.musicr.provider;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.provider.BaseColumns;
@@ -26,10 +25,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 
-import com.ldt.musicr.loader.medialoader.SongLoader;
 import com.ldt.musicr.model.Song;
 
 import java.util.ArrayList;
+
 
 /**
  * @author Andrew Neal, modified for Phonograph by Karim Abou Zeid
@@ -162,16 +161,16 @@ public class MusicPlaybackQueueStore extends SQLiteOpenHelper {
                     ContentValues values = new ContentValues(4);
 
                     values.put(BaseColumns._ID, song.id);
-                    values.put(AudioColumns.TITLE, song.title);
+                    values.put(AudioColumns.TITLE, song.getTitle());
                     values.put(AudioColumns.TRACK, song.trackNumber);
-                    values.put(AudioColumns.YEAR, song.year);
+                    values.put(AudioColumns.YEAR, song.getYear());
                     values.put(AudioColumns.DURATION, song.duration);
                     values.put(AudioColumns.DATA, song.data);
-                    values.put(AudioColumns.DATE_MODIFIED, song.dateModified);
+                    values.put(AudioColumns.DATE_MODIFIED, song.getDateModified().getTime());
                     values.put(AudioColumns.ALBUM_ID, song.albumId);
-                    values.put(AudioColumns.ALBUM, song.albumName);
+                    values.put(AudioColumns.ALBUM, song.getAlbum());
                     values.put(AudioColumns.ARTIST_ID, song.artistId);
-                    values.put(AudioColumns.ARTIST, song.artistName);
+                    values.put(AudioColumns.ARTIST, song.getArtist());
 
                     database.insert(tableName, null, values);
                 }
@@ -183,20 +182,4 @@ public class MusicPlaybackQueueStore extends SQLiteOpenHelper {
         }
     }
 
-    @NonNull
-    public ArrayList<Song> getSavedPlayingQueue() {
-        return getQueue(PLAYING_QUEUE_TABLE_NAME);
-    }
-
-    @NonNull
-    public ArrayList<Song> getSavedOriginalPlayingQueue() {
-        return getQueue(ORIGINAL_PLAYING_QUEUE_TABLE_NAME);
-    }
-
-    @NonNull
-    private ArrayList<Song> getQueue(@NonNull final String tableName) {
-        Cursor cursor = getReadableDatabase().query(tableName, null,
-                null, null, null, null, null);
-        return SongLoader.getSongs(cursor);
-    }
 }

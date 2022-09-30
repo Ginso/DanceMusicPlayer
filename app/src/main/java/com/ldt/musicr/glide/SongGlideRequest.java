@@ -2,8 +2,6 @@ package com.ldt.musicr.glide;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.os.Build;
-
 import androidx.annotation.NonNull;
 
 import com.bumptech.glide.GenericTransitionOptions;
@@ -22,7 +20,7 @@ import com.ldt.musicr.util.PreferenceUtil;
 public class SongGlideRequest {
 
     public static final DiskCacheStrategy DEFAULT_DISK_CACHE_STRATEGY = DiskCacheStrategy.NONE;
-    public static final int DEFAULT_ERROR_IMAGE = R.drawable.ic_music_style;
+    public static final int DEFAULT_ERROR_IMAGE = R.drawable.music_style;
     public static final int DEFAULT_ANIMATION = android.R.anim.fade_in;
 
     public static class Builder {
@@ -48,7 +46,7 @@ public class SongGlideRequest {
         }
 
         public Builder checkIgnoreMediaStore(Context context) {
-            return ignoreMediaStore(PreferenceUtil.getInstance(context).ignoreMediaStoreArtwork());
+            return ignoreMediaStore(PreferenceUtil.getInstance().ignoreMediaStoreArtwork());
         }
 
         public Builder ignoreMediaStore(boolean ignoreMediaStore) {
@@ -61,7 +59,7 @@ public class SongGlideRequest {
             return createBaseRequest(requestManager, song, ignoreMediaStore)
                     .diskCacheStrategy(DEFAULT_DISK_CACHE_STRATEGY)
                     .error(DEFAULT_ERROR_IMAGE)
-                    //.transition(GenericTransitionOptions.with(DEFAULT_ANIMATION))
+                    .transition(GenericTransitionOptions.with(DEFAULT_ANIMATION))
                     .signature(createSignature(song));
         }
     }
@@ -74,9 +72,11 @@ public class SongGlideRequest {
         }
 
         public RequestBuilder<Bitmap> build() {
+            //noinspection unchecked
             return createBaseRequest(builder.requestManager, builder.song, builder.ignoreMediaStore)
                     .diskCacheStrategy(DEFAULT_DISK_CACHE_STRATEGY)
                     .error(DEFAULT_ERROR_IMAGE)
+                    .transition(GenericTransitionOptions.with(DEFAULT_ANIMATION))
                     .signature(createSignature(builder.song));
         }
     }
@@ -91,7 +91,9 @@ public class SongGlideRequest {
         }
 
         public RequestBuilder<Bitmap> build() {
+            //noinspection unchecked
             return createBaseRequest(builder.requestManager, builder.song, builder.ignoreMediaStore)
+
               //     .transcode(new BitmapPaletteTranscoder(context), BitmapPaletteWrapper.class)
                     .diskCacheStrategy(DEFAULT_DISK_CACHE_STRATEGY)
                     .error(DEFAULT_ERROR_IMAGE)
@@ -101,7 +103,7 @@ public class SongGlideRequest {
     }
 
     public static RequestBuilder<Bitmap> createBaseRequest(RequestManager requestManager, Song song, boolean ignoreMediaStore) {
-        if (ignoreMediaStore || Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+        if (ignoreMediaStore) {
             return requestManager.asBitmap().load(new AudioFileCover(song.data));
         } else {
             return requestManager.asBitmap().load(MusicUtil.getMediaStoreAlbumCoverUri(song.albumId));
@@ -109,6 +111,6 @@ public class SongGlideRequest {
     }
 
     public static Key createSignature(Song song) {
-        return new MediaStoreSignature("", song.dateModified, 0);
+        return new MediaStoreSignature("", song.getDateModified().getTime(), 0);
     }
 }

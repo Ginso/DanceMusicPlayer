@@ -26,19 +26,6 @@ public class CreatePlaylistDialog extends DialogFragment {
     private static final String SONGS = "songs";
 
     @NonNull
-    public static CreatePlaylistDialog create() {
-        return create((Song) null);
-    }
-
-    @NonNull
-    public static CreatePlaylistDialog create(@Nullable Song song) {
-        ArrayList<Song> list = new ArrayList<>();
-        if (song != null)
-            list.add(song);
-        return create(list);
-    }
-
-    @NonNull
     public static CreatePlaylistDialog create(ArrayList<Song> songs) {
         CreatePlaylistDialog dialog = new CreatePlaylistDialog();
         Bundle args = new Bundle();

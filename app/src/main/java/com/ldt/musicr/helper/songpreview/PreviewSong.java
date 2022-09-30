@@ -308,11 +308,11 @@ public class PreviewSong {
         try {
             mMediaPlayer.setVolume(mCurrentVolume * getInAppVolume() * getLeftBalanceValue(), mCurrentVolume * getInAppVolume() * getRightBalanceValue());
             if (startFadeOut != -1)
-                Log.d(TAG, why + " : song " + mSong.title + ", update new volume = " + mCurrentVolume + ", thread id " + Thread.currentThread().getId() + ", time fade out = " + (System.currentTimeMillis() - startFadeOut));
+                Log.d(TAG, why + " : song " + mSong.getTitle() + ", update new volume = " + mCurrentVolume + ", thread id " + Thread.currentThread().getId() + ", time fade out = " + (System.currentTimeMillis() - startFadeOut));
             else
-                Log.d(TAG, why + " : song " + mSong.title + ", update new volume = " + mCurrentVolume + ", thread id " + Thread.currentThread().getId());
+                Log.d(TAG, why + " : song " + mSong.getTitle() + ", update new volume = " + mCurrentVolume + ", thread id " + Thread.currentThread().getId());
         } catch (Exception ignored) {
-            Log.d(TAG, "exception when update song " + mSong.title + "  volume = " + mCurrentVolume);
+            Log.d(TAG, "exception when update song " + mSong.getTitle() + "  volume = " + mCurrentVolume);
         }
     }
 

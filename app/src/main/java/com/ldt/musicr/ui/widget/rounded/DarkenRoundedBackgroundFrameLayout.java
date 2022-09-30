@@ -30,16 +30,7 @@ public class DarkenRoundedBackgroundFrameLayout extends FrameLayout {
         init();
     }
     private int backColor1=Color.WHITE,backColor2 =Color.WHITE;
-    public void setBackColor1(int color)
-    {
-        backColor1 = color;
-        invalidate();
-    }
-    public void setBackColor2(int color)
-    {
-        backColor2 = color;
-        invalidate();
-    }
+
     private Paint mPaint;
     private void init()
     {
@@ -53,17 +44,7 @@ public class DarkenRoundedBackgroundFrameLayout extends FrameLayout {
         mPaint.setAntiAlias(true);
     }
     private float darken=0f;
-    public void setDarken(float darken, boolean shouldDraw)
-    {
-        if(darken>=0&&darken<=1) {
-            this.darken = darken;
-            if(shouldDraw) invalidate();
-        }
-    }
-    public float getDarken()
-    {
-        return darken;
-    }
+
     private Paint drawDarkenPaint;
 
     private float eachDP =0;
@@ -72,14 +53,11 @@ public class DarkenRoundedBackgroundFrameLayout extends FrameLayout {
     private int notARGB=0xffffffff;
     public void updateColor() {
         int tempMix1 = ColorUtils.blendARGB(backColor2,backColor1,0.5f);
-        int mixColor = ColorUtils.blendARGB(tempMix1, Color.WHITE, 0.5F);
         notARGB = ColorUtils.compositeColors(backColor1, Color.WHITE);
         int notARGB2 = ColorUtils.compositeColors(backColor2,Color.WHITE);
         notARGB = ColorUtils.blendARGB(notARGB,notARGB2,0.5f);
     }
-    public int getColorDrawn() {
-        return notARGB;
-    }
+
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
@@ -94,17 +72,9 @@ public class DarkenRoundedBackgroundFrameLayout extends FrameLayout {
         mPaint.setColor(backColor1);
         drawContent(canvas,mPaint);
     }
-    public int getBackgroundColor() {
-        return notARGB;
-    }
+
     private float number=0;
-    public void setRoundNumber(float number, boolean shouldDraw)
-    {
-        if(this.number!=number) {
-            this.number = number;
-        }
-        if(shouldDraw) invalidate();
-    }
+
     private void drawContent(Canvas canvas,Paint paint)
     {
         if(eachDP==0) eachDP = Tool.getOneDps(getContext());

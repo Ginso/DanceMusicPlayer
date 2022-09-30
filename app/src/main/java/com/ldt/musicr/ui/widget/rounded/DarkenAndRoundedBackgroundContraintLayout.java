@@ -15,7 +15,7 @@ import com.ldt.musicr.R;
 import com.ldt.musicr.util.Tool;
 import com.ldt.musicr.util.BitmapEditor;
 
-public class DarkenAndRoundedBackgroundContraintLayout extends ConstraintLayout implements RoundColorable{
+public class DarkenAndRoundedBackgroundContraintLayout extends ConstraintLayout {
 
     public DarkenAndRoundedBackgroundContraintLayout(@NonNull Context context) {
         super(context);
@@ -54,17 +54,7 @@ public class DarkenAndRoundedBackgroundContraintLayout extends ConstraintLayout 
         setWillNotDraw(false);
     }
     private float darken=0f;
-    public void setDarken(float darken, boolean shouldDraw)
-    {
-        if(darken>=0&&darken<=1) {
-            this.darken = darken;
-            if(shouldDraw) invalidate();
-        }
-    }
-    public float getDarken()
-    {
-        return darken;
-    }
+
     private Paint drawDarkenPaint;
 
     protected float eachDP =0;
@@ -76,25 +66,12 @@ public class DarkenAndRoundedBackgroundContraintLayout extends ConstraintLayout 
         ROUND_TOP
     }
     protected ROUND_TYPE round_type = ROUND_TYPE.ROUND_ALL;
-    public void setRoundType(ROUND_TYPE type, boolean shouldInvalidate) {
-        round_type = type;
-        if(shouldInvalidate) invalidate();
-    }
     private int color_background;
-    @Override
-    public void setBackColor(int color) {
-        color_background = color;
-    }
     protected float alpha =1;
-    public void setAlphaBackground(float value) {
-        alpha = value;
-    }
+
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        //   canvas.drawColor(Color.WHITE);
-        //   if(backColor1!=0) canvas.drawColor(backColor1);
-        //   if(backColor2!=0) canvas.drawColor(backColor2);
 
         mSolidPaint.setColor(color_background);
         mSolidPaint.setAlpha((int) (alpha*255f));
@@ -103,13 +80,7 @@ public class DarkenAndRoundedBackgroundContraintLayout extends ConstraintLayout 
     }
 
     protected float number=0;
-    public void setRoundNumber(float number, boolean shouldDraw)
-    {
-        if(this.number!=number) {
-            this.number = number;
-        }
-        if(shouldDraw) invalidate();
-    }
+
     private void drawContent(Canvas canvas,Paint paint)
     {
         if(eachDP==0) eachDP = Tool.getOneDps(getContext());

@@ -110,26 +110,6 @@ public class HistoryStore extends SQLiteOpenHelper {
 
     }
 
-    public void clear() {
-        final SQLiteDatabase database = getWritableDatabase();
-        database.delete(RecentStoreColumns.NAME, null, null);
-    }
-
-    public boolean contains(long id) {
-        final SQLiteDatabase database = getReadableDatabase();
-        Cursor cursor = database.query(RecentStoreColumns.NAME,
-                new String[]{RecentStoreColumns.ID},
-                RecentStoreColumns.ID + "=?",
-                new String[]{String.valueOf(id)},
-                null, null, null, null);
-
-        boolean containsId = cursor != null && cursor.moveToFirst();
-        if (cursor != null) {
-            cursor.close();
-        }
-        return containsId;
-    }
-
     public Cursor queryRecentIds(long cutoff) {
         final SQLiteDatabase database = getReadableDatabase();
 

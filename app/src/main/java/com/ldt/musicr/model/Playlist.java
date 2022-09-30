@@ -5,7 +5,10 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import androidx.annotation.NonNull;
 
-public class Playlist extends Media implements Parcelable {
+/**
+ * @author Karim Abou Zeid (kabouzeid)
+ */
+public class Playlist implements Parcelable {
     public final int id;
     public final String name;
 

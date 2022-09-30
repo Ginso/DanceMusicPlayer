@@ -4,7 +4,6 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 import android.view.View;
 
-import com.ldt.musicr.model.Media;
 import com.ldt.musicr.util.Tool;
 
 /**
@@ -12,7 +11,7 @@ import com.ldt.musicr.util.Tool;
  * <br> Menu button click
  * <br> Long press
  */
-public abstract class AbsMediaAdapter<VH extends AbsBindAbleHolder, I extends Media> extends AbsDataAdapter<VH, I> {
+public abstract class AbsMediaAdapter<VH extends AbsBindAbleHolder, I> extends AbsDataAdapter<VH, I> {
     private static final String TAG = "AbsMediaAdapter";
 
     public Context getContext() {
@@ -20,7 +19,7 @@ public abstract class AbsMediaAdapter<VH extends AbsBindAbleHolder, I extends Me
     }
 
     private Context mContext;
-    public int mMediaPlayDataItem = -1;
+    protected int mMediaPlayDataItem = -1;
     protected String mName = TAG;
 
     public static final String PLAY_STATE_CHANGED = "play_state_changed";
@@ -29,10 +28,6 @@ public abstract class AbsMediaAdapter<VH extends AbsBindAbleHolder, I extends Me
 
     public void setName(String name) {
         mName = name;
-    }
-
-    public String getName() {
-        return mName;
     }
 
     public AbsMediaAdapter() {}
@@ -65,7 +60,7 @@ public abstract class AbsMediaAdapter<VH extends AbsBindAbleHolder, I extends Me
         return -1 < mMediaPlayDataItem && mMediaPlayDataItem < getData().size();
     }
 
-    public class AbsMediaHolder<I extends Media> extends AbsBindAbleHolder<I> implements View.OnClickListener, View.OnLongClickListener {
+    public class AbsMediaHolder<I> extends AbsBindAbleHolder<I> implements View.OnClickListener, View.OnLongClickListener {
         public AbsMediaHolder(@NonNull View itemView) {
             super(itemView);
             itemView.setOnClickListener(this);

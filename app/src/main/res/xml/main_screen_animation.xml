@@ -9,12 +9,12 @@
 
         <OnSwipe
             app:dragDirection="dragUp"
-            app:touchAnchorId="@id/scroll_view"
+            app:touchAnchorId="@id/recycler_view"
             app:touchAnchorSide="top" />
     </Transition>
 <ConstraintSet android:id="@+id/start">
     <Constraint
-        android:id="@id/scroll_view"
+        android:id="@id/recycler_view"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:scrollbars="none"
@@ -35,7 +35,7 @@
 
     <ConstraintSet android:id="@+id/end">
         <Constraint
-            android:id="@id/scroll_view"
+            android:id="@id/recycler_view"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:scrollbars="none"

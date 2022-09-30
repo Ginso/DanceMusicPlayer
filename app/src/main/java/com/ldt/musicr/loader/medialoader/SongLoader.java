@@ -1,10 +1,7 @@
 package com.ldt.musicr.loader.medialoader;
 
-import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
-import android.os.Build;
-import android.os.Environment;
 import android.provider.BaseColumns;
 import android.provider.MediaStore;
 import android.provider.MediaStore.Audio.AudioColumns;
@@ -12,35 +9,35 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import android.util.Log;
-import android.webkit.MimeTypeMap;
 
 import com.ldt.musicr.App;
+import com.ldt.musicr.model.Dance;
 import com.ldt.musicr.model.Song;
 import com.ldt.musicr.provider.BlacklistStore;
+import com.ldt.musicr.service.MusicPlayerRemote;
 import com.ldt.musicr.util.PreferenceUtil;
 
-import org.jaudiotagger.audio.AudioFile;
-import org.jaudiotagger.audio.AudioFileIO;
-import org.jaudiotagger.tag.FieldKey;
-import org.jaudiotagger.tag.Tag;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
-import java.io.FilenameFilter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Karim Abou Zeid (kabouzeid)
  */
 public class SongLoader {
     private static final String TAG = "SongLoader";
-
-    protected static final String NO_MEDIA_TAG = ".nomedia";
 
     protected static final String BASE_SELECTION = AudioColumns.IS_MUSIC + "=1" + " AND " + AudioColumns.TITLE + " != ''";
     protected static final String[] BASE_PROJECTION = new String[]{
@@ -55,246 +52,257 @@ public class SongLoader {
             AudioColumns.ALBUM,// 8
             AudioColumns.ARTIST_ID,// 9
             AudioColumns.ARTIST,// 10
+            AudioColumns.RELATIVE_PATH // 11
     };
 
-    public static ArrayList<Song> getAllSongsIncludeHidden(@NonNull Context context) {
-        ArrayList<Song> list = getAllSongs(context);
-        list.addAll(getHiddenSongs(context));
-        return list;
-    }
+    private static JSONObject songInfo = null;
+    private static JSONObject json = null;
 
-    public static ArrayList<Song> getHiddenSongs(@NonNull Context context) {
-        ArrayList<Song> list = new ArrayList<>();
+    private static JSONArray courseInfo = null;
+    public static File tagsFile;
+    public static File courseFile;
 
-        doSomething(context);
+    public static List<Song> allSongs = new ArrayList<>();
+    public static List<Dance> allDances = new ArrayList<>();
+    public static Map<String, Song.Tag> allTags = new HashMap<>();
+    public static List<String> tagNames = new ArrayList<>();
 
-        return list;
-    }
-
-    private static String getFileExtension(String path) {
-        String extension = "";
-
+    public static void createSongData() {
+        json = new JSONObject();
         try {
-            if (path!=null) {
-                String name = path;
-                extension = name.substring(name.lastIndexOf(".") +1);
-            }
-        } catch (Exception e) {
-            extension = "";
+            allTags = new HashMap<>();
+            JSONArray tagArr = new JSONArray();
+            addTag(new Song.Tag(Song._DURATION, Song.Tag.Type.DATETIME,6), tagArr);
+            addTag(new Song.Tag(Song._DATE, Song.Tag.Type.DATETIME,2), tagArr);
+            addTag(new Song.Tag(Song._ALBUM, Song.Tag.Type.STRING), tagArr);
+            addTag(new Song.Tag(Song._ARTIST, Song.Tag.Type.STRING), tagArr);
+            addTag(new Song.Tag(Song._DANCE, Song.Tag.Type.STRING), tagArr);
+            addTag(new Song.Tag(Song._TITLE, Song.Tag.Type.STRING), tagArr);
+            addTag(new Song.Tag(Song._YEAR, Song.Tag.Type.INT), tagArr);
+            addTag(new Song.Tag(Song._RATING, Song.Tag.Type.RATING, 5), tagArr);
+            addTag(new Song.Tag(Song._TPM, Song.Tag.Type.FLOAT,1), tagArr);
+            json.put("tags", tagArr);
+            songInfo = new JSONObject();
+            json.put("songs", songInfo);
+            saveTagFile(json);
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
-        return extension;
-
     }
 
-    public static long[] doFindAudioWayOne(boolean forceOldWay) {
-        long start = System.nanoTime();
-        ArrayList<File> files = new ArrayList<>();
-        ArrayList<File> noMedias = new ArrayList<>();
+    private static void addTag(Song.Tag tag, JSONArray tagArr) {
+        allTags.put(tag.name, tag);
+        tagNames.add(tag.name);
+        if(tagArr != null) tagArr.put(tag.toJSON());
+    }
 
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O&&!forceOldWay) {
+    public static JSONObject getJSON() {
+        if(json != null) return json;
+        try {
+            String s = new String(Files.readAllBytes(tagsFile.toPath()));
+            json = new JSONObject(s);
+            songInfo = json.getJSONObject("songs");
+            tagNames = new ArrayList<>();
+            allTags = new HashMap<>();
+            JSONArray arr = json.getJSONArray("tags");
+            for(int i = 0; i < arr.length(); i++) {
+                JSONObject o = arr.getJSONObject(i);
+                String name = o.getString("name");
+                Song.Tag.Type type = Song.Tag.Type.fromInteger(o.getInt("type"));
+                addTag(o.has("arg") ? new Song.Tag(name, type, o.getInt("arg")) : new Song.Tag(name, type), null);
+            }
+        } catch(Exception e) {
+            e.printStackTrace();
+            createSongData();
+        }
+        return json;
+    }
 
-            String root = Environment.getExternalStorageDirectory().getAbsolutePath();
 
-            try {
-                Files.walk(Paths.get(root)).filter(path -> NO_MEDIA_TAG.equals(path.getFileName().toString())).map(Path::toFile).collect(Collectors.toCollection(() -> noMedias));
-            } catch (Exception ignored) {}
-            for (int i = 0, noMediaPathsSize = noMedias.size(); i < noMediaPathsSize; i++) {
+    public static void resetJSON() {
+        json = null;
+        getJSON();
+    }
 
-                try {
-                    Files.walk(Paths.get(noMedias.get(i).getParent())).filter(path -> Files.isRegularFile(path) && isAudioExtension(path)).map(Path::toFile).collect(Collectors.toCollection(() -> files));
-                } catch (Exception ignored) {
+    public static Song.Tag getTag(int i) {
+        return allTags.get(tagNames.get(i));
+    }
+
+    public static void addTag(Song.Tag tag) {
+        JSONObject json = getJSON();
+        try {
+            JSONArray taginfo = json.optJSONArray("tags");
+            if(taginfo == null) taginfo = new JSONArray();
+            addTag(tag,taginfo);
+            json.put("tags", taginfo);
+            saveTagFile(json);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void removeTag(Song.Tag tag, boolean removeData) {
+        int index = tagNames.indexOf(tag.name);
+        tagNames.remove(tag.name);
+        JSONObject json = getJSON();
+        try {
+            JSONArray taginfo = json.optJSONArray("tags");
+            if(taginfo == null) return;
+            taginfo.remove(index);
+            json.put("tags", taginfo);
+            if(removeData) {
+                Iterator<String> it = songInfo.keys();
+                while (it.hasNext()) {
+                    String key = it.next();
+                    JSONObject song = songInfo.getJSONObject(key);
+                    song.remove(tag.name);
                 }
+                json.put("songs", songInfo);
+                for(Song song:allSongs) song.tags.remove(tag.name);
             }
-        } else {
-            File root = Environment.getExternalStorageDirectory();
-            getAllNoMediaDirectories(noMedias,root);
-            for (File f :
-                    noMedias) {
-                getAllMp3FileBelow26(files,f);
-            }
-        }
-
-        long end = System.nanoTime();
-
-        for (File file : noMedias) {
-            Log.d(TAG, "find non media " + file.getAbsolutePath());
-        }
-
-        for (File file : files) {
-            Log.d(TAG, "find " + file.getAbsolutePath());
-        }
-
-        return new long[] {files.size(),end-start};
-     }
-
-    private static void getAllMp3FileBelow26(ArrayList<File> list, File directory) {
-
-        File[] files = directory.listFiles();
-
-        for (File file : files)
-        {
-            if (file.isFile()&&isAudioExtension(file.getAbsolutePath()))
-            {
-                list.add(file);
-            }
-            else if (file.isDirectory())
-            {
-               getAllMp3FileBelow26(list, file);
-            }
+            saveTagFile(json);
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
     }
 
-    private static void getAllNoMediaDirectories(ArrayList<File> list, File directory) {
-
-        File[] files = directory.listFiles();
-
-        for (File file : files)
-        {
-            if (file.isFile()&&NO_MEDIA_TAG.equals(file.getName()))
-            {
-                File parent = file.getParentFile();
-                list.add(parent);
-                break;
-            }
-            else if (file.isDirectory())
-            {
-                getAllNoMediaDirectories(list, file);
-            }
+    public static void save(Song song) {
+        try {
+            JSONObject songs = getSongInfo();
+            songs.put(song.key, song.tags);
+            json.put("songs", songs);
+            saveTagFile(json);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
-    private static boolean isAudioExtension(Path path) {
-        if(path==null) return false;
-        String mime = MimeTypeMap.getSingleton().getMimeTypeFromExtension(getFileExtension(path.toString()));
-        return mime != null && mime.contains("audio");
+    public static void saveAllSongs() {
+        try {
+            JSONObject songs = getSongInfo();
+            for(Song song:allSongs) songs.put(song.key, song.tags);
+            json.put("songs", songs);
+            saveTagFile(json);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
-    private static boolean isAudioExtension(String path) {
-        if(path==null) return false;
-        String mime = MimeTypeMap.getSingleton().getMimeTypeFromExtension(getFileExtension(path));
-        return mime != null && mime.contains("audio");
+    public static void saveTagFile(JSONObject json) {
+        try {
+            FileWriter fw = new FileWriter(tagsFile);
+            fw.write(json.toString(2));
+            fw.close();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
-    public static long[] doFindAudioWayTwo(@NonNull Context context) {
-        long start = System.nanoTime();
-        String root = Environment.getExternalStorageDirectory().getAbsolutePath();
-        ArrayList<Path> audioPaths = new ArrayList<>();
-        List<Path> noMediaPaths = new ArrayList<>();
+    public static JSONObject getSongInfo() {
+        if (songInfo == null) {
+            getJSON();
+        }
+        return songInfo;
+    }
 
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+    public static Map<String, Song.Tag> getAllTags() {
+        if (allTags == null) {
+            getJSON();
+        }
+        return allTags;
+    }
+
+    public static List<String> getTagNames() {
+        if (tagNames == null) {
+            getJSON();
+        }
+        return tagNames;
+    }
+
+
+    public static JSONArray getCourseInfo() {
+        if (courseInfo == null) {
             try {
-                Files.walk(Paths.get(root)).filter(path -> NO_MEDIA_TAG.equals(path.getFileName().toString())).collect(Collectors.toCollection(() -> noMediaPaths));
-            } catch (Exception e) {
-                e.printStackTrace();
+                String s = new String(Files.readAllBytes(courseFile.toPath()));
+                courseInfo = new JSONArray(s);
+            } catch(Exception e) {
+                courseInfo = new JSONArray();
             }
-
-            for (int i = 0, noMediaPathsSize = noMediaPaths.size(); i < noMediaPathsSize; i++) {
-                Path parent = noMediaPaths.get(i).getParent();
-                noMediaPaths.set(i, parent);
-            }
-
-                try {
-               Files.walk(Paths.get(root)).filter(path -> !Files.isDirectory(path) && noMediaPaths.contains(path.getParent()) && isAudioExtension(path)).collect(Collectors.toCollection(() -> audioPaths));
-            } catch (Exception ignored) {}
         }
-        long end = System.nanoTime();
-
-        for (Path path : audioPaths) {
-            Log.d(TAG, "find "+path);
-        }
-
-        return new long[]{audioPaths.size(),end -start};
+        return courseInfo;
     }
 
-    public static void doSomething(@NonNull Context context) {
-        Log.d(TAG, "find way one");
+    public static JSONObject getCurrentCourseInfo() {
+        int currentCourse = App.getInstance().getPreferencesUtility().getCurrentCourse();
+        if (currentCourse < 0) return null;
+        return getCourseInfo().optJSONObject(currentCourse);
+    }
 
-        long[] w1,w2;
-        w1 = doFindAudioWayOne(true);
-        w1 = doFindAudioWayOne(true);
-        Log.d(TAG, "find way two");
-        w2 = doFindAudioWayOne(false);
-
-   /*     w1[1] = 0;
-        for(int i= 0;i<100;i++) {
-           long[] ew1 = doFindAudioWayOne(context);
-           w1[1]+=ew1[1];
+    public static void saveCourseInfo(JSONObject course) {
+        try {
+            int currentCourse = App.getInstance().getPreferencesUtility().getCurrentCourse();
+            courseInfo.put(currentCourse, course);
+            saveCourseInfo();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+    }
 
-        w1[1]/=100;
-
-        w2[1] = 0;
-        for(int i= 0;i<100;i++) {
-            long[] ew2 = doFindAudioWayTwo(context);
-            w2[1]+=ew2[1];
+    public static void saveCourseInfo() {
+        try {
+            FileWriter fw = new FileWriter(courseFile);
+            fw.write(courseInfo.toString(2));
+            fw.close();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+    }
 
-        w2[1]/=100;*/
+    public static void loadAllSongs(@NonNull Context context) {
+        String folder = App.getInstance().getPreferencesUtility().getRootFolder("");
+        Cursor cursor = makeSongCursor(
+                context,
+                "relative_path LIKE '" + folder + "%'",
+                null,
+                null
+        );
+        allSongs = getSongs(cursor);
+        MusicPlayerRemote.openQueue(allSongs, 0, false);
+        loadDances();
 
-        Log.d(TAG, "way 1 find "+w1[0]+" files in "+w1[1]);
-        Log.d(TAG, "way 2 find "+w2[0]+" files in "+w2[1]);
+    }
 
-        if(true) return;
-        String where = MediaStore.Files.FileColumns.MIME_TYPE  +" = 'audio/mpeg'" +// MediaStore.Files.FileColumns.MEDIA_TYPE_NONE + " AND " +
-               // MediaStore.Files.FileColumns.TITLE + " LIKE %"+"50MB"+"%";
-               // MediaStore.Files.FileColumns.
-                " AND " +MediaStore.Files.FileColumns.MEDIA_TYPE +" != " +MediaStore.Files.FileColumns.MEDIA_TYPE_AUDIO +
-                "";
-        Log.d(TAG, "find in: "+MediaStore.Files.getContentUri("external").getPath());
-        Log.d(TAG, "find in:"+ Environment.getExternalStorageDirectory().getAbsolutePath());
-        FilenameFilter filenameFilter = new FilenameFilter() {
-            @Override
-            public boolean accept(File file, String name) {
-                return name.equals(NO_MEDIA_TAG);
-            }
-        };
-        File root = new File(Environment.getExternalStorageDirectory().getAbsolutePath());
-
-        String[] list = root.list (filenameFilter);
-        Log.d(TAG, "find list :"+ Arrays.toString(list));
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            try {
-                //Files.walk(Paths.get(root.getAbsolutePath())).filter(path -> Files.isRegularFile(path)&&"audio/mpeg".equals(MimeTypeMap.getSingleton().getMimeTypeFromExtension(getFileExtension(path)))).forEach(x -> Log.d(TAG, "find file "+x.toAbsolutePath()));
-                Files.walk(Paths.get(root.getAbsolutePath())).filter(path -> NO_MEDIA_TAG.equals(path.getFileName().toString())).forEach(x -> Log.d(TAG, "find file "+x.toAbsolutePath()));
-            } catch (Exception ignored) {}
-        }
-        if(true) return;
-        Log.d(TAG, "find where ["+where+"]");
-        ContentResolver resolver = context.getContentResolver();
-        if(resolver!=null) {
-            Cursor cursor = context.getContentResolver().query(MediaStore.Files.getContentUri("external"),
-                    new String[]{MediaStore.Files.FileColumns.DATA}, where, null, null);
-
-            if(cursor!=null) Log.d(TAG, "find "+cursor.getCount()+" hidden folders");
-            if (cursor != null && cursor.moveToFirst()) {
-                String path;
-                File file;
-                do {
-                    path = cursor.getString(cursor.getColumnIndex(MediaStore.Files.FileColumns.DATA));
-                  //  Log.d(TAG, "find hidden files: \""+path+"\"");
-                    file = new File(path);
-                    if(file.exists()) {
-                        AudioFile audioFile = null;
-
-                        try {
-                            audioFile = AudioFileIO.read(file);
-                        } catch (Exception ignored) {}
-
-                        if(audioFile!=null) {
-                            Tag tag = audioFile.getTag();
-                            if(tag!=null) {
-                              String artist =  tag.getFirst(FieldKey.ARTIST);
-                              String title = tag.getFirst(FieldKey.TITLE);
-                              String album = tag.getFirst(FieldKey.ALBUM);
-                              String genre = tag.getFirst(FieldKey.GENRE);
-                                Log.d(TAG, "find hidden song: title = "+title+", artist = "+artist+", album = "+album+", genre = "+genre);
-                            }
-                        }
-                    }
-                } while (cursor.moveToNext());
-                cursor.close();
+    public static void loadTags() throws JSONException {
+        JSONObject info = getSongInfo();
+        for (Song song : allSongs) {
+            if (info.has(song.key)) {
+                song.tags = info.getJSONObject(song.key);
+            } else {
+                info.put(song.key, song.tags);
             }
         }
+        json.put("songs", info);
+
+        saveTagFile(json);
+        loadDances();
+    }
+
+    public static void loadDances() {
+        Map<String, Dance> dances = new HashMap<>();
+        for(Song song:allSongs) {
+            String dance = song.getString(Song._DANCE);
+            if(dance.isEmpty())  dance = "<UNTAGGED>";
+            String[] danceArr = dance.split(";");
+            for(String d:danceArr) {
+                if (!dances.containsKey(d)) dances.put(d, new Dance(d));
+                dances.get(d).addSong(song);
+            }
+        }
+        ArrayList<Dance> list = new ArrayList<>(dances.values());
+        list.sort((d1, d2) -> d1.title.compareTo(d2.title));
+        allDances = list;
     }
 
     @NonNull
@@ -309,23 +317,20 @@ public class SongLoader {
     }
 
     @NonNull
-    public static ArrayList<Song> getSongs(@NonNull final Context context, final String query) {
-        Cursor cursor = makeSongCursor(context, AudioColumns.TITLE + " LIKE ?", new String[]{"%" + query + "%"});
-        return getSongs(cursor);
-    }
-
-    @NonNull
-    public static Song getSong(@NonNull final Context context, final int queryId) {
+    public static Song getSong(@NonNull final Context context, final int queryId, String path) {
         Cursor cursor = makeSongCursor(context, AudioColumns._ID + "=?", new String[]{String.valueOf(queryId)});
-        return getSong(cursor);
+        return getSong(cursor, path);
     }
 
     @NonNull
     public static ArrayList<Song> getSongs(@Nullable final Cursor cursor) {
+        String folder = App.getInstance().getPreferencesUtility().getRootFolder("");
         ArrayList<Song> songs = new ArrayList<>();
+        int i = 0;
         if (cursor != null && cursor.moveToFirst()) {
             do {
-                songs.add(getSongFromCursorImpl(cursor));
+                System.out.println(i++);
+                songs.add(getSongFromCursorImpl(cursor, folder));
             } while (cursor.moveToNext());
         }
 
@@ -335,10 +340,31 @@ public class SongLoader {
     }
 
     @NonNull
-    public static Song getSong(@Nullable Cursor cursor) {
+    public static Set<String> getFolders(@NonNull final Context context) {
+        Cursor cursor = makeSongCursor(
+                context,
+                null,
+                null,
+                null
+        );
+        Set<String> songs = new HashSet<>();
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                String path = cursor.getString(11);
+                songs.add(path);
+            } while (cursor.moveToNext());
+        }
+
+        if (cursor != null)
+            cursor.close();
+        return songs;
+    }
+
+    @NonNull
+    public static Song getSong(@Nullable Cursor cursor, String path) {
         Song song;
         if (cursor != null && cursor.moveToFirst()) {
-            song = getSongFromCursorImpl(cursor);
+            song = getSongFromCursorImpl(cursor, path);
         } else {
             song = Song.EMPTY_SONG;
         }
@@ -349,25 +375,47 @@ public class SongLoader {
     }
 
     @NonNull
-    private static Song getSongFromCursorImpl(@NonNull Cursor cursor) {
+    private static Song getSongFromCursorImpl(@NonNull Cursor cursor, String path) {
         final int id = cursor.getInt(0);
         final String title = cursor.getString(1);
         final int trackNumber = cursor.getInt(2);
         final int year = cursor.getInt(3);
         final long duration = cursor.getLong(4);
         final String data = cursor.getString(5);
-        final long dateModified = cursor.getLong(6);
+        final long dateModified = cursor.getLong(6)*1000;
         final int albumId = cursor.getInt(7);
         final String albumName = cursor.getString(8);
         final int artistId = cursor.getInt(9);
         final String artistName = cursor.getString(10);
+        String relPath;
+        String key = null;
+        if(cursor.getColumnCount() > 11) {
+            relPath = cursor.getString(11);
+            int n = data.indexOf(path);
+            key = data.substring(n + path.length());
+        } else if(data.contains(path)) {
+            int n = data.indexOf(path);
+            relPath = data.substring(n);
+            key = data.substring(n + path.length());
+            n = relPath.lastIndexOf("/");
+            relPath = relPath.substring(0,n+1);
+        } else {
+            relPath = data;
+        }
 
-        return new Song(id, title, trackNumber, year, duration, data, dateModified, albumId, albumName, artistId, artistName);
+        Song song = new Song(id, title, trackNumber, year, duration, data, dateModified, albumId, albumName, artistId, artistName, key.toLowerCase(), relPath);
+
+        JSONObject json = getSongInfo();
+
+        if (json.has(song.key)) {
+            song.tags = json.optJSONObject(song.key);
+        }
+        return song;
     }
 
     @Nullable
     public static Cursor makeSongCursor(@NonNull final Context context, @Nullable final String selection, final String[] selectionValues) {
-        return makeSongCursor(context, selection, selectionValues, PreferenceUtil.getInstance(context).getSongSortOrder());
+        return makeSongCursor(context, selection, selectionValues, PreferenceUtil.getInstance().getSongSortOrder());
     }
 
     @Nullable

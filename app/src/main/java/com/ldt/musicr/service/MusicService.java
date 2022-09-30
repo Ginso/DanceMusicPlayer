@@ -49,7 +49,6 @@ import com.ldt.musicr.glide.SongGlideRequest;
 import com.ldt.musicr.helper.ShuffleHelper;
 import com.ldt.musicr.helper.StopWatch;
 import com.ldt.musicr.loader.medialoader.PlaylistSongLoader;
-import com.ldt.musicr.model.AbsCustomPlaylist;
 import com.ldt.musicr.model.Playlist;
 import com.ldt.musicr.model.Song;
 import com.ldt.musicr.provider.HistoryStore;
@@ -223,7 +222,7 @@ public class MusicService extends Service implements SharedPreferences.OnSharedP
         getContentResolver().registerContentObserver(
                 MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, true, mediaStoreObserver);
 
-        PreferenceUtil.getInstance(this).registerOnSharedPreferenceChangedListener(this);
+        PreferenceUtil.getInstance().registerOnSharedPreferenceChangedListener(this);
 
         restoreState();
 
@@ -316,12 +315,7 @@ public class MusicService extends Service implements SharedPreferences.OnSharedP
                         int shuffleMode = intent.getIntExtra(INTENT_EXTRA_SHUFFLE_MODE, getShuffleMode());
                         if (playlist != null) {
                             ArrayList<Song> playlistSongs;
-                            if (playlist instanceof AbsCustomPlaylist) {
-                                playlistSongs = ((AbsCustomPlaylist) playlist).getSongs(getApplicationContext());
-                            } else {
-                                //noinspection unchecked
-                                playlistSongs = (ArrayList<Song>) (List) PlaylistSongLoader.getPlaylistSongList(getApplicationContext(), playlist.id);
-                            }
+                            playlistSongs = (ArrayList<Song>) (List) PlaylistSongLoader.getPlaylistSongList(getApplicationContext(), playlist.id);
                             if (!playlistSongs.isEmpty()) {
                                 if (shuffleMode == SHUFFLE_MODE_SHUFFLE) {
                                     int startPosition = new Random().nextInt(playlistSongs.size());
@@ -369,7 +363,7 @@ public class MusicService extends Service implements SharedPreferences.OnSharedP
         quit();
         releaseResources();
         getContentResolver().unregisterContentObserver(mediaStoreObserver);
-        PreferenceUtil.getInstance(this).unregisterOnSharedPreferenceChangedListener(this);
+        PreferenceUtil.getInstance().unregisterOnSharedPreferenceChangedListener(this);
         wakeLock.release();
 
         sendBroadcast(new Intent("com.ldt.musicr.R_MUSIC_SERVICE_DESTROYED"));
@@ -438,26 +432,26 @@ public class MusicService extends Service implements SharedPreferences.OnSharedP
     }
 
     private synchronized void restoreQueuesAndPositionIfNecessary() {
-        if (!queuesRestored && playingQueue.isEmpty()) {
-            ArrayList<Song> restoredQueue = MusicPlaybackQueueStore.getInstance(this).getSavedPlayingQueue();
-            ArrayList<Song> restoredOriginalQueue = MusicPlaybackQueueStore.getInstance(this).getSavedOriginalPlayingQueue();
-            int restoredPosition = PreferenceManager.getDefaultSharedPreferences(this).getInt(SAVED_POSITION, -1);
-            int restoredPositionInTrack = PreferenceManager.getDefaultSharedPreferences(this).getInt(SAVED_POSITION_IN_TRACK, -1);
-
-            if (restoredQueue.size() > 0 && restoredQueue.size() == restoredOriginalQueue.size() && restoredPosition != -1) {
-                this.originalPlayingQueue = restoredOriginalQueue;
-                this.playingQueue = restoredQueue;
-
-                position = restoredPosition;
-                openCurrent();
-                prepareNext();
-
-                if (restoredPositionInTrack > 0) seek(restoredPositionInTrack);
-
-                notHandledMetaChangedForCurrentTrack = true;
-                sendChangeInternal(META_CHANGED);
-                sendChangeInternal(QUEUE_CHANGED);
-            }
+        if (!queuesRestored && playingQueue.isEmpty() && App.getInstance().getPreferencesUtility().getRootFolder(null) != null) {
+//            ArrayList<Song> restoredQueue = MusicPlaybackQueueStore.getInstance(this).getSavedPlayingQueue();
+//            ArrayList<Song> restoredOriginalQueue = MusicPlaybackQueueStore.getInstance(this).getSavedOriginalPlayingQueue();
+//            int restoredPosition = PreferenceManager.getDefaultSharedPreferences(this).getInt(SAVED_POSITION, -1);
+//            int restoredPositionInTrack = PreferenceManager.getDefaultSharedPreferences(this).getInt(SAVED_POSITION_IN_TRACK, -1);
+//
+//            if (restoredQueue.size() > 0 && restoredQueue.size() == restoredOriginalQueue.size() && restoredPosition != -1) {
+//                this.originalPlayingQueue = restoredOriginalQueue;
+//                this.playingQueue = restoredQueue;
+//
+//                position = restoredPosition;
+//                openCurrent();
+//                prepareNext();
+//
+//                if (restoredPositionInTrack > 0) seek(restoredPositionInTrack);
+//
+//                notHandledMetaChangedForCurrentTrack = true;
+//                sendChangeInternal(META_CHANGED);
+//                sendChangeInternal(QUEUE_CHANGED);
+//            }
         }
         queuesRestored = true;
     }
@@ -552,7 +546,7 @@ public class MusicService extends Service implements SharedPreferences.OnSharedP
     }
 
     public void initNotification() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && !PreferenceUtil.getInstance(this).classicNotification()) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && !PreferenceUtil.getInstance().classicNotification()) {
             playingNotification = new PlayingNotificationImpl24();
         } else {
             playingNotification = new PlayingNotificationImpl();
@@ -584,25 +578,25 @@ public class MusicService extends Service implements SharedPreferences.OnSharedP
         }
 
         final MediaMetadataCompat.Builder metaData = new MediaMetadataCompat.Builder()
-                .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, song.artistName)
-                .putString(MediaMetadataCompat.METADATA_KEY_ALBUM_ARTIST, song.artistName)
-                .putString(MediaMetadataCompat.METADATA_KEY_ALBUM, song.albumName)
-                .putString(MediaMetadataCompat.METADATA_KEY_TITLE, song.title)
+                .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, song.getArtist())
+                .putString(MediaMetadataCompat.METADATA_KEY_ALBUM_ARTIST, song.getArtist())
+                .putString(MediaMetadataCompat.METADATA_KEY_ALBUM, song.getAlbum())
+                .putString(MediaMetadataCompat.METADATA_KEY_TITLE, song.getTitle())
                 .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, song.duration)
                 .putLong(MediaMetadataCompat.METADATA_KEY_TRACK_NUMBER, getPosition() + 1)
-                .putLong(MediaMetadataCompat.METADATA_KEY_YEAR, song.year)
+                .putLong(MediaMetadataCompat.METADATA_KEY_YEAR, song.getYear())
                 .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, null);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             metaData.putLong(MediaMetadataCompat.METADATA_KEY_NUM_TRACKS, getPlayingQueue().size());
         }
 
-        if (PreferenceUtil.getInstance(this).albumArtOnLockscreen()) {
+        if (PreferenceUtil.getInstance().albumArtOnLockscreen()) {
             final Point screenSize = Util.getScreenSize(MusicService.this);
             final RequestBuilder<Bitmap> request = SongGlideRequest.Builder.from(Glide.with(MusicService.this), song)
                     .checkIgnoreMediaStore(MusicService.this)
                     .asBitmap().build();
-            if (PreferenceUtil.getInstance(this).blurredAlbumArt()) {
+            if (PreferenceUtil.getInstance().blurredAlbumArt()) {
                request.transform(new BlurTransformation.Builder(MusicService.this).build());
             }
             runOnUiThread(new Runnable() {
@@ -1073,9 +1067,9 @@ public class MusicService extends Service implements SharedPreferences.OnSharedP
 
         intent.putExtra("id", song.id);
 
-        intent.putExtra("artist", song.artistName);
-        intent.putExtra("album", song.albumName);
-        intent.putExtra("track", song.title);
+        intent.putExtra("artist", song.getArtist());
+        intent.putExtra("album", song.getAlbum());
+        intent.putExtra("track", song.getTitle());
 
         intent.putExtra("duration", song.duration);
         intent.putExtra("position", (long) getSongProgressMillis());
@@ -1215,7 +1209,7 @@ public class MusicService extends Service implements SharedPreferences.OnSharedP
 
             switch (msg.what) {
                 case DUCK:
-                    if (PreferenceUtil.getInstance(service).audioDucking()) {
+                    if (PreferenceUtil.getInstance().audioDucking()) {
                         currentDuckVolume -= .05f;
                         if (currentDuckVolume > .2f) {
                             sendEmptyMessageDelayed(DUCK, 10);
@@ -1230,7 +1224,7 @@ public class MusicService extends Service implements SharedPreferences.OnSharedP
                     break;
 
                 case UNDUCK:
-                    if (PreferenceUtil.getInstance(service).audioDucking()) {
+                    if (PreferenceUtil.getInstance().audioDucking()) {
                         currentDuckVolume += .03f;
                         if (currentDuckVolume < 1f) {
                             sendEmptyMessageDelayed(UNDUCK, 10);
@@ -1414,7 +1408,7 @@ public class MusicService extends Service implements SharedPreferences.OnSharedP
         @Override
         public void run() {
             savePositionInTrack();
-            sendPublicIntent(PLAY_STATE_CHANGED); // for musixmatch synced lyrics
+            sendPublicIntent(PLAY_STATE_CHANGED);
         }
     }
 

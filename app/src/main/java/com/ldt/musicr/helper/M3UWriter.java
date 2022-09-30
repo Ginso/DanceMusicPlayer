@@ -3,7 +3,6 @@ package com.ldt.musicr.helper;
 import android.content.Context;
 
 import com.ldt.musicr.loader.medialoader.PlaylistSongLoader;
-import com.ldt.musicr.model.AbsCustomPlaylist;
 import com.ldt.musicr.model.Playlist;
 import com.ldt.musicr.model.Song;
 
@@ -21,11 +20,7 @@ public class M3UWriter implements M3UConstants {
         File file = new File(dir, playlist.name.concat("." + EXTENSION));
 
         ArrayList<? extends Song> songs;
-        if (playlist instanceof AbsCustomPlaylist) {
-            songs = ((AbsCustomPlaylist) playlist).getSongs(context);
-        } else {
-            songs = PlaylistSongLoader.getPlaylistSongList(context, playlist.id);
-        }
+        songs = PlaylistSongLoader.getPlaylistSongList(context, playlist.id);
 
         if (songs.size() > 0) {
             BufferedWriter bw = new BufferedWriter(new FileWriter(file));
@@ -33,7 +28,7 @@ public class M3UWriter implements M3UConstants {
             bw.write(HEADER);
             for (Song song : songs) {
                 bw.newLine();
-                bw.write(ENTRY + song.duration + DURATION_SEPARATOR + song.artistName + " - " + song.title);
+                bw.write(ENTRY + song.duration + DURATION_SEPARATOR + song.getArtist() + " - " + song.getTitle());
                 bw.newLine();
                 bw.write(song.data);
             }

@@ -1,26 +1,27 @@
 package com.ldt.musicr.ui.nowplaying;
 
+import android.app.Activity;
 import android.content.Context;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.ldt.musicr.R;
-import com.ldt.musicr.common.MediaManager;
-import com.ldt.musicr.glide.ArtistGlideRequest;
-import com.ldt.musicr.glide.GlideApp;
-import com.ldt.musicr.loader.medialoader.ArtistLoader;
-import com.ldt.musicr.model.Artist;
+import com.ldt.musicr.loader.medialoader.SongLoader;
 import com.ldt.musicr.model.Song;
-import com.ldt.musicr.util.Tool;
-import com.ldt.musicr.utils.ArtworkUtils;
+import com.ldt.musicr.util.NavigationUtil;
+import com.ldt.musicr.util.WidgetFactory;
 import com.squareup.picasso.Callback;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import butterknife.BindView;
@@ -30,6 +31,7 @@ public class NowPlayingAdapter extends RecyclerView.Adapter<NowPlayingAdapter.It
     private static final String TAG ="NowPlayingAdapter";
     private ArrayList<Song> mData = new ArrayList<>();
     private Context mContext;
+    public Activity mActivity;
     public Context getContext() {
         return mContext;
     }
@@ -75,56 +77,61 @@ public class NowPlayingAdapter extends RecyclerView.Adapter<NowPlayingAdapter.It
     public void onError(Exception e) {
 
     }
+    TextView TPMCounter;
+    TextView counterView;
+    Calendar firtClick = null;
+    int counter;
 
     public class ItemHolder extends RecyclerView.ViewHolder {
-        @BindView(R.id.image)
-        ImageView mImage;
+        @BindView(R.id.container)
+        LinearLayout mContainer;
 
         public ItemHolder(@NonNull View itemView) {
             super(itemView);
             ButterKnife.bind(this,itemView);
         }
         private void bind(Song song) {
- /*           Picasso.get().load(Util.getAlbumArtUri(song.albumId))
-                    .error(R.drawable.speaker2)
-                    .placeholder(R.drawable.music_style)
-                    .stableKey("album_id="+song.albumId+"_"+song.dateModified)
-                    .into(mImage,NowPlayingAdapter.this);*/
 
-            Artist artist = MediaManager.INSTANCE.getArtist(song.artistId);
-            int[] screen = Tool.getScreenSize(mContext);
-
-            ArtworkUtils.getBitmapRequestBuilder(itemView.getContext(), song)
-                    .override(screen[1])
-                    .placeholder(R.drawable.speaker2)
-                    .error(
-                            ArtistGlideRequest.Builder.from(GlideApp.with(mContext), artist).requestHighResolutionArt(true).whichImage(1).generateBuilder(mContext).build()
-                                    .error(ArtistGlideRequest.Builder.from(GlideApp.with(mContext),artist).requestHighResolutionArt(false).whichImage(1).generateBuilder(mContext).build().error(R.drawable.speaker2)
-                    ))
-                    .into(mImage);
-     /*       ArtistGlideRequest.Builder.from(GlideApp.with(getContext()), mArtist)
-                    .tryToLoadOriginal(true)
-                    .generateBuilder(getContext())
-                    .build()
-                    .error(
-                                ArtistGlideRequest
-                                        .Builder
-                                        .from(GlideApp.with(getContext()),mArtist)
-                                        .tryToLoadOriginal(false)
-                                        .generateBuilder(getContext())
-                                        .build())
-                    .thumbnail(
-                            ArtistGlideRequest
-                                    .Builder
-                                    .from(GlideApp.with(getContext()), mArtist)
-                                    .tryToLoadOriginal(false)
-                                    .generateBuilder(getContext())
-                                    .build())
-                    .into(mBigImage);
-
-            Glide.with(mContext).load(Util.getAlbumArtUri(song.albumId)).apply(options).error(R.drawable.speaker2).placeholder(R.drawable.speaker2).into(mImage);*/
+            WidgetFactory widgetFactory = new WidgetFactory(getContext());
+            widgetFactory.defaultTextSize = 24;
+            widgetFactory.loadTags(mContainer, song, s -> {
+                SongLoader.save(s);
+                NavigationUtil.updateSongs(mActivity);
+            });
+            mContainer.addView(widgetFactory.modifyParams(widgetFactory.createTextView("TPM/BPM Counter", 22),p -> p.gravity = Gravity.CENTER));
+            mContainer.addView(widgetFactory.modifyParams(widgetFactory.createTextView("Tap on the every beat to count BPM or the first of every takt for TPM:", 22),p -> p.gravity = Gravity.CENTER));
 
 
+            int size = widgetFactory.scale(100);
+            LinearLayout layout = widgetFactory.createLinearLayout(size,size,LinearLayout.VERTICAL);
+            layout.setBackgroundColor(mContext.getColor(R.color.itemBackground));
+            layout.addView(widgetFactory.createFillerVertical());
+            TPMCounter = widgetFactory.modifyParams(widgetFactory.createTextView("0", 26),p -> p.gravity = Gravity.CENTER);
+            layout.setOnClickListener(v -> {
+                Calendar now = Calendar.getInstance();
+                if(firtClick == null) {
+                    firtClick = now;
+                    counter = 0;
+                } else {
+                    counter++;
+                    long l = now.getTimeInMillis() - firtClick.getTimeInMillis();
+                    double tpm = counter*60000.0 / l;
+                    TPMCounter.setText(String.format("%.1f", tpm));
+                }
+                counterView.setText((counter+1) + " Taps");
+            });
+            layout.addView(TPMCounter);
+            counterView = widgetFactory.modifyParams(widgetFactory.createTextView("0 Taps", 16),p -> p.gravity = Gravity.CENTER);
+            layout.addView(counterView);
+
+            layout.addView(widgetFactory.createFillerVertical());
+            mContainer.addView(layout);
+            mContainer.addView(widgetFactory.createButton("reset",v->{
+                firtClick = null;
+                counter = 0;
+                TPMCounter.setText("0");
+                counterView.setText("0 Taps");
+            }));
         }
     }
 }

@@ -15,7 +15,6 @@ import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.dtrung98.insetsview.ext.WindowThemingKt;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -30,15 +29,20 @@ import android.widget.FrameLayout;
 
 import com.ldt.musicr.App;
 import com.ldt.musicr.R;
-import com.ldt.musicr.common.AppConfig;
+import com.ldt.musicr.loader.medialoader.SongLoader;
 import com.ldt.musicr.service.MusicPlayerRemote;
 import com.ldt.musicr.service.MusicService;
 import com.ldt.musicr.ui.intro.IntroController;
 import com.ldt.musicr.ui.nowplaying.NowPlayingLayerFragment;
+import com.ldt.musicr.ui.page.subpages.FilterConfigurationFragment;
+import com.ldt.musicr.ui.page.subpages.SonglistConfigurationFragment;
 import com.ldt.musicr.ui.playingqueue.PlayingQueueLayerFragment;
-import com.ldt.musicr.ui.maintab.BackStackController;
+import com.ldt.musicr.ui.page.BackStackController;
 import com.ldt.musicr.util.NavigationUtil;
+import com.ldt.musicr.util.PreferenceUtil;
 
+import java.io.File;
+import java.io.IOException;
 
 public class AppActivity extends MusicServiceActivity {
     private static final String TAG = "AppActivity";
@@ -48,12 +52,9 @@ public class AppActivity extends MusicServiceActivity {
 
     public FrameLayout mLayerContainerView;
 
-    BottomNavigationView mBottomNavigationView;
-
     private void bindView() {
         mAppRootView = findViewById(R.id.appRoot);
         mLayerContainerView = findViewById(R.id.layer_container);
-        mBottomNavigationView = findViewById(R.id.bottom_navigation_view);
     }
 
     public BackStackController mBackStackController;
@@ -99,7 +100,7 @@ public class AppActivity extends MusicServiceActivity {
         return mCurrentSystemInsets;
     }
 
-    private final int[] mCurrentSystemInsets = new int[]{0, 0, 0, 0};
+    private int[] mCurrentSystemInsets = new int[]{0, 0, 0, 0};
 
     public void setPermissionListener(PermissionListener listener) {
         mPermissionListener = listener;
@@ -112,6 +113,12 @@ public class AppActivity extends MusicServiceActivity {
 
     private void onPermissionGranted() {
         if (mPermissionListener != null) mPermissionListener.onPermissionGranted();
+        try {
+            if (!SongLoader.tagsFile.exists()) SongLoader.tagsFile.createNewFile();
+            if (!SongLoader.courseFile.exists()) SongLoader.courseFile.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void onPermissionDenied() {
@@ -123,6 +130,11 @@ public class AppActivity extends MusicServiceActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        SongLoader.tagsFile = new File(getApplicationContext().getFilesDir(), "DancePlayerTags.json");
+        SongLoader.courseFile = new File(getApplicationContext().getFilesDir(), "DancePlayerTags.json");
+        FilterConfigurationFragment.file = new File(getApplicationContext().getFilesDir(), "FilterHeader.json");
+        SonglistConfigurationFragment.file = new File(getApplicationContext().getFilesDir(), "songItem.json");
+
         if (!App.getInstance().getPreferencesUtility().isFirstTime()) {
             mUseDynamicTheme = false;
             App.getInstance().getPreferencesUtility().notFirstTime();
@@ -147,7 +159,6 @@ public class AppActivity extends MusicServiceActivity {
             mCurrentSystemInsets[1] = insets.getSystemWindowInsetTop();
             mCurrentSystemInsets[2] = insets.getSystemWindowInsetRight();
             mCurrentSystemInsets[3] = insets.getSystemWindowInsetBottom();
-            AppConfig.setSystemBarsInset(mCurrentSystemInsets);
             return ViewCompat.onApplyWindowInsets(v, insets);
         });
         bindView();
@@ -174,14 +185,14 @@ public class AppActivity extends MusicServiceActivity {
                 }
             }
         });
-
+        setShowWhenLocked(PreferenceUtil.getInstance().showOnLock());
     }
 
     @Override
     public void onConfigurationChanged(@NonNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         if (mCardLayerController != null) {
-            mCardLayerController.onConfigurationChanged(newConfig);
+            mCardLayerController.onConfigurationChanged();
         }
     }
 
@@ -275,8 +286,8 @@ public class AppActivity extends MusicServiceActivity {
 
     }
 
-    public boolean dispatchOnTouchEvent(MotionEvent event) {
-        if (mBackStackController != null) return mBackStackController.dispatchOnTouchEvent(event);
+    public boolean backStackStreamOnTouchEvent(MotionEvent event) {
+        if (mBackStackController != null) return mBackStackController.streamOnTouchEvent(event);
         return false;
     }
 

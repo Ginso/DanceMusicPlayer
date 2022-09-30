@@ -9,7 +9,6 @@ import android.renderscript.Allocation;
 import android.renderscript.Element;
 import android.renderscript.RenderScript;
 import android.renderscript.ScriptIntrinsicBlur;
-import androidx.annotation.FloatRange;
 import androidx.annotation.NonNull;
 
 import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
@@ -31,8 +30,6 @@ public class BlurTransformation extends BitmapTransformation {
     private static final String ID = "com.ldt.musicr.glide.BlurTransformation";
     private static Charset CHARSET = Charset.forName(STRING_CHARSET_NAME);
     private static final byte[] ID_BYTES = ID.getBytes(CHARSET);
-
-    private static int MAX_RADIUS = 25;
 
     private Context context;
     private float blurRadius;
@@ -62,33 +59,6 @@ public class BlurTransformation extends BitmapTransformation {
 
         public Builder(@NonNull Context context) {
             this.context = context;
-        }
-
-        /**
-         * @param blurRadius The radius to use. Must be between 0 and 25. Default is 5.
-         * @return the same Builder
-         */
-        public Builder blurRadius(@FloatRange(from = 0.0f, to = 25.0f) float blurRadius) {
-            this.blurRadius = blurRadius;
-            return this;
-        }
-
-        /**
-         * @param sampling The inSampleSize to use. Must be a power of 2, or 1 for no down sampling or 0 for auto detect sampling. Default is 0.
-         * @return the same Builder
-         */
-        public Builder sampling(int sampling) {
-            this.sampling = sampling;
-            return this;
-        }
-
-        /**
-         * @param bitmapPool The BitmapPool to use.
-         * @return the same Builder
-         */
-        public Builder bitmapPool(BitmapPool bitmapPool) {
-            this.bitmapPool = bitmapPool;
-            return this;
         }
 
         public BlurTransformation build() {

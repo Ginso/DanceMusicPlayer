@@ -12,7 +12,6 @@
     android:focusable="true"
     android:background="#66333333"
    >
-    <!--android:background="@color/FlatBlue">-->
    <ImageView
        android:id="@+id/image"
        android:layout_width="75dp"

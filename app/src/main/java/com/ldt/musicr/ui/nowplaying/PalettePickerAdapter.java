@@ -1,6 +1,5 @@
 package com.ldt.musicr.ui.nowplaying;
 
-import android.graphics.Color;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
@@ -44,40 +43,6 @@ public class PalettePickerAdapter extends RecyclerView.Adapter<PalettePickerAdap
             notifyItemChanged(s);
             if(mListener!=null) mListener.onColorChanged(mSelected,mData.get(mSelected));
         }
-    }
-
-    private int mColor = -1;
-
-    public void setSelectedColor(Integer color) {
-        mColor = color;
-        findSelected();
-    }
-
-    public void findSelected() {
-        int newOne = mData.indexOf(mColor);
-        setSelected(newOne);
-    }
-
-    public void setData(Integer... color) {
-        mData.clear();
-        addData(color);
-    }
-
-    public void addData(Integer... color) {
-        if(color!=null) {
-            int posBefore = mData.size();
-            for (Integer c : color) {
-                if (!mData.contains(c)&&c!=Color.TRANSPARENT)
-                    mData.add(c);
-            }
-            mSelected = mData.indexOf(mColor);
-            findSelected();
-            notifyItemRangeChanged(posBefore,mData.size()-posBefore);
-
-            Log.d(TAG, "addData: size = "+color.length +", data size = "+mData.size());
-
-        }
-
     }
 
 

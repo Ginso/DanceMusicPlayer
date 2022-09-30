@@ -5,7 +5,6 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -27,7 +26,6 @@ import com.ldt.musicr.model.Song;
 import com.ldt.musicr.service.MusicService;
 import com.ldt.musicr.ui.AppActivity;
 import com.ldt.musicr.util.ImageUtil;
-import com.ldt.musicr.util.Util;
 
 public class AppWidgetBig extends BaseAppWidget {
     public static final String NAME = "app_widget_big";
@@ -69,11 +67,11 @@ public class AppWidgetBig extends BaseAppWidget {
         final Song song = service.getCurrentSong();
 
         // Set the titles and artwork
-        if (TextUtils.isEmpty(song.title) && TextUtils.isEmpty(song.artistName)) {
+        if (TextUtils.isEmpty(song.getTitle()) && TextUtils.isEmpty(song.getArtist())) {
             appWidgetView.setViewVisibility(R.id.media_titles, View.INVISIBLE);
         } else {
             appWidgetView.setViewVisibility(R.id.media_titles, View.VISIBLE);
-            appWidgetView.setTextViewText(R.id.title, song.title);
+            appWidgetView.setTextViewText(R.id.title, song.getTitle());
             appWidgetView.setTextViewText(R.id.text, getSongArtistAndAlbum(song));
         }
 
@@ -89,8 +87,6 @@ public class AppWidgetBig extends BaseAppWidget {
         linkButtons(service, appWidgetView);
 
         // Load the album cover async and push the update on completion
-        Point p = Util.getScreenSize(service);
-        final int widgetImageSize = Math.min(p.x, p.y);
         final Context appContext = service.getApplicationContext();
         service.runOnUiThread(new Runnable() {
             @Override
@@ -115,20 +111,6 @@ public class AppWidgetBig extends BaseAppWidget {
                         .checkIgnoreMediaStore(appContext)
                         .asBitmap().build()
                         .into(awt);
-
-                    /*    .into(new SimpleTarget<Bitmap>(widgetImageSize, widgetImageSize) {
-                            @Override
-                            public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
-                                update(resource);
-                            }
-
-                            @Override
-                            public void onLoadFailed(Exception e, Drawable errorDrawable) {
-                                super.onLoadFailed(e, errorDrawable);
-                                update(null);
-                            }
-                            */
-
 
             }
             private void update(@Nullable Bitmap bitmap) {

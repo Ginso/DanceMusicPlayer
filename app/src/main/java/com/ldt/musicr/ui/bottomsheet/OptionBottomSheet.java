@@ -26,7 +26,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.ldt.musicr.helper.menu.MenuHelper;
-import com.ldt.musicr.model.Media;
 import com.ldt.musicr.util.Tool;
 import com.ldt.musicr.R;
 
@@ -38,7 +37,6 @@ import java.util.Arrays;
 import static com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_COLLAPSED;
 
 public class OptionBottomSheet extends BottomSheetDialogFragment implements View.OnClickListener{
-    public final static String OPTION_RES_ARRAY = "option_res_array";
     private int[] mOptionStringID;
 
     @Override
@@ -46,18 +44,11 @@ public class OptionBottomSheet extends BottomSheetDialogFragment implements View
         return R.style.BottomSheetDialogTheme;
     }
 
-   /* public static OptionBottomSheet newInstance(int[] optionIDs) {
 
-        Bundle args = new Bundle();
-        args.putIntArray();
-        OptionBottomSheet fragment = new OptionBottomSheet();
-        fragment.setArguments(args);
-        return fragment;
-    }*/
 
    private Object mObject;
 
-    public static OptionBottomSheet newInstance(int[] optionIDs, Media media) {
+    public static OptionBottomSheet newInstance(int[] optionIDs, Object media) {
         OptionBottomSheet fragment = new OptionBottomSheet();
         fragment.mOptionStringID = optionIDs;
         fragment.mObject = media;
@@ -182,7 +173,6 @@ public class OptionBottomSheet extends BottomSheetDialogFragment implements View
             first_time = false;
             res = getResources();
         }
-        int l = v.length;
         rippleViews.addAll(Arrays.asList(v));
         for(View view :v) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -195,17 +185,6 @@ public class OptionBottomSheet extends BottomSheetDialogFragment implements View
     }
 
     Resources res;
-    public void applyRippleColor(int color) {
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            for (final View v : rippleViews) {
-                ((RippleDrawable) v.getBackground()).setColor(ColorStateList.valueOf(color));
-            }
-        }
-        else {
-            //TODO: setBackground below Android L
-        }
-    }
 
     @Override
     public void onViewCreated(@NotNull View view, @Nullable Bundle savedInstanceState) {

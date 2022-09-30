@@ -91,7 +91,7 @@ public class PlayingNotificationImpl24 extends PlayingNotification {
                                 .setLargeIcon(bitmap)
                                 .setContentIntent(clickIntent)
                                 .setDeleteIntent(deleteIntent)
-                                .setContentTitle(song.title)
+                                .setContentTitle(song.getTitle())
                                 .setContentText(text)
                                 .setOngoing(isPlaying)
                                 .setShowWhen(false)
@@ -102,7 +102,7 @@ public class PlayingNotificationImpl24 extends PlayingNotification {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                             builder.setStyle(new MediaStyle().setMediaSession(service.getMediaSession().getSessionToken()).setShowActionsInCompactView(0, 1, 2))
                                     .setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
-                            if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.O && PreferenceUtil.getInstance(service).coloredNotification())
+                            if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.O && PreferenceUtil.getInstance().coloredNotification())
                                 builder.setColor(color);
                         }
 

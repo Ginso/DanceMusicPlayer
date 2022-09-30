@@ -89,7 +89,7 @@ public class CalendarUtil {
                 year--;
             }
 
-            elapsed += getDaysInMonth(year, month) * MS_PER_DAY;
+            elapsed += getDaysInMonth(month) * MS_PER_DAY;
         }
 
         return elapsed;
@@ -105,9 +105,8 @@ public class CalendarUtil {
         long elapsed = getElapsedMonth();
 
         int month = calendar.get(Calendar.MONTH) - 1;
-        int year = calendar.get(Calendar.YEAR);
         while (month > Calendar.JANUARY) {
-            elapsed += getDaysInMonth(year, month) * MS_PER_DAY;
+            elapsed += getDaysInMonth(month) * MS_PER_DAY;
 
             month--;
         }
@@ -118,11 +117,10 @@ public class CalendarUtil {
     /**
      * Gets the number of days for the given month in the given year.
      *
-     * @param year  The year.
      * @param month The month (1 - 12).
      * @return The days in that month/year.
      */
-    private int getDaysInMonth(int year, int month) {
+    private int getDaysInMonth(int month) {
         final Calendar monthCal = new GregorianCalendar(calendar.get(Calendar.YEAR), month, 1);
         return monthCal.getActualMaximum(Calendar.DAY_OF_MONTH);
     }

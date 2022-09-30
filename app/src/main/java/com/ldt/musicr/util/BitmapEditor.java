@@ -1,9 +1,7 @@
 package com.ldt.musicr.util;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.ColorFilter;
@@ -17,7 +15,6 @@ import android.graphics.PorterDuffColorFilter;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.view.View;
 import android.widget.ImageView;
 import androidx.renderscript.*;
@@ -671,7 +668,7 @@ public final class BitmapEditor {
         paint.setStyle(Paint.Style.FILL);
         paint.setAntiAlias(true);
         canvas.drawBitmap(original,paddingLeft,paddingTop,paint);
-        Bitmap blurred_bitmap= getBlurredWithGoodPerformance(context, bitmap,1,valueBlurBackground,valueSaturationBlurBackground);
+        Bitmap blurred_bitmap= getBlurredWithGoodPerformance(context, bitmap, valueBlurBackground,valueSaturationBlurBackground);
      //   Bitmap blurred_bitmap= getBlurredWithGoodPerformance(context, bitmap,1,15,3);
         Bitmap end_bitmap = Bitmap.createBitmap(bitmap_width,bitmap_height, Bitmap.Config.ARGB_8888);
         canvas.setBitmap(end_bitmap);
@@ -695,7 +692,6 @@ public final class BitmapEditor {
     }
     public static Bitmap getBlurredWithGoodPerformance(Bitmap bitmap,int scale,int radius,int saturation)
     {
-        BitmapFactory.Options options = new BitmapFactory.Options();
         Bitmap bitmap1=getResizedBitmap(bitmap,50,50);
         Bitmap updateSatBitmap = updateSat(bitmap1,saturation);
         Bitmap blurredBitmap= FastBlurSupportAlpha(updateSatBitmap,scale,radius);
@@ -759,7 +755,7 @@ public final class BitmapEditor {
 
         return a << ALPHA_CHANNEL | r << RED_CHANNEL | g << GREEN_CHANNEL | b << BLUE_CHANNEL;
     }
-    public static Bitmap getBlurredWithGoodPerformance(Context context,Bitmap bitmap,int scale,int radius,float saturation)
+    public static Bitmap getBlurredWithGoodPerformance(Context context, Bitmap bitmap, int radius, float saturation)
     {
         Bitmap bitmap1=getResizedBitmap(bitmap,150,150);
         Bitmap updateSatBimap = updateSat(bitmap1,saturation);
@@ -769,21 +765,6 @@ public final class BitmapEditor {
         return blurredBitmap;
     }
 
-    public static Bitmap getBlurredBimapWithRenderScript(Context context, Bitmap bitmapOriginal,float radius)
-    {
-        //define this only once if blurring multiple times
-        RenderScript rs = RenderScript.create(context);
-
-//this will blur the bitmapOriginal with A radius of 8 and save it in bitmapOriginal
-        final Allocation input = Allocation.createFromBitmap(rs, bitmapOriginal); //use this constructor for best performance, because it uses USAGE_SHARED mode which reuses memory
-        final Allocation output = Allocation.createTyped(rs, input.getType());
-        final ScriptIntrinsicBlur script = ScriptIntrinsicBlur.create(rs, Element.U8_4(rs));
-        script.setRadius(radius);
-        script.setInput(input);
-        script.forEach(output);
-        output.copyTo(bitmapOriginal);
-        return bitmapOriginal;
-    }
     public static Bitmap BlurBitmapWithRenderScript(Context context, Bitmap bitmap, float radius){
         //Let's create an empty bitmap with the same size of the bitmap we want to blur
         Bitmap outBitmap = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.ARGB_8888);
@@ -818,22 +799,6 @@ public final class BitmapEditor {
     }
 
 
-    public static Drawable covertBitmapToDrawable(Context context, Bitmap bitmap) {
-        Drawable d = new BitmapDrawable(context.getResources(), bitmap);
-        return d;
-    }
-
-    public static Bitmap convertDrawableToBitmap(Drawable drawable) {
-        if (drawable instanceof BitmapDrawable) {
-            return ((BitmapDrawable) drawable).getBitmap();
-        }
-        Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(),
-                drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(bitmap);
-        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
-        drawable.draw(canvas);
-        return bitmap;
-    }
     public static Bitmap changeBitmapColor(Bitmap sourceBitmap, int color)
     {
         Bitmap resultBitmap = sourceBitmap.copy(sourceBitmap.getConfig(),true);
@@ -892,36 +857,7 @@ public final class BitmapEditor {
             case 15: return PorterDuff.Mode.OVERLAY;
         }
     }
-    public static void applyNewColor4Bitmap(Context context,int[] idBitmaps,ImageView[] imageViews,int color,float alpha)
-    {
-        android.content.res.Resources resource =  context.getResources();
-        int size= idBitmaps.length;
-        Bitmap usingBitmap,resultBitmap;
-        for(int i=0;i<size;i++)
-        {
-            usingBitmap = BitmapFactory.decodeResource(resource,idBitmaps[i]);
-            resultBitmap = changeBitmapColor(usingBitmap,color);
-            imageViews[i].setImageBitmap(resultBitmap);
-            imageViews[i].setAlpha(alpha);
-        }
-    }
-    public static void applyNewColor4Bitmap(Context context,int idBitmap,ImageView applyView,int color,float alpha)
-    {
 
-        android.content.res.Resources resource =  context.getResources();
-        Bitmap usingBitmap = BitmapFactory.decodeResource(resource,idBitmap);
-        Bitmap resultBitmap = changeBitmapColor(usingBitmap,color);
-        applyView.setImageBitmap(resultBitmap);
-        applyView.setAlpha(alpha);
-
-    }
-    public static Bitmap getBitmapFromView(View view) {
-        Bitmap bitmap = Bitmap.createBitmap(view.getWidth(), view.getHeight(), Bitmap.Config.ARGB_8888);
-        Canvas c = new Canvas(bitmap);
-        view.layout(view.getLeft(), view.getTop(), view.getRight(), view.getBottom());
-        view.draw(c);
-        return bitmap;
-    }
     public static Bitmap getBitmapFromView(View view,int left,int top,int right,int bottom) {
         Bitmap bitmap = Bitmap.createBitmap(view.getWidth(), view.getHeight(), Bitmap.Config.ARGB_8888);
         Canvas c = new Canvas(bitmap);
@@ -934,12 +870,5 @@ public final class BitmapEditor {
         int[] pos_child  = new int[2];
         childView.getLocationOnScreen(pos_child);
         return getBitmapFromView(parentView,pos_child[0],pos_child[1],parentView.getRight(),parentView.getBottom());
-    }
-    public static Bitmap getBackgroundBlurAViewWithParent(Activity activity,View childView,View parentView)
-    {
-        Bitmap b1= getBackgroundBitmapAViewWithParent(childView, parentView);
-        Bitmap b2 = getBlurredWithGoodPerformance(activity,b1,1,8,2);
-        b1.recycle();
-        return b2;
     }
 }

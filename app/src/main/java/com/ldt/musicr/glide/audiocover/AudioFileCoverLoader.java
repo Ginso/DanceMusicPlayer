@@ -20,12 +20,12 @@ public class AudioFileCoverLoader implements ModelLoader<AudioFileCover, InputSt
     @Nullable
     @Override
     public LoadData<InputStream> buildLoadData(@NonNull AudioFileCover audioFileCover, int width, int height, @NonNull Options options) {
-        return new LoadData<>(new ObjectKey(audioFileCover.filePath),new AudioFileCoverFetcher(audioFileCover));
+        return new LoadData<InputStream>(new ObjectKey(audioFileCover.filePath),new AudioFileCoverFetcher(audioFileCover));
     }
 
     @Override
     public boolean handles(@NonNull AudioFileCover audioFileCover) {
-        return audioFileCover.filePath != null;
+        return true;
     }
 
     public static class Factory implements ModelLoaderFactory<AudioFileCover, InputStream> {

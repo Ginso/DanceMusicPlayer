@@ -20,13 +20,8 @@ public class LastAddedLoader {
         return SongLoader.getSongs(makeLastAddedCursor(context, null));
     }
 
-    @NonNull
-    public static ArrayList<Song> getLastAddedSongs(@NonNull Context context, @Nullable String _sortOrder) {
-        return SongLoader.getSongs(makeLastAddedCursor(context, _sortOrder));
-    }
-
     public static Cursor makeLastAddedCursor(@NonNull final Context context, @Nullable String _sortOrder) {
-        long cutoff = PreferenceUtil.getInstance(context).getLastAddedCutoffTimeSecs();
+        long cutoff = PreferenceUtil.getInstance().getLastAddedCutoffTimeSecs();
 
         String sortOrder = _sortOrder == null ? MediaStore.Audio.Media.DATE_ADDED + " DESC" : _sortOrder;
 

@@ -18,7 +18,7 @@ import com.ldt.musicr.ui.widget.fragmentnavigationcontroller.NavigationFragment;
 import static com.ldt.musicr.ui.widget.fragmentnavigationcontroller.NavigationFragment.PRESENT_STYLE_DEFAULT;
 
 
-public class BackPressableFragment extends Fragment implements BackPressable {
+public class BackPressableFragment extends Fragment {
     NavigationControllerFragment mNavigationController;
 
     @Nullable
@@ -38,7 +38,6 @@ public class BackPressableFragment extends Fragment implements BackPressable {
         initBackStack(savedInstanceState);
     }
 
-    @Override
     public boolean onBackPressed() {
         if(mNavigationController.getTopFragment().isReadyToDismiss())
             return isNavigationControllerInit() && mNavigationController.dismissFragment(true);
@@ -47,14 +46,6 @@ public class BackPressableFragment extends Fragment implements BackPressable {
 
     private boolean isNavigationControllerInit() {
         return null!= mNavigationController;
-    }
-    public void presentFragment(NavigationFragment fragment) {
-        if(isNavigationControllerInit()) {
-//            Random r = new Random();
-//            mNavigationController.setPresentStyle(r.nextInt(39)+1); //exclude NONE present style
-            mNavigationController.setPresentStyle(fragment.getPresentTransition());
-            mNavigationController.presentFragment(fragment, true);
-        }
     }
 
     @NonNull
@@ -71,33 +62,10 @@ public class BackPressableFragment extends Fragment implements BackPressable {
         mNavigationController.setPresentStyle(PRESENT_STYLE_DEFAULT);
         mNavigationController.setDuration(250);
         mNavigationController.setInterpolator(new AccelerateDecelerateInterpolator());
-        //if(savedInstanceState==null) {
-
         mNavigationController.presentFragment(mRootFragment);
 
-        // } else {
-
-//          mNavigationController = (FragmentNavigationController) fm.getFragment(savedInstanceState,"navigation-controller");
-//          if(mNavigationController==null) Log.d(TAG, "initBackStack: found Navigation Controller");
-//          else Log.d(TAG, "initBackStack: unable to get Navigation Controller");
-        // }
-    }
-    public void dismiss() {
-        if(isNavigationControllerInit()) {
-            mNavigationController.dismissFragment();
-        }
     }
 
-    public void presentFragment(NavigationFragment fragment, boolean animated) {
-        if(isNavigationControllerInit()) {
-            mNavigationController.presentFragment(fragment,animated);
-        }
-    }
-    public void dismiss(boolean animated) {
-        if(isNavigationControllerInit()) {
-            mNavigationController.dismissFragment(animated);
-        }
-    }
     public void popToRootFragment() {
         if(isNavigationControllerInit())
             mNavigationController.popToRootFragment();

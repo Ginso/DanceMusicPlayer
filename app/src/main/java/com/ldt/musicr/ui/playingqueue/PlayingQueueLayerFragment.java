@@ -32,8 +32,7 @@ import com.ldt.musicr.service.MusicService;
 import com.ldt.musicr.service.MusicServiceEventListener;
 import com.ldt.musicr.ui.AppActivity;
 import com.ldt.musicr.ui.CardLayerController;
-import com.ldt.musicr.ui.floating.LyricFragment;
-import com.ldt.musicr.ui.maintab.CardLayerFragment;
+import com.ldt.musicr.ui.page.CardLayerFragment;
 import com.ldt.musicr.util.Tool;
 
 import java.util.ArrayList;
@@ -63,11 +62,6 @@ public class PlayingQueueLayerFragment extends CardLayerFragment implements Musi
     @BindView(R.id.constraint_root)
     ViewGroup mConstraintRoot;
 
-    @OnClick(R.id.lyric)
-    void showLyric() {
-        if (getActivity() != null)
-            LyricFragment.newInstance().show(getActivity().getSupportFragmentManager(), "LyricBottomSheet");
-    }
 
     @OnClick(R.id.save)
     void saveCurrentPlaylist() {
@@ -85,8 +79,6 @@ public class PlayingQueueLayerFragment extends CardLayerFragment implements Musi
     @BindView(R.id.recycler_view)
     RecyclerView mRecyclerView;
 
-    @BindView(R.id.lyric)
-    View mLyricView;
     @BindView(R.id.save)
     View mSaveView;
 
@@ -181,7 +173,6 @@ public class PlayingQueueLayerFragment extends CardLayerFragment implements Musi
         });
     }
 
-    private boolean mFirstTouchEvent = true;
     private boolean mInStreamEvent = false;
     private float mPreviousY = 0;
 
@@ -194,13 +185,11 @@ public class PlayingQueueLayerFragment extends CardLayerFragment implements Musi
             case MotionEvent.ACTION_DOWN:
                 Log.d(TAG, "onTouchRecyclerView: down");
                 //    Toast.makeText(getContext(),"Down",Toast.LENGTH_SHORT).show();
-                mFirstTouchEvent = true;
                 view.onTouchEvent(event);
                 if (isRecyclerViewOnTop) mCardLayerController.dispatchOnTouchEvent(mRoot, event);
                 break;
             case MotionEvent.ACTION_UP:
                 Log.d(TAG, "onTouchRecyclerView: up");
-                mFirstTouchEvent = false;
                 mPreviousY = 0;
                 if (mInStreamEvent) {
                     mInStreamEvent = false;
@@ -213,7 +202,6 @@ public class PlayingQueueLayerFragment extends CardLayerFragment implements Musi
                 if (mPreviousY < currentY && isRecyclerViewOnTop) mInStreamEvent = true;
                 if (mInStreamEvent) mCardLayerController.dispatchOnTouchEvent(mRoot, event);
                 else view.onTouchEvent(event);
-                mFirstTouchEvent = false;
         }
         mPreviousY = currentY;
         return true;
@@ -410,7 +398,6 @@ public class PlayingQueueLayerFragment extends CardLayerFragment implements Musi
 
             ((RippleDrawable) mShuffleButton.getBackground()).setColor(ColorStateList.valueOf(Tool.getBaseColor()));
             ((RippleDrawable) mRepeatButton.getBackground()).setColor(ColorStateList.valueOf(Tool.getBaseColor()));
-            ((RippleDrawable) mLyricView.getBackground()).setColor(ColorStateList.valueOf(Tool.getBaseColor()));
             ((RippleDrawable) mSaveView.getBackground()).setColor(ColorStateList.valueOf(Tool.getBaseColor()));
         }
         onColorPaletteReady(Tool.ColorOne, Tool.ColorTwo, Tool.AlphaOne, Tool.AlphaTwo);

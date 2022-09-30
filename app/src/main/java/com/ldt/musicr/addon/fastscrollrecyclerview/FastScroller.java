@@ -263,11 +263,6 @@ public class FastScroller {
         setOffset(x, mOffset.y);
     }
 
-    @Keep
-    public int getOffsetX() {
-        return mOffset.x;
-    }
-
     public void show() {
         if (!mAnimatingShow) {
             if (mAutoHideAnimator != null) {

@@ -3,321 +3,500 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="#AA080808"
     android:overScrollMode="never"
     tools:background="@color/background_artist_header_color">
-
-    <androidx.core.widget.NestedScrollView
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:clipToPadding="false"
-        android:overScrollMode="never"
-        android:paddingBottom="@dimen/bottom_back_stack_spacing">
+        android:paddingBottom="16dp">
 
-        <androidx.constraintlayout.widget.ConstraintLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:overScrollMode="never"
+            app:layout_constraintTop_toBottomOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:paddingBottom="@dimen/bottom_back_stack_spacing">
+
+            <androidx.constraintlayout.widget.ConstraintLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="16dp">
+
+
+                <View
+                    android:id="@+id/status_bar"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/in_app_volume"
+                    android:layout_width="0dp"
+                    android:layout_height="35dp"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="24dp"
+                    android:fontFamily="@font/hevetica_font"
+                    android:gravity="center_vertical"
+                    android:paddingStart="4dp"
+                    android:paddingEnd="4dp"
+                    android:text="@string/in_app_volume"
+                    android:textColor="@color/FlatWhite"
+                    android:textSize="19sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/status_bar" />
+
+                <com.ldt.musicr.ui.widget.rangeseekbar.RangeSeekBar
+                    android:id="@+id/in_app_volume_seek_bar"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:paddingStart="20dp"
+                    android:paddingEnd="20dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/in_app_volume"
+                    app:rsb_indicator_height="25dp"
+                    app:rsb_indicator_radius="8dp"
+                    app:rsb_indicator_show_mode="alwaysHide"
+                    app:rsb_indicator_text_size="14sp"
+                    app:rsb_max="100"
+                    app:rsb_min="5"
+                    app:rsb_mode="single"
+                    app:rsb_progress_color="@color/flatOrange"
+                    app:rsb_progress_default_color="@color/rsbColorSeekBarDefault"
+                    app:rsb_tick_mark_mode="number"
+                    app:rsb_tick_mark_text_array="@array/markArray"
+                    app:rsb_tick_mark_text_color="#FF999999"
+                    app:rsb_tick_mark_text_margin="20dp" />
+
+                <TextView
+                    android:id="@+id/left_right_balance_title"
+                    android:layout_width="0dp"
+                    android:layout_height="35dp"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="24dp"
+                    android:fontFamily="@font/hevetica_font"
+                    android:gravity="center_vertical"
+                    android:paddingStart="4dp"
+                    android:paddingEnd="4dp"
+                    android:text="@string/left_right_audio_balance"
+                    android:textColor="@color/FlatWhite"
+                    android:textSize="19sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/in_app_volume_seek_bar" />
+
+                <com.ldt.musicr.ui.widget.rangeseekbar.RangeSeekBar
+                    android:id="@+id/left_right_balance_seek_bar"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:paddingStart="20dp"
+                    android:paddingEnd="20dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/left_right_balance_title"
+                    app:rsb_indicator_height="25dp"
+                    app:rsb_indicator_radius="8dp"
+                    app:rsb_indicator_show_mode="alwaysHide"
+                    app:rsb_indicator_text_size="14sp"
+                    app:rsb_max="100"
+                    app:rsb_min="0"
+                    app:rsb_mode="single"
+                    app:rsb_progress_color="@color/flatOrange"
+                    app:rsb_progress_default_color="@color/rsbColorSeekBarDefault"
+                    app:rsb_tick_mark_mode="other"
+                    app:rsb_tick_mark_text_array="@array/balanceArray"
+                    app:rsb_tick_mark_text_color="#FF999999"
+                    app:rsb_tick_mark_text_margin="20dp" />
+                <LinearLayout
+                    android:id="@+id/rootLayout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/left_right_balance_seek_bar"
+                    android:layout_marginStart="24dp">
+
+                    <TextView
+                        android:id="@+id/root_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:fontFamily="@font/hevetica_font"
+                        android:gravity="center_vertical"
+                        android:paddingStart="4dp"
+                        android:paddingEnd="4dp"
+                        android:text="Root Folder: "
+                        android:textColor="@color/FlatWhite"
+                        android:textSize="19sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/root_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="8dp"
+                        android:fontFamily="@font/hevetica_font"
+                        android:gravity="center_vertical"
+                        android:paddingStart="4dp"
+                        android:paddingEnd="4dp"
+                        android:text=""
+                        android:maxLines="1"
+                        android:textColor="@color/FlatWhite"
+                        android:textSize="19sp"
+                        android:textStyle="bold" />
+
+                    <Button
+                        android:id="@+id/changeRoot"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="24dp"
+                        android:text="change"
+                        />
+                </LinearLayout>
+
+
+
+
+
+                <LinearLayout
+                    android:id="@+id/explorer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="24dp"
+                    android:background="#000000"
+                    android:padding="20dp"
+                    android:visibility="gone"
+                    android:orientation="vertical"
+                    app:layout_constraintTop_toBottomOf="@id/rootLayout"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent">
+                    <Button
+                        android:id="@+id/saveRoot"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="save"/>
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tags_title"
+                    android:layout_width="0dp"
+                    android:layout_height="35dp"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="24dp"
+                    android:fontFamily="@font/hevetica_font"
+                    android:gravity="center_vertical"
+                    android:paddingStart="4dp"
+                    android:paddingEnd="4dp"
+                    android:text="Tags"
+                    android:textColor="@color/FlatWhite"
+                    android:textSize="19sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/explorer" />
+
+                <Button
+                    android:id="@+id/import_tags"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="24dp"
+                    app:layout_constraintStart_toEndOf="@id/tags_title"
+                    app:layout_constraintBaseline_toBaselineOf="@id/tags_title"
+                    android:text="import"
+                    />
+
+                <Button
+                    android:id="@+id/export_tags"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="24dp"
+                    app:layout_constraintStart_toEndOf="@id/import_tags"
+                    app:layout_constraintBaseline_toBaselineOf="@id/tags_title"
+                    android:text="export"
+                    />
+
+                <TextView
+                    android:id="@+id/tags"
+                    android:layout_width="0dp"
+                    android:layout_height="46dp"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginTop="24dp"
+                    android:layout_marginEnd="24dp"
+                    android:background="@drawable/ripple_effect"
+                    android:fontFamily="@font/hevetica_font"
+                    android:gravity="center_vertical"
+                    android:paddingStart="4dp"
+                    android:paddingEnd="46dp"
+                    android:text="Custom Tags"
+                    android:textColor="@color/FlatWhite"
+                    android:textSize="19sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tags_title" />
+
+                <ImageView
+                    android:id="@+id/tags_icon"
+                    android:layout_width="46dp"
+                    android:layout_height="0dp"
+                    android:padding="12dp"
+                    android:src="@drawable/right_light"
+                    app:layout_constraintBottom_toBottomOf="@id/tags"
+                    app:layout_constraintDimensionRatio="1:1"
+                    app:layout_constraintEnd_toEndOf="@id/tags"
+                    app:layout_constraintTop_toTopOf="@id/tags"
+                    app:tint="@color/FlatWhite" />
+
+                <TextView
+                    android:id="@+id/parseTags"
+                    android:layout_width="0dp"
+                    android:layout_height="46dp"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginTop="24dp"
+                    android:layout_marginEnd="24dp"
+                    android:background="@drawable/ripple_effect"
+                    android:fontFamily="@font/hevetica_font"
+                    android:gravity="center_vertical"
+                    android:paddingStart="4dp"
+                    android:paddingEnd="46dp"
+                    android:text="Get Tags from filenames/-paths"
+                    android:textColor="@color/FlatWhite"
+                    android:textSize="19sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tags" />
+
+                <ImageView
+                    android:id="@+id/parseTags_icon"
+                    android:layout_width="46dp"
+                    android:layout_height="0dp"
+                    android:padding="12dp"
+                    android:src="@drawable/right_light"
+                    app:layout_constraintBottom_toBottomOf="@id/parseTags"
+                    app:layout_constraintDimensionRatio="1:1"
+                    app:layout_constraintEnd_toEndOf="@id/parseTags"
+                    app:layout_constraintTop_toTopOf="@id/parseTags"
+                    app:tint="@color/FlatWhite" />
+
+                <TextView
+                    android:id="@+id/configureFilter"
+                    android:layout_width="0dp"
+                    android:layout_height="46dp"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginTop="24dp"
+                    android:layout_marginEnd="24dp"
+                    android:background="@drawable/ripple_effect"
+                    android:fontFamily="@font/hevetica_font"
+                    android:gravity="center_vertical"
+                    android:paddingStart="4dp"
+                    android:paddingEnd="46dp"
+                    android:text="Configure Filter and Sortheaders"
+                    android:textColor="@color/FlatWhite"
+                    android:textSize="19sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/parseTags" />
+
+                <ImageView
+                    android:id="@+id/configureFilter_icon"
+                    android:layout_width="46dp"
+                    android:layout_height="0dp"
+                    android:padding="12dp"
+                    android:src="@drawable/right_light"
+                    app:layout_constraintBottom_toBottomOf="@id/configureFilter"
+                    app:layout_constraintDimensionRatio="1:1"
+                    app:layout_constraintEnd_toEndOf="@id/configureFilter"
+                    app:layout_constraintTop_toTopOf="@id/configureFilter"
+                    app:tint="@color/FlatWhite" />
+
+                <TextView
+                    android:id="@+id/configureSonglist"
+                    android:layout_width="0dp"
+                    android:layout_height="46dp"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginTop="24dp"
+                    android:layout_marginEnd="24dp"
+                    android:background="@drawable/ripple_effect"
+                    android:fontFamily="@font/hevetica_font"
+                    android:gravity="center_vertical"
+                    android:paddingStart="4dp"
+                    android:paddingEnd="46dp"
+                    android:text="Configure layout of songlist items"
+                    android:textColor="@color/FlatWhite"
+                    android:textSize="19sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/configureFilter" />
+
+                <ImageView
+                    android:id="@+id/configureSonglist_icon"
+                    android:layout_width="46dp"
+                    android:layout_height="0dp"
+                    android:padding="12dp"
+                    android:src="@drawable/right_light"
+                    app:layout_constraintBottom_toBottomOf="@id/configureSonglist"
+                    app:layout_constraintDimensionRatio="1:1"
+                    app:layout_constraintEnd_toEndOf="@id/configureSonglist"
+                    app:layout_constraintTop_toTopOf="@id/configureSonglist"
+                    app:tint="@color/FlatWhite" />
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/showOnLock"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="100dp"
+                    android:checked="false"
+                    android:textSize="19sp"
+                    android:text="Show App over Lockscreen"
+                    android:textColor="#DDF5F5F5"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/configureSonglist" />
+
+                <TextView
+                    android:id="@+id/logs_title"
+                    android:layout_width="0dp"
+                    android:layout_height="35dp"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="24dp"
+                    android:fontFamily="@font/hevetica_font"
+                    android:gravity="center_vertical"
+                    android:paddingStart="4dp"
+                    android:paddingEnd="4dp"
+                    android:text="Logs"
+                    android:textColor="@color/FlatWhite"
+                    android:textSize="19sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/showOnLock" />
+
+                <LinearLayout
+                    android:id="@+id/courseSelection"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginLeft="30dp"
+                    app:layout_constraintTop_toBottomOf="@id/logs_title"
+                    app:layout_constraintStart_toStartOf="parent">
+
+                </LinearLayout>
+
+                <EditText
+                    android:id="@+id/newCourseName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@id/courseSelection"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:layout_marginLeft="30dp"
+                    android:ems="8"
+                    />
+
+                <Button
+                    android:id="@+id/addNewCourse"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toTopOf="@id/newCourseName"
+                    app:layout_constraintLeft_toRightOf="@id/newCourseName"
+                    android:text="+"
+                    />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    app:layout_constraintTop_toBottomOf="@id/newCourseName"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"/>
+
+
+
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.core.widget.NestedScrollView>
+
+        <View
+            android:id="@+id/alertBackground"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#C444"
+            android:clickable="true"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <LinearLayout
+            android:id="@+id/alertView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="16dp">
-
-            <androidx.constraintlayout.widget.Group
+            android:orientation="vertical"
+            android:layout_margin="20sp"
+            android:background="#888"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
+            <TextView
+                android:id="@+id/alertTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:visibility="gone"
-                app:constraint_referenced_ids="specific_playlist,specific_playlist_note,create_now"
-                tools:visibility="visible" />
-
-            <View
-                android:id="@+id/status_bar"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:id="@+id/in_app_volume"
-                android:layout_width="0dp"
-                android:layout_height="35dp"
-                android:layout_marginStart="24dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="24dp"
-                android:fontFamily="@font/hevetica_font"
-                android:gravity="center_vertical"
-                android:paddingStart="4dp"
-                android:paddingEnd="4dp"
-                android:text="@string/in_app_volume"
-                android:textColor="@color/FlatWhite"
-                android:textSize="19sp"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/status_bar" />
-
-            <com.ldt.musicr.ui.widget.rangeseekbar.RangeSeekBar
-                android:id="@+id/in_app_volume_seek_bar"
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:paddingStart="20dp"
-                android:paddingEnd="20dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/in_app_volume"
-                app:rsb_indicator_height="25dp"
-                app:rsb_indicator_radius="8dp"
-                app:rsb_indicator_show_mode="alwaysHide"
-                app:rsb_indicator_text_size="14sp"
-                app:rsb_max="100"
-                app:rsb_min="5"
-                app:rsb_mode="single"
-                app:rsb_progress_color="@color/flatOrange"
-                app:rsb_progress_default_color="@color/rsbColorSeekBarDefault"
-                app:rsb_tick_mark_mode="number"
-                app:rsb_tick_mark_text_array="@array/markArray"
-                app:rsb_tick_mark_text_color="#FF999999"
-                app:rsb_tick_mark_text_margin="20dp" />
-
-            <TextView
-                android:id="@+id/left_right_balance_title"
-                android:layout_width="0dp"
-                android:layout_height="35dp"
                 android:layout_marginStart="24dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="24dp"
                 android:fontFamily="@font/hevetica_font"
                 android:gravity="center_vertical"
+                android:layout_gravity="center"
                 android:paddingStart="4dp"
                 android:paddingEnd="4dp"
-                android:text="@string/left_right_audio_balance"
-                android:textColor="@color/FlatWhite"
+                android:text="Warning: This will overwrite your current tags"
+                android:textColor="#f00"
                 android:textSize="19sp"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/in_app_volume_seek_bar" />
-
-            <com.ldt.musicr.ui.widget.rangeseekbar.RangeSeekBar
-                android:id="@+id/left_right_balance_seek_bar"
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:paddingStart="20dp"
-                android:paddingEnd="20dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/left_right_balance_title"
-                app:rsb_indicator_height="25dp"
-                app:rsb_indicator_radius="8dp"
-                app:rsb_indicator_show_mode="alwaysHide"
-                app:rsb_indicator_text_size="14sp"
-                app:rsb_max="100"
-                app:rsb_min="0"
-                app:rsb_mode="single"
-                app:rsb_progress_color="@color/flatOrange"
-                app:rsb_progress_default_color="@color/rsbColorSeekBarDefault"
-                app:rsb_tick_mark_mode="other"
-                app:rsb_tick_mark_text_array="@array/balanceArray"
-                app:rsb_tick_mark_text_color="#FF999999"
-                app:rsb_tick_mark_text_margin="20dp" />
-
-            <TextView
-                android:id="@+id/specific_playlist"
-                android:layout_width="0dp"
-                android:layout_height="35dp"
-                android:layout_marginStart="24dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="24dp"
-                android:fontFamily="@font/hevetica_font"
-                android:gravity="center_vertical"
-                android:paddingStart="4dp"
-                android:text="@string/specific_playlist"
-                android:textColor="@color/FlatWhite"
-                android:textSize="19sp"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/left_right_balance_seek_bar" />
-
-            <TextView
-                android:id="@+id/specific_playlist_note"
-                android:layout_width="0dp"
+                android:textStyle="bold" />
+            <LinearLayout
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:paddingStart="4dp"
-                android:text="@string/specific_playlist_note"
-                android:textColor="#AAF5F5F5"
-                android:textSize="12sp"
-                app:layout_constraintEnd_toEndOf="@id/specific_playlist"
-
-                app:layout_constraintStart_toStartOf="@id/specific_playlist"
-                app:layout_constraintTop_toBottomOf="@id/specific_playlist" />
-
-            <TextView
-                android:id="@+id/create_now"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="30dp"
-                android:layout_marginTop="12dp"
-                android:layout_marginEnd="30dp"
-                android:layout_marginBottom="12dp"
-                android:background="@drawable/ripple_effect_15dp_radius"
-                android:clickable="true"
-                android:focusable="true"
-                android:gravity="center"
-                android:padding="10dp"
-                android:text="@string/create"
-                android:textColor="@color/FlatWhite"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/specific_playlist_note" />
-
-            <TextView
-                android:id="@+id/customization"
-                android:layout_width="0dp"
-                android:layout_height="35dp"
-                android:layout_marginStart="24dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="24dp"
-                android:fontFamily="@font/hevetica_font"
-                android:gravity="center_vertical"
-                android:paddingStart="4dp"
-                android:paddingEnd="4dp"
-                android:text="@string/customization"
-                android:textColor="@color/FlatWhite"
-                android:textSize="19sp"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/create_now" />
-
-            <View
-                android:id="@+id/customization_panel"
-                android:layout_width="0dp"
-                android:layout_height="45dp"
-                android:background="@drawable/black_rounded_big_light_alpha"
-                app:layout_constraintBottom_toBottomOf="@id/hide_switch"
-                app:layout_constraintEnd_toEndOf="@id/change_language"
-                app:layout_constraintStart_toStartOf="@id/change_language"
-                app:layout_constraintTop_toTopOf="@id/hide_switch" />
-
-            <androidx.appcompat.widget.SwitchCompat
-                android:id="@+id/hide_switch"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="12dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="8dp"
-                android:checked="true"
-                android:padding="10dp"
-                android:text="@string/artist_image_background"
-                android:textColor="#DDF5F5F5"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="@id/in_app_volume"
-                app:layout_constraintStart_toStartOf="@id/in_app_volume"
-                app:layout_constraintTop_toBottomOf="@id/customization" />
-
-            <TextView
-                android:id="@+id/change_language"
-                android:layout_width="0dp"
-                android:layout_height="35dp"
-                android:layout_marginStart="24dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="24dp"
-                android:fontFamily="@font/hevetica_font"
-                android:gravity="center_vertical"
-                android:paddingStart="4dp"
-                android:text="@string/language"
-                android:textColor="@color/FlatWhite"
-                android:textSize="19sp"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/more_setting" />
-
-            <TextView
-                android:id="@+id/change_language_note"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:paddingStart="4dp"
-                android:text="@string/change_languague_note"
-                android:textColor="#AAF5F5F5"
-                android:textSize="12sp"
-                app:layout_constraintEnd_toEndOf="@id/change_language"
-                app:layout_constraintStart_toStartOf="@id/change_language"
-                app:layout_constraintTop_toBottomOf="@id/change_language" />
-
-            <TextView
-                android:id="@+id/switch_to_en"
-                android:layout_width="0dp"
-                android:layout_height="40dp"
-                android:layout_marginTop="16dp"
-                android:gravity="center"
-                android:text="@string/english"
-                android:textColor="@color/FlatWhite"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toStartOf="@id/switch_to_vi"
-                app:layout_constraintStart_toStartOf="@id/change_language"
-                app:layout_constraintTop_toBottomOf="@id/change_language_note"
-                tools:background="@drawable/ripple_16dp_solid_left" />
-
-            <TextView
-                android:id="@+id/switch_to_vi"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:gravity="center"
-                android:text="@string/viet_nam"
-                android:textColor="@color/FlatWhite"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="@id/switch_to_en"
-                app:layout_constraintEnd_toEndOf="@id/change_language"
-                app:layout_constraintStart_toEndOf="@id/switch_to_en"
-                app:layout_constraintTop_toTopOf="@id/switch_to_en"
-                tools:background="@drawable/ripple_16dp_solid_right" />
-
-            <TextView
-                android:id="@+id/more_setting"
-                android:layout_width="0dp"
-                android:layout_height="46dp"
-                android:layout_marginStart="24dp"
-                android:layout_marginTop="24dp"
-                android:layout_marginEnd="24dp"
-                android:background="@drawable/ripple_effect"
-                android:fontFamily="@font/hevetica_font"
-                android:gravity="center_vertical"
-                android:paddingStart="4dp"
-                android:paddingEnd="46dp"
-                android:text="@string/more_setting"
-                android:textColor="@color/FlatWhite"
-                android:textSize="19sp"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/hide_switch" />
-
-            <ImageView
-                android:id="@+id/more_setting_icon"
-                android:layout_width="46dp"
-                android:layout_height="0dp"
-                android:padding="12dp"
-                android:src="@drawable/right_light"
-                app:layout_constraintBottom_toBottomOf="@id/more_setting"
-                app:layout_constraintDimensionRatio="1:1"
-                app:layout_constraintEnd_toEndOf="@id/more_setting"
-                app:layout_constraintTop_toTopOf="@id/more_setting"
-                app:tint="@color/FlatWhite" />
-
-            <View
-                android:id="@+id/divider"
-                android:layout_width="0dp"
-                android:layout_height="1dp"
-                android:background="#0CFFFFFF"
-                app:layout_constraintBottom_toTopOf="@id/change_language"
-                app:layout_constraintEnd_toEndOf="@id/change_language"
-                app:layout_constraintStart_toStartOf="@id/change_language"
-                app:layout_constraintTop_toBottomOf="@id/more_setting" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </androidx.core.widget.NestedScrollView>
+                android:layout_gravity="center"
+                android:layout_margin="20sp"
+                android:orientation="horizontal">
+                <Button
+                    android:id="@+id/alertOk"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="OK"/>
+                <View
+                    android:layout_width="30sp"
+                    android:layout_height="1px"/>
+                <Button
+                    android:id="@+id/alertCancel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/cancel"/>
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </com.ldt.springback.view.SpringBackLayout>

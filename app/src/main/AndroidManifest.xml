@@ -4,7 +4,7 @@
     package="com.ldt.musicr">
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" tools:ignore="ScopedStorage" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.BROADCAST_STICKY" />
@@ -14,7 +14,6 @@
     <application
         android:name=".App"
         android:allowBackup="true"
-        android:fullBackupContent="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher"
@@ -22,7 +21,6 @@
         android:theme="@style/AppThemeNoWallpaper"
         tools:ignore="UnusedAttribute">
         <activity
-            android:exported="true"
             android:name=".ui.AppActivity"
             android:theme="@style/SplashThemeV2"
             android:screenOrientation="portrait"
@@ -84,14 +82,13 @@
                 <data android:mimeType="vnd.android.cursor.dir/audio" />
             </intent-filter>
 
-            <intent-filter tools:ignore="AppLinkUrlError">
+            <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.DEFAULT" />
 
                 <data android:mimeType="vnd.android.cursor.dir/playlist" />
-                <data android:mimeType="vnd.android.cursor.dir/albums" />
-                <data android:mimeType="vnd.android.cursor.dir/artists" />
+                <data android:mimeType="vnd.android.cursor.dir/dances" />
             </intent-filter>
         </activity>
         <service
@@ -110,12 +107,12 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/provider_paths" />
         </provider>
-        <receiver android:name=".service.MediaButtonIntentReceiver" android:exported="true">
+        <receiver android:name=".service.MediaButtonIntentReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.MEDIA_BUTTON" />
             </intent-filter>
         </receiver>
-        <receiver android:name=".appwidgets.BootReceiver" android:exported="true">
+        <receiver android:name=".appwidgets.BootReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="android.intent.action.QUICKBOOT_POWERON" />

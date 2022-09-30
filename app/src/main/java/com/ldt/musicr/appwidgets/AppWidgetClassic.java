@@ -68,11 +68,11 @@ public class AppWidgetClassic extends BaseAppWidget {
         final Song song = service.getCurrentSong();
 
         // Set the titles and artwork
-        if (TextUtils.isEmpty(song.title) && TextUtils.isEmpty(song.artistName)) {
+        if (TextUtils.isEmpty(song.getTitle()) && TextUtils.isEmpty(song.getArtist())) {
             appWidgetView.setViewVisibility(R.id.media_titles, View.INVISIBLE);
         } else {
             appWidgetView.setViewVisibility(R.id.media_titles, View.VISIBLE);
-            appWidgetView.setTextViewText(R.id.title, song.title);
+            appWidgetView.setTextViewText(R.id.title, song.getTitle());
             appWidgetView.setTextViewText(R.id.text, getSongArtistAndAlbum(song));
         }
 

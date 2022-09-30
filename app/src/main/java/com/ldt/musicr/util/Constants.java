@@ -14,61 +14,96 @@
 
 package com.ldt.musicr.util;
 
+import android.content.Context;
+import android.graphics.Color;
+
+import com.ldt.musicr.R;
+
 public class Constants {
 
-    public static final String NAVIGATE_LIBRARY = "navigate_library";
-    public static final String NAVIGATE_PLAYLIST = "navigate_playlist";
-    public static final String NAVIGATE_QUEUE = "navigate_queue";
-    public static final String NAVIGATE_ALBUM = "navigate_album";
-    public static final String NAVIGATE_ARTIST = "navigate_artist";
-    public static final String NAVIGATE_NOWPLAYING = "navigate_nowplaying";
-    public static final String NAVIGATE_LYRICS = "navigate_lyrics";
 
-    public static final String NAVIGATE_PLAYLIST_RECENT = "navigate_playlist_recent";
-    public static final String NAVIGATE_PLAYLIST_LASTADDED = "navigate_playlist_lastadded";
-    public static final String NAVIGATE_PLAYLIST_TOPTRACKS = "navigate_playlist_toptracks";
-    public static final String NAVIGATE_PLAYLIST_USERCREATED = "navigate_playlist";
-    public static final String PLAYLIST_FOREGROUND_COLOR = "foreground_color";
-    public static final String PLAYLIST_NAME = "playlist_name";
+    public static final String FIELD_TYPE = "type";
+    public static final String FIELD_TAG = "tag";
+    public static final String FIELD_CHILDREN = "children";
+    public static final String FIELD_WIDTH = "width";
+    public static final String FIELD_HEIGHT = "height";
+    public static final String FIELD_TEXTSIZE = "textsize";
+    public static final String FIELD_FORMAT = "format";
+    public static final String FIELD_BOLD = "bold";
+    public static final String FIELD_ITALIC = "italic";
+    public static final String FIELD_UNDERLINE = "underline";
+    public static final String FIELD_COLOR = "color";
+    public static final String FIELD_BACKGROUND = "background";
+    public static final String FIELD_FILTER = "filter";
+    public static final String FIELD_TEXT = "text";
+    public static final String FIELD_LENGTH = "ems";
+    public static final String FIELD_TYPE2 = "type2";
 
-    public static final String ALBUM_ID = "album_id";
-    public static final String ARTIST_ID = "artist_id";
-    public static final String PLAYLIST_ID = "playlist_id";
-
-    public static final String FRAGMENT_ID = "fragment_id";
-    public static final String NOWPLAYING_FRAGMENT_ID = "nowplaying_fragment_id";
-
-    public static final String WITH_ANIMATIONS = "with_animations";
-
-    public static final String TIMBER1 = "timber1";
-    public static final String TIMBER2 = "timber2";
-    public static final String TIMBER3 = "timber3";
-    public static final String TIMBER4 = "timber4";
-    public static final String TIMBER5 = "timber5";
-    public static final String TIMBER6 = "timber6";
-
-    public static final String NAVIGATE_SETTINGS = "navigate_settings";
-    public static final String NAVIGATE_SEARCH = "navigate_search";
-
-    public static final String SETTINGS_STYLE_SELECTOR_NOWPLAYING = "style_selector_nowplaying";
-    public static final String SETTINGS_STYLE_SELECTOR_ARTIST = "style_selector_artist";
-    public static final String SETTINGS_STYLE_SELECTOR_ALBUM = "style_selector_album";
-    public static final String SETTINGS_STYLE_SELECTOR_WHAT = "style_selector_what";
-
-    public static final String SETTINGS_STYLE_SELECTOR = "settings_style_selector";
-
-    public static final int PLAYLIST_VIEW_DEFAULT = 0;
-    public static final int PLAYLIST_VIEW_LIST = 1;
-    public static final int PLAYLIST_VIEW_GRID = 2;
-
-    public static final int PLAYLIST_ALBUM_ART_TAG = 888;
-    public static final int ACTION_DELETE_PLAYLIST = 111;
+    public static final String[] dateFormats =  {
+            "dd.MM.yyyy", //0
+            "dd.MM.yy", //1
+            "dd.MM.yyyy hh:mm", //2
+            "dd.MM.yy hh:mm", //3
+            "hh:mm", //4
+            "hh:mm:ss", //5
+            "mm:ss" //6
+    };
 
 
-    public static final String ACTIVITY_TRANSITION = "activity_transition";
+    public enum RatingType {
+        ROTATE,
+        STARS,
+        NOTES,
+        NUMBERS;
+    }
 
-    public static final int CAST_SERVER_PORT = 8080;
+    public static final String[] colorList = {
+            "White",
+            "Black",
+            "Red",
+            "Blue",
+            "Yellow",
+            "Green",
+            "Orange",
+            "Gray"
+    };
+    public static int getColor(Context context, int i) {
+        switch (i) {
+            case 0: return context.getColor(R.color.FlatWhite);
+            case 1: return Color.BLACK;
+            case 2: return Color.RED;
+            case 3: return Color.BLUE;
+            case 4: return Color.YELLOW;
+            case 5: return Color.GREEN;
+            case 6: return Color.rgb(255,128,0);
+            case 7: return Color.rgb(190,190,190);
+            default: return 0;
+        }
+    }
 
-
-
+    public static final String[] colorList2 = {
+            "Transparent",
+            "White",
+            "Black",
+            "Red",
+            "Blue",
+            "Yellow",
+            "Green",
+            "Orange",
+            "gray"
+    };
+    public static int getColor2(int i) {
+        switch (i) {
+            case 0: return Color.TRANSPARENT;
+            case 1: return Color.WHITE;
+            case 2: return Color.BLACK;
+            case 3: return Color.RED;
+            case 4: return Color.BLUE;
+            case 5: return Color.YELLOW;
+            case 6: return Color.GREEN;
+            case 7: return Color.rgb(255,128,0);
+            case 8: return Color.parseColor("#66333333");
+            default: return 0;
+        }
+    }
 }

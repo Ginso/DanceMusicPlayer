@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 
 
 import com.ldt.musicr.ui.AppActivity;
@@ -24,7 +25,7 @@ public abstract class NavigationFragment extends Fragment {
 
     private WeakReference<NavigationControllerFragment> weakFragmentNavigationController = null;
     protected boolean animatable = true;
-    private FragmentTransitionFrameLayout innerRootLayout = null;
+    private FrameLayout innerRootLayout = null;
     private View contentView = null;
     private PresentStyle presentStyle = null;
     public boolean isWhiteTheme(boolean current) {
@@ -86,7 +87,7 @@ public abstract class NavigationFragment extends Fragment {
         View v = onCreateView(inflater, container);
         if(v == null) return v;
         contentView = v;
-        innerRootLayout = new FragmentTransitionFrameLayout(getActivity());
+        innerRootLayout = new FrameLayout(getActivity());
         innerRootLayout.addView(contentView);
         return innerRootLayout;
     }
@@ -101,14 +102,6 @@ public abstract class NavigationFragment extends Fragment {
 
     @Nullable
     abstract protected View onCreateView(LayoutInflater inflater, ViewGroup container);
-
-    /**
-     * This is the layout for wrapping contentView
-     * @return AndroidFragmentFrameLayout
-     */
-    public FragmentTransitionFrameLayout getRootLayout() {
-        return innerRootLayout;
-    }
 
     /**
      * This is the layout-view which is definded by user.

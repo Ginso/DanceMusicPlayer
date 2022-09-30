@@ -34,24 +34,6 @@ public class IntroController {
 
     }
 
-    private boolean isNavigationControllerInit() {
-        return null != mNavigationController;
-    }
-
-    public void presentFragment(NavigationFragment fragment) {
-        Log.d(TAG, "presentFragment");
-        if (isNavigationControllerInit()) {
-            Log.d(TAG, "presentFragment: INIT");
-//            Random r = new Random();
-//            mNavigationController.setPresentStyle(r.nextInt(39)+1); //exclude NONE present style
-            mNavigationController.setPresentStyle(fragment.getPresentTransition());
-
-            //setTheme(fragment.isWhiteTheme());
-            mNavigationController.presentFragment(fragment, true);
-
-        }
-    }
-
     private void initBackStack(AppCompatActivity activity, Bundle savedInstanceState) {
         FragmentManager fm = activity.getSupportFragmentManager();
         mNavigationController = NavigationControllerFragment.navigationController(fm, R.id.back_wall_container);

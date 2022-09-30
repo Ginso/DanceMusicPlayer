@@ -38,19 +38,16 @@
     </declare-styleable>
 
 
-    <declare-styleable name="BlurImageViewChildConstraintLayout">
+    <!--declare-styleable name="BlurImageViewChildConstraintLayout">
         <attr name="imageViewId" format="reference"/>
         <attr name="shadowDeltaLeft" format="dimension"/>
         <attr name="shadowDeltaTop" format="dimension"/>
         <attr name="shadowDeltaRight" format="dimension"/>
         <attr name="shadowDeltaBottom" format="dimension"/>
 
-    </declare-styleable>
+    </declare-styleable-->
 
-    <declare-styleable name="RoundClippingFrameLayout">
-        <attr name="round_clip_back_color" format="color"/>
-        <attr name="round_clip_number" format="float"/>
-    </declare-styleable>
+
 
     <declare-styleable name="DarkenAndRoundedBackgroundConstraintLayout">
 
@@ -64,9 +61,6 @@
     </declare-styleable>
     <declare-styleable name="CircularPlayPauseProgressBar">
         <attr name="iconTint" format="color"/>
-    </declare-styleable>
-    <declare-styleable name="ToggleButton">
-        <attr name="maskColor" format="color"/>
     </declare-styleable>
 
     <declare-styleable name="RangeSeekBar">

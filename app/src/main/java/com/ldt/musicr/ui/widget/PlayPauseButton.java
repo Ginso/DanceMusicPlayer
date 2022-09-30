@@ -80,8 +80,6 @@ public class PlayPauseButton extends View {
                 }
             };
 
-    private OnControlStatusChangeListener mListener;
-
     /**
      * コンストラクタ
      * {@inheritDoc}
@@ -220,26 +218,6 @@ public class PlayPauseButton extends View {
         }
     }
 
-    public void setOnControlStatusChangeListener(OnControlStatusChangeListener listener) {
-        mListener = listener;
-    }
-
-//  /**
-//   * ACTION_DOWNされたらアニメーションのスタートとか
-//   * {@inheritDoc}
-//   */
-//  @Override public boolean onTouchEvent(@NonNull MotionEvent event) {
-//    switch (event.getAction()) {
-//      case MotionEvent.ACTION_DOWN:
-//        setPlayed(!mPlayed);
-//        startAnimation();
-//        if (mListener != null) {
-//          mListener.onStatusChange(this, mPlayed);
-//        }
-//        break;
-//    }
-//    return false;
-//  }
 
     /**
      * 回転状況を {@link PlayPauseButton.SavedState} に保存する

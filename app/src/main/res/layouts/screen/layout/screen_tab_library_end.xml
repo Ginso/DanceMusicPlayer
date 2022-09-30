@@ -43,7 +43,7 @@
         android:id="@+id/header"
         android:layout_width="0dp"
         android:layout_height="75dp"
-        app:layout_constraintBottom_toTopOf="@id/search_view"
+        app:layout_constraintBottom_toBottomOf="@id/status_bar_parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:text="@string/library"
@@ -56,22 +56,6 @@
         android:scaleX="0.5"
         android:scaleY="0.5"
         android:alpha="0"
-        />
-    <com.ldt.musicr.ui.widget.view.MPSearchLikeView
-        android:id="@+id/search_view"
-        android:layout_width="0dp"
-        android:layout_height="45dp"
-        android:focusable="true"
-        android:background="@drawable/search_view_background"
-        android:clickable="true"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="@id/status_bar_parent"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
-        android:alpha="0"
-        android:scaleX="0.5"
-        android:scaleY="0.5"
         />
     <View
         android:id="@+id/back_color_view"
@@ -97,7 +81,7 @@
         app:tabTextColor="#88F5F5F5"
         android:overScrollMode="never"/>
 
-    <com.ldt.musicr.ui.widget.viewpager.SmoothScrollerViewPager
+    <androidx.viewpager.widget.ViewPager
         android:id="@+id/view_pager"
         android:layout_width="0dp"
         android:layout_height="0dp"

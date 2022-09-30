@@ -4,6 +4,8 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
+import android.graphics.BlendMode;
+import android.graphics.BlendModeColorFilter;
 import android.graphics.Color;
 import android.graphics.drawable.RippleDrawable;
 import android.os.Build;
@@ -13,8 +15,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.load.DataSource;
@@ -27,22 +32,32 @@ import com.ldt.musicr.glide.SongGlideRequest;
 import com.ldt.musicr.helper.songpreview.PreviewSong;
 import com.ldt.musicr.helper.songpreview.SongPreviewController;
 import com.ldt.musicr.helper.songpreview.SongPreviewListener;
+import com.ldt.musicr.loader.medialoader.SongLoader;
 import com.ldt.musicr.model.Song;
 import com.ldt.musicr.service.MusicPlayerRemote;
 import com.ldt.musicr.ui.AppActivity;
 import com.ldt.musicr.ui.MusicServiceActivity;
-import com.ldt.musicr.ui.maintab.library.artist.ArtistAdapter;
+import com.ldt.musicr.ui.page.librarypage.dance.DanceAdapter;
+import com.ldt.musicr.ui.page.subpages.SonglistConfigurationFragment;
 import com.ldt.musicr.ui.widget.CircularPlayPauseProgressBar;
+import com.ldt.musicr.util.Constants;
 import com.ldt.musicr.util.Tool;
+import com.ldt.musicr.util.WidgetFactory;
 import com.makeramen.roundedimageview.RoundedImageView;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+
 
 /**
  * Handle Event:
@@ -89,7 +104,7 @@ public abstract class AbsSongAdapter extends AbsMediaAdapter<AbsBindAbleHolder, 
         super.destroy();
     }
 
-    public void previewAllOrStopAll(boolean shuffle) {
+    public void previewAll(boolean shuffle) {
         if (getContext() instanceof AppActivity) {
             SongPreviewController preview = ((AppActivity) getContext()).getSongPreviewController();
             if (preview != null) {
@@ -272,8 +287,8 @@ public abstract class AbsSongAdapter extends AbsMediaAdapter<AbsBindAbleHolder, 
         public void bind(Song song) {
             Log.d(TAG, "bind");
             mNumber.setText("" + (getDataPosition(getAdapterPosition()) + 1));
-            mTitle.setText(song.title);
-            mDescription.setText(song.artistName);
+            mTitle.setText(song.getTitle());
+            mDescription.setText(song.getArtist());
 
             SongGlideRequest.Builder.from(GlideApp.with(getContext()), song)
                     .ignoreMediaStore(false)
@@ -328,8 +343,8 @@ public abstract class AbsSongAdapter extends AbsMediaAdapter<AbsBindAbleHolder, 
         private void bindMediaPlayState() {
             if (MusicPlayerRemote.getCurrentSong().id == getData().get(getDataPosition(getAdapterPosition())).id) {
                 mMediaPlayDataItem = getDataPosition(getAdapterPosition());
-                int baseColor = ArtistAdapter.lighter(Tool.getBaseColor(), 0.6f);
-                mTitle.setTextColor(ArtistAdapter.lighter(Tool.getBaseColor(), 0.25f));
+                int baseColor = DanceAdapter.lighter(Tool.getBaseColor(), 0.6f);
+                mTitle.setTextColor(DanceAdapter.lighter(Tool.getBaseColor(), 0.25f));
                 mDescription.setTextColor(Color.argb(0xAA, Color.red(baseColor), Color.green(baseColor), Color.blue(baseColor)));
                 mQuickPlayPause.setColorFilter(baseColor);
 
@@ -356,5 +371,100 @@ public abstract class AbsSongAdapter extends AbsMediaAdapter<AbsBindAbleHolder, 
                 previewThisSong(getDataPosition(getAdapterPosition()));
             }
         }
+    }
+
+    public class DanceSongHolder extends AbsMediaHolder<Song> {
+
+        private Song mSong;
+
+        @BindView(R.id.root) LinearLayout root;
+        int backgroundColor = 0;
+
+        public DanceSongHolder(View view) {
+            super(view);
+            ButterKnife.bind(this, view);
+        }
+
+        @Override
+        public void onClick(View view) {
+            playAll(getDataPosition(getAdapterPosition()), true);
+            JSONObject courseInfo = SongLoader.getCurrentCourseInfo();
+            if (courseInfo == null) return;
+            JSONObject songs = courseInfo.optJSONObject("songs");
+            if(songs == null) songs = new JSONObject();
+            JSONObject song = songs.optJSONObject(mSong.key);
+            try {
+                if(song == null) {
+                    song = new JSONObject();
+                    song.put("count", 1);
+                } else {
+                    song.put("count", song.getInt("count")+1);
+                }
+                song.put("last",new Date().getTime());
+                songs.put(mSong.key, song);
+                courseInfo.put("songs", songs);
+                SongLoader.saveCourseInfo(courseInfo);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+
+        @SuppressLint("SetTextI18n")
+        @Override
+        public void bind(Song song) {
+            Log.d(TAG, "bind");
+            mSong = song;
+            root.removeAllViews();
+            JSONObject scheme = SonglistConfigurationFragment.getConfiguration();
+            WidgetFactory widgetFactory = new WidgetFactory(getContext());
+            try {
+                int type = scheme.getInt(Constants.FIELD_TYPE);
+                int height = scheme.optInt(Constants.FIELD_HEIGHT, 70);
+                if(height>0) height = widgetFactory.scale(height);
+                backgroundColor = Constants.getColor2(scheme.optInt(Constants.FIELD_BACKGROUND, 8));
+                ViewGroup.LayoutParams params = root.getLayoutParams();
+                params.height = height;
+                root.setLayoutParams(params);
+                root.setOrientation(-1-type);
+                root.getBackground().setColorFilter(new BlendModeColorFilter(backgroundColor, BlendMode.SRC_ATOP));
+                JSONArray children = scheme.getJSONArray(Constants.FIELD_CHILDREN);
+                for(int i = 0; i < children.length(); i++)
+                    widgetFactory.loadView(children.getJSONObject(i), root, song, false);
+
+                ImageView img = new ImageView(getContext());
+                int n = widgetFactory.scale(48);
+                int m = widgetFactory.scale(12);
+                LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(n,n);
+                p.gravity = Gravity.CENTER_VERTICAL;
+                img.setColorFilter(getContext().getColor(R.color.FlatWhite));
+                img.setPadding(m,m,m,m);
+                img.setLayoutParams(p);
+                img.setImageResource(R.drawable.ic_more_horiz_black_24dp);
+                img.setOnClickListener( v -> onMenuItemClick(getDataPosition(getBindingAdapterPosition())));
+                root.addView(img);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            bindTheme();
+        }
+
+        void bindTheme() {
+            bindMediaPlayState();
+        }
+
+
+
+        private void bindMediaPlayState() {
+            int dataPosition = getDataPosition(getBindingAdapterPosition());
+            if (MusicPlayerRemote.getCurrentSong().id == getData().get(dataPosition).id) {
+                mMediaPlayDataItem = dataPosition;
+                root.getBackground().setColorFilter(new BlendModeColorFilter(Color.parseColor("#AA00FFFF"), BlendMode.SRC_ATOP));
+            } else {
+                root.getBackground().setColorFilter(new BlendModeColorFilter(backgroundColor, BlendMode.SRC_ATOP));
+            }
+        }
+
     }
 }

@@ -36,16 +36,10 @@ public class PreviewPlayer implements PreviewSong.OnPreviewSongStateChangedListe
     }
 
     public void addToQueue(PreviewSong song) {
-        Log.d(TAG, "addToQueue: song " + song.getSong().title);
+        Log.d(TAG, "addToQueue: song " + song.getSong().getTitle());
         mPreviewSongs.add(song);
         if (mPreviewSongs.size() == 1)
             play(false);
-    }
-
-    public void playNew(PreviewSong song) {
-        mPreviewSongs.clear();
-        mPreviewSongs.add(song);
-        song.play();
     }
 
     private boolean mIsUserPaused = false;
@@ -53,7 +47,7 @@ public class PreviewPlayer implements PreviewSong.OnPreviewSongStateChangedListe
     public void play(boolean stillPlayIfPaused) {
         if (stillPlayIfPaused) mIsUserPaused = true;
         if (!mPreviewSongs.isEmpty() && !mIsUserPaused) {
-            Log.d(TAG, "play new preview song " + mPreviewSongs.get(0).getSong().title);
+            Log.d(TAG, "play new preview song " + mPreviewSongs.get(0).getSong().getTitle());
             mPreviewSongs.get(0).setOnPreviewSongStateChangedListener(this);
             mPreviewSongs.get(0).play();
             if (mListener != null && !mPreviewSongs.isEmpty()) {
@@ -90,7 +84,7 @@ public class PreviewPlayer implements PreviewSong.OnPreviewSongStateChangedListe
             song.removeListener();
             if (mListener != null) mListener.onSongPreviewFinish(song);
             PreviewSong previewSong = mPreviewSongs.remove(0);
-            Log.d(TAG, "onPreviewSongStateChanged: removing song " + previewSong.getSong().title);
+            Log.d(TAG, "onPreviewSongStateChanged: removing song " + previewSong.getSong().getTitle());
             play(false);
         } else if (mListener != null && (newState == PreviewSong.PREPARE_TO_FINISH || newState == PreviewSong.FAILURE)) {
             mListener.onSongPreviewFinish(song);
