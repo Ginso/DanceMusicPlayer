@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.ldt.dancemusic.R;
@@ -43,7 +44,10 @@ public class SongChildTab extends MusicServiceFragment implements PreviewRandomP
     RecyclerView mRecyclerView;
 
     @BindView(R.id.searchTags)
-    LinearLayout searchSettings;
+    LinearLayout searchTagsLayout;
+
+    @BindView(R.id.searchTagsContainer)
+    ScrollView searchTagsContainer;
 
     List<String> searchTags;
 
@@ -171,11 +175,11 @@ public class SongChildTab extends MusicServiceFragment implements PreviewRandomP
 
     @OnClick(R.id.search_settings)
     void toggleSearchSettings() {
-        if(searchSettings.getVisibility() == View.GONE) {
+        if(searchTagsContainer.getVisibility() == View.GONE) {
             WidgetFactory widgetFactory = new WidgetFactory(getContext(), 20);
-            searchSettings.removeAllViews();
-            searchSettings.setVisibility(View.VISIBLE);
-            searchSettings.addView(widgetFactory.createTextView("Search in:"));
+            searchTagsContainer.setVisibility(View.VISIBLE);
+            searchTagsLayout.removeAllViews();
+            searchTagsLayout.addView(widgetFactory.createTextView("Search in:"));
             List<String> allTags = SongLoader.getTagNames();
 
             final int margin = widgetFactory.scale(10);
@@ -191,10 +195,10 @@ public class SongChildTab extends MusicServiceFragment implements PreviewRandomP
                     }
                     PreferenceUtil.getInstance().setSearchTags(searchTags);
                 });
-                searchSettings.addView(tv);
+                searchTagsLayout.addView(tv);
             }
         } else {
-            searchSettings.setVisibility(View.GONE);
+            searchTagsContainer.setVisibility(View.GONE);
         }
     }
 }

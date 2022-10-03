@@ -339,7 +339,7 @@ public class SongChildAdapter extends AbsSongAdapter
             return false;
         }
 
-        void updateSongs(boolean sortOnly) {
+        public void updateSongs(boolean sortOnly) {
             try {
                 Map<String, Song.Tag> tagMap = SongLoader.getAllTags();
                 List<Song> songs = sortOnly ? getData() : getAllData();

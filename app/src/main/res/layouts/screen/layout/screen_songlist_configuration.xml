@@ -71,33 +71,36 @@
                     android:textColor="@color/FlatWhite"
                     android:textSize="36sp"
                     android:textStyle="bold" />
-                <LinearLayout
+                <HorizontalScrollView
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:layout_height="wrap_content">
 
                     <LinearLayout
-                        android:id="@+id/scheme"
-                        android:layout_width="0dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical"/>
+                        android:orientation="horizontal">
 
-                    <View
-                        android:id="@+id/divider"
-                        android:layout_width="1px"
-                        android:layout_height="match_parent"
-                        android:background="@color/FlatWhite"
-                        android:layout_marginLeft="10dp"
-                        android:layout_marginRight="10dp"/>
+                        <LinearLayout
+                            android:id="@+id/scheme"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"/>
 
-                    <LinearLayout
-                        android:id="@+id/configuration"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical"/>
-                </LinearLayout>
+                        <View
+                            android:id="@+id/divider"
+                            android:layout_width="1px"
+                            android:layout_height="match_parent"
+                            android:background="@color/FlatWhite"
+                            android:layout_marginLeft="10dp"
+                            android:layout_marginRight="10dp"/>
+
+                        <LinearLayout
+                            android:id="@+id/configuration"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"/>
+                    </LinearLayout>
+                </HorizontalScrollView>
                 <View
                     android:id="@+id/divider2"
                     android:layout_width="match_parent"

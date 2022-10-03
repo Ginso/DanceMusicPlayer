@@ -361,6 +361,7 @@ public class WidgetFactory {
                 String s = song.getString(tag, type);
                 String format = o.getString(Constants.FIELD_FORMAT);
                 TextView tv = new TextView(context);
+                tv.setMaxLines(1);
                 tv.setLayoutParams(p);
                 tv.setBackgroundColor(bcolor);
                 SpannableString spanString = new SpannableString(String.format(format, s));
@@ -493,6 +494,7 @@ public class WidgetFactory {
         tv.setText(text);
         tv.setTextColor(flatWhite);
         tv.setTextSize(textSize);
+        tv.setMaxLines(1);
         return tv;
     }
 

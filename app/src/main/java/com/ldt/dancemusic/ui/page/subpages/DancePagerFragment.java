@@ -181,7 +181,7 @@ public class DancePagerFragment extends MusicServiceNavigationFragment {
 
 
         updateSongs();
-
+        mAdapter.sortHolder.updateSongs(false);
     }
 
     @Override
