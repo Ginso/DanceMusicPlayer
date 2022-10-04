@@ -423,7 +423,8 @@ public class MusicPlayerRemote {
                         songs = SongLoader.getSongs(SongLoader.makeSongCursor(
                                 musicService,
                                 MediaStore.Audio.AudioColumns._ID + "=?",
-                                new String[]{songId}
+                                new String[]{songId},
+                                null
                         ));
                     }
                 }
@@ -445,7 +446,8 @@ public class MusicPlayerRemote {
                     songs = SongLoader.getSongs(SongLoader.makeSongCursor(
                             musicService,
                             MediaStore.Audio.AudioColumns.DATA + "=?",
-                            new String[]{songFile.getAbsolutePath()}
+                            new String[]{songFile.getAbsolutePath()},
+                            null
                     ));
                 }
             }

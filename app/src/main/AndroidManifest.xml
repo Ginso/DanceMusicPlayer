@@ -26,6 +26,7 @@
             android:screenOrientation="portrait"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:launchMode="singleInstance"
+            android:exported="true"
             android:windowSoftInputMode="adjustPan|adjustResize"
             tools:ignore="LockedOrientationActivity">
             <intent-filter>
@@ -36,38 +37,38 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
             <intent-filter>
-            <action android:name="android.intent.action.VIEW" />
-            <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
 
-            <data android:scheme="content" />
-            <data android:mimeType="audio/*" />
-            <data android:mimeType="application/ogg" />
-            <data android:mimeType="application/x-ogg" />
-            <data android:mimeType="application/itunes" />
-        </intent-filter>
-        <intent-filter>
-            <action android:name="android.intent.action.VIEW" />
+                <data android:scheme="content" />
+                <data android:mimeType="audio/*" />
+                <data android:mimeType="application/ogg" />
+                <data android:mimeType="application/x-ogg" />
+                <data android:mimeType="application/itunes" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
 
-            <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.DEFAULT" />
 
-            <data android:scheme="file" />
-            <data android:mimeType="audio/*" />
-            <data android:mimeType="application/ogg" />
-            <data android:mimeType="application/x-ogg" />
-            <data android:mimeType="application/itunes" />
-        </intent-filter>
-        <intent-filter>
-            <action android:name="android.intent.action.VIEW" />
+                <data android:scheme="file" />
+                <data android:mimeType="audio/*" />
+                <data android:mimeType="application/ogg" />
+                <data android:mimeType="application/x-ogg" />
+                <data android:mimeType="application/itunes" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
 
-            <category android:name="android.intent.category.DEFAULT" />
-            <category android:name="android.intent.category.BROWSABLE" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
 
-            <data android:scheme="http" />
-            <data android:mimeType="audio/*" />
-            <data android:mimeType="application/ogg" />
-            <data android:mimeType="application/x-ogg" />
-            <data android:mimeType="application/itunes" />
-        </intent-filter>
+                <data android:scheme="http" />
+                <data android:mimeType="audio/*" />
+                <data android:mimeType="application/ogg" />
+                <data android:mimeType="application/x-ogg" />
+                <data android:mimeType="application/itunes" />
+            </intent-filter>
             <intent-filter>
                 <action android:name="com.cyanogenmod.eleven.AUDIO_PLAYER" />
 
@@ -81,18 +82,10 @@
 
                 <data android:mimeType="vnd.android.cursor.dir/audio" />
             </intent-filter>
-
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-
-                <data android:mimeType="vnd.android.cursor.dir/playlist" />
-                <data android:mimeType="vnd.android.cursor.dir/dances" />
-            </intent-filter>
         </activity>
         <service
             android:name="com.ldt.dancemusic.service.MusicService"
+            android:exported="false"
             android:enabled="true"/>
         <meta-data
             android:name="android.max_aspect"
@@ -101,18 +94,20 @@
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}"
-            android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/provider_paths" />
         </provider>
-        <receiver android:name="com.ldt.dancemusic.service.MediaButtonIntentReceiver">
+        <receiver
+            android:name="com.ldt.dancemusic.service.MediaButtonIntentReceiver"
+            android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.MEDIA_BUTTON" />
             </intent-filter>
         </receiver>
-        <receiver android:name="com.ldt.dancemusic.appwidgets.BootReceiver">
+        <receiver android:name="com.ldt.dancemusic.appwidgets.BootReceiver"
+            android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="android.intent.action.QUICKBOOT_POWERON" />

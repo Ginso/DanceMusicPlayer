@@ -266,7 +266,7 @@ public class SongLoader {
 
     @NonNull
     public static ArrayList<Song> getAllSongs(@NonNull Context context) {
-        Cursor cursor = makeSongCursor(context, null, null);
+        Cursor cursor = makeSongCursor(context, null, null, PreferenceUtil.getInstance().getRootFolder(null));
         return getSongs(cursor);
     }
 
@@ -277,7 +277,7 @@ public class SongLoader {
 
     @NonNull
     public static Song getSong(@NonNull final Context context, final int queryId, String path) {
-        Cursor cursor = makeSongCursor(context, AudioColumns._ID + "=?", new String[]{String.valueOf(queryId)});
+        Cursor cursor = makeSongCursor(context, AudioColumns._ID + "=?", new String[]{String.valueOf(queryId)}, null);
         return getSong(cursor, path);
     }
 
@@ -373,12 +373,12 @@ public class SongLoader {
     }
 
     @Nullable
-    public static Cursor makeSongCursor(@NonNull final Context context, @Nullable final String selection, final String[] selectionValues) {
-        return makeSongCursor(context, selection, selectionValues, PreferenceUtil.getInstance().getSongSortOrder());
+    public static Cursor makeSongCursor(@NonNull final Context context, @Nullable final String selection, final String[] selectionValues, String root) {
+        return makeSongCursor(context, selection, selectionValues, PreferenceUtil.getInstance().getSongSortOrder(), root);
     }
 
     @Nullable
-    public static Cursor makeSongCursor(@NonNull final Context context, @Nullable String selection, String[] selectionValues, final String sortOrder) {
+    public static Cursor makeSongCursor(@NonNull final Context context, @Nullable String selection, String[] selectionValues, final String sortOrder, String root) {
 
         if (selection != null && !selection.trim().equals("")) {
             selection = addMinDurationFilter(BASE_SELECTION)  + " AND " + selection;
@@ -400,6 +400,10 @@ public class SongLoader {
                 values.append("[").append(value).append("], ");
             }
             Log.d(TAG, "makeSongCursor: values = "+ values);
+        }
+
+        if(root != null) {
+            selection += String.format(" AND %s LIKE '%s%%'",  AudioColumns.RELATIVE_PATH, root);
         }
 
         try {

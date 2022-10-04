@@ -18,7 +18,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,10 +35,10 @@ import com.ldt.dancemusic.ui.page.subpages.TagsFragment;
 import com.ldt.dancemusic.ui.widget.rangeseekbar.OnRangeChangedListener;
 import com.ldt.dancemusic.ui.widget.rangeseekbar.RangeSeekBar;
 import com.ldt.dancemusic.util.NavigationUtil;
+import com.ldt.dancemusic.util.PreferenceUtil;
 import com.ldt.dancemusic.util.Tool;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
@@ -78,6 +77,8 @@ public class SettingTabFragment extends MusicServiceNavigationFragment implement
     @BindView(R.id.root_name)
     TextView mRootName;
 
+    @BindView(R.id.hintsView) View mHintsView;
+
 
 
     @OnCheckedChanged(R.id.showOnLock)
@@ -101,8 +102,12 @@ public class SettingTabFragment extends MusicServiceNavigationFragment implement
         refreshData();
         onPaletteChanged();
         getMainActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
-
+        if(PreferenceUtil.getInstance().showHints()) {
+            mHintsView.setVisibility(View.VISIBLE);
+        }
     }
+
+
 
     private float mCurrentInAppVolume = 1.0f;
     private float mCurrentBalanceValue = 0.5f;
@@ -501,6 +506,17 @@ public class SettingTabFragment extends MusicServiceNavigationFragment implement
             return false;
         }
         return true;
+    }
+
+    @OnClick(R.id.dismissHints)
+    void dismissHints() {
+        mHintsView.setVisibility(View.GONE);
+        PreferenceUtil.getInstance().deactivateHints();
+    }
+
+    @OnClick(R.id.showHints)
+    void showHints() {
+        mHintsView.setVisibility(View.VISIBLE);
     }
 
 }

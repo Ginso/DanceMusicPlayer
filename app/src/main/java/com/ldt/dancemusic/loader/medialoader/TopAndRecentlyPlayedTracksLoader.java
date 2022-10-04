@@ -149,7 +149,7 @@ public class TopAndRecentlyPlayedTracksLoader {
             selection.append(")");
 
             // get a list of songs with the data given the selection statement
-            Cursor songCursor = SongLoader.makeSongCursor(context, selection.toString(), null);
+            Cursor songCursor = SongLoader.makeSongCursor(context, selection.toString(), null, PreferenceUtil.getInstance().getRootFolder(null));
             if (songCursor != null) {
                 // now return the wrapped TopTracksCursor to handle sorting given order
                 return new SortedLongCursor(songCursor, order, BaseColumns._ID);

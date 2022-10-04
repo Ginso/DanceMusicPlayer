@@ -266,7 +266,7 @@ public class SonglistConfigurationFragment extends NavigationFragment {
                 }));
                 line.addView(widgetFactory.createButton("Add Item", v -> {
                     try {
-                        JSONObject item = createTagObject(Song._DURATION, 6, 50, 14, "%s");
+                        JSONObject item = createTagObject(Song._DURATION, 6, WRAP_CONTENT, 14, "%s");
                         JSONArray children = o.getJSONArray(Constants.FIELD_CHILDREN);
                         children.put(item);
                         o.put(Constants.FIELD_CHILDREN, children);

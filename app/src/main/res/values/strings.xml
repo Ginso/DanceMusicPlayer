@@ -100,6 +100,23 @@
     <string name="this_is_name_of_the_song">This Is Name Of The Song</string>
     <string name="unplayable_file">Couldn\u2019t play this song.</string>
     <string name="x_has_been_set_as_ringtone">Set %1$s as your ringtone.</string>
+    <string name="hints">
+"With this app, you can store information about your songs and display them anyway you like. Most audio file formats(like mp3) can already store information(also called tags) like title, artist, album, etc.
+This App cann store additional tags for each of your songs.
+The app will read some of those tags, lets you change them and define new ones.
+Note, that this app does not change your song files at all. Anything you enter, whether it is for default mp3-tags or a tag defined by this app, is stored only in the app.
+That also means, that if you rename or move a file on your phone, this data can not be linked with it anymore.
+The first thing you should do is tell the app, where the audio files are stored, that you want to manage by the app.
+To do this, just click 'change' in the 'root folder' section of the settings page, then navigate to the directory, containing the respective music and click 'save'.
+Next you should check the 'custom tags' setting page. Here you can define what Tags you want to use.
+Since this app was mainly designed for dance music, there are already 3 custom tags defined:
+- dance: a text field to enter the dance for this song. This is also used to sort your songs.
+- TPM(Takts per minute), the usual measure of speed, here stored with one decimal value
+- rating: a Field to give songs a rating from 0-5
+If some of the tags can be read from the names of your files and/or their directories, you can automatically load them int he settings under 'Get Tags from Filenames/-paths'
+At the top of every Songlist, (whether it is a playlist, the list of all songs or those of a dance) there is a section for filters and sorting buttons. You can configure this section under 'Configure Filter and Sortheaders' to define what and how you want to be able to filter and sort for.
+You can also configure how the songs in these lists should be displayed, so that whatever tags are relevant for you can be seen there. To do this go to 'Configure Layout of Songlist Items'.
+    </string>
 
     <string-array name="tagTypes">
     <item>Text</item>

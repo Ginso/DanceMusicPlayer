@@ -43,6 +43,9 @@ public final class PreferenceUtil {
     public static final String ROOT_FOLDER = "root_folder";
     public static final String SEARCH_TAGS = "search_tags";
 
+    public static final String SHOW_HINTS = "show_hints";
+
+
     private static PreferenceUtil sInstance;
 
     public boolean isFirstTime() {
@@ -243,6 +246,16 @@ public final class PreferenceUtil {
             for(String t:split) tags.add(t);
         }
         return tags;
+    }
+
+    public final boolean showHints() {
+        return mPreferences.getBoolean(SHOW_HINTS, true);
+    }
+
+    public final void deactivateHints() {
+        final SharedPreferences.Editor editor = mPreferences.edit();
+        editor.putBoolean(SHOW_HINTS, false);
+        editor.apply();
     }
 
 }

@@ -70,7 +70,7 @@ public class TagsFragment extends NavigationFragment {
         mUnbinder = ButterKnife.bind(this,view);
         LinearLayout left = (LinearLayout) predefinedTags.getChildAt(0);
         LinearLayout right = (LinearLayout) predefinedTags.getChildAt(1);
-        for(int i = 0; i < 6; i++) {
+        for(int i = 0; i < 7; i++) {
             Song.Tag tag = SongLoader.getTag(i);
             addTextView(tag, left, right);
         }
@@ -92,7 +92,7 @@ public class TagsFragment extends NavigationFragment {
         mLeftLayout.removeAllViews();
         mRightLayout.removeAllViews();
         mButtonsLayout.removeAllViews();
-        for(int i = 6; i < SongLoader.getTagNames().size(); i++) {
+        for(int i = 7; i < SongLoader.getTagNames().size(); i++) {
             addCustomTag(SongLoader.getTag(i));
         }
     }
