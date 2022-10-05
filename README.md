@@ -1,5 +1,4 @@
-# RD Music Player - Redefined Music Player
-**A pretty UI&UX Music Player**
+# Dance Music Player - Redefined Music Player
 
 ## Features
 * Single activity, all fragments architecture with fancy animation
