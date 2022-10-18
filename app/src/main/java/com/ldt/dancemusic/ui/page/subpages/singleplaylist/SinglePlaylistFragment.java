@@ -29,6 +29,8 @@ import com.ldt.dancemusic.helper.Reliable;
 import com.ldt.dancemusic.helper.ReliableEvent;
 import com.ldt.dancemusic.helper.menu.MenuHelper;
 
+import com.ldt.dancemusic.loader.medialoader.SongLoader;
+import com.ldt.dancemusic.model.Song;
 import com.ldt.dancemusic.ui.base.MPViewModel;
 import com.ldt.dancemusic.ui.page.MusicServiceNavigationFragment;
 import com.ldt.dancemusic.ui.page.librarypage.song.SongChildAdapter;
@@ -37,6 +39,11 @@ import com.ldt.dancemusic.ui.widget.fragmentnavigationcontroller.PresentStyle;
 import com.ldt.dancemusic.R;
 
 import com.ldt.dancemusic.model.Playlist;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -184,7 +191,14 @@ public class SinglePlaylistFragment extends MusicServiceNavigationFragment imple
         mViewModel.getStateLiveData().observe(this, _event -> {
             SinglePlaylistViewModel.State state = _event == null ? null : _event.getReliable().getData();
             mHeaderAdapter.setData(state);
-            mAdapter.setData(state == null ? null : state.songs);
+            if(state != null) {
+                final List<Song> allSongs = SongLoader.allSongs;
+                List<Song> songs = state.songs.stream().map(song -> {
+                    for (Song s : allSongs) if (song.data.equals(s.data)) return s;
+                    return null;
+                }).filter(Objects::nonNull).collect(Collectors.toList());
+                mAdapter.setData(songs);
+            } else mAdapter.setData(null);
 
         });
     }
