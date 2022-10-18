@@ -7,6 +7,7 @@ import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -84,7 +85,19 @@ public class SettingTabFragment extends MusicServiceNavigationFragment implement
     @OnCheckedChanged(R.id.showOnLock)
     void onChangedShowOnLock(boolean value) {
         App.getInstance().getPreferencesUtility().setShowOnLock(value);
-        getMainActivity().setShowWhenLocked(value);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+            getMainActivity().setShowWhenLocked(value);
+        } else {
+
+        }
+        if (Build.VERSION.SDK_INT >= 27) {
+            getMainActivity().setShowWhenLocked(value);
+        } else {
+            if(value)
+                getMainActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
+            else
+                getMainActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
+        }
     }
 
     @Nullable
@@ -131,6 +144,7 @@ public class SettingTabFragment extends MusicServiceNavigationFragment implement
     void refreshData() {
         refreshInAppVolume();
         refreshBalanceValue();
+
         mShowOnLock.setChecked(App.getInstance().getPreferencesUtility().showOnLock());
 
         String root = App.getInstance().getPreferencesUtility().getRootFolder(null);

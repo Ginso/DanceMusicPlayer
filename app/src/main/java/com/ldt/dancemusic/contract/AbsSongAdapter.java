@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.BlendMode;
 import android.graphics.BlendModeColorFilter;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.RippleDrawable;
 import android.os.Build;
 import android.os.Handler;
@@ -408,7 +409,7 @@ public abstract class AbsSongAdapter extends AbsMediaAdapter<AbsBindAbleHolder, 
                 params.height = height;
                 root.setLayoutParams(params);
                 root.setOrientation(-1-type);
-                root.getBackground().setColorFilter(new BlendModeColorFilter(backgroundColor, BlendMode.SRC_ATOP));
+                WidgetFactory.setBackground(root, backgroundColor);
                 JSONArray children = scheme.getJSONArray(Constants.FIELD_CHILDREN);
                 for(int i = 0; i < children.length(); i++)
                     widgetFactory.loadView(children.getJSONObject(i), root, song, false);
@@ -441,10 +442,11 @@ public abstract class AbsSongAdapter extends AbsMediaAdapter<AbsBindAbleHolder, 
             int dataPosition = getDataPosition(getBindingAdapterPosition());
             if (MusicPlayerRemote.getCurrentSong().id == getData().get(dataPosition).id) {
                 mMediaPlayDataItem = dataPosition;
-                root.getBackground().setColorFilter(new BlendModeColorFilter(Color.parseColor("#AA00FFFF"), BlendMode.SRC_ATOP));
+                WidgetFactory.setBackground(root, Color.parseColor("#AA00FFFF"));
             } else {
-                root.getBackground().setColorFilter(new BlendModeColorFilter(backgroundColor, BlendMode.SRC_ATOP));
+                WidgetFactory.setBackground(root, backgroundColor);
             }
+
         }
 
     }

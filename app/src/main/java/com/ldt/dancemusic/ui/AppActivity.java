@@ -185,7 +185,13 @@ public class AppActivity extends MusicServiceActivity {
                 }
             }
         });
-        setShowWhenLocked(PreferenceUtil.getInstance().showOnLock());
+        boolean showWhenLocked = PreferenceUtil.getInstance().showOnLock();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+            setShowWhenLocked(showWhenLocked);
+        } else {
+            if(showWhenLocked) getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
+            else getWindow().clearFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
+        }
     }
 
     @Override

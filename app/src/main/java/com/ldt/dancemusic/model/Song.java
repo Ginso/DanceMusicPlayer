@@ -127,8 +127,8 @@ public class Song implements Parcelable {
                         for(int i = 0; i < tag.arg; i++) s += i < rating ? "★" : "☆";
                         return s;
                     case 2:
-                        for(int i = 0; i < rating; i++) s += "♫";
-                        return s;
+                        for(int i = 0; i < rating; i++) s += "♫ ";
+                        return s.isEmpty() ? s : s.substring(0,s.length()-1);
                 }
         }
         return "";

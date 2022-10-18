@@ -4,7 +4,10 @@ import android.content.Context;
 import android.graphics.BlendMode;
 import android.graphics.BlendModeColorFilter;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.SpannableString;
@@ -329,7 +332,7 @@ public class WidgetFactory {
                 layout.setOrientation(-1-type);
                 if(root) {
                     layout.setBackgroundResource(R.drawable.background_item_song_in_dance);
-                    layout.getBackground().setColorFilter(new BlendModeColorFilter(bcolor, BlendMode.SRC_ATOP));
+                    setBackground(layout, bcolor);
                     p.topMargin = 20;
                 } else {
                     layout.setBackgroundColor(bcolor);
@@ -711,5 +714,13 @@ public class WidgetFactory {
         c.accept((LinearLayout.LayoutParams) params);
         view.setLayoutParams(params);
         return view;
+    }
+
+    public static void setBackground(View v, int color) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            v.getBackground().setColorFilter(new BlendModeColorFilter(color, BlendMode.SRC_ATOP));
+        } else {
+            v.getBackground().setColorFilter(color, PorterDuff.Mode.SRC_ATOP);
+        }
     }
 }
