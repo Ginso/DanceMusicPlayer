@@ -187,10 +187,10 @@ public class WidgetFactory {
                             format = new SimpleDateFormat(formatString);
                             SimpleDateFormat format1 = new SimpleDateFormat(split[0]);
                             SimpleDateFormat format2 = new SimpleDateFormat(split[1]);
-                            editText = createEditText(split[0].length(), InputType.TYPE_CLASS_DATETIME | InputType.TYPE_DATETIME_VARIATION_DATE, textsize);
-                            editText2 = createEditText(split[1].length(), InputType.TYPE_CLASS_DATETIME | InputType.TYPE_DATETIME_VARIATION_TIME, textsize);
-                            EditText editText3 = createEditText(split[0].length(), InputType.TYPE_CLASS_DATETIME | InputType.TYPE_DATETIME_VARIATION_DATE, textsize);
-                            EditText editText4 = createEditText(split[1].length(), InputType.TYPE_CLASS_DATETIME | InputType.TYPE_DATETIME_VARIATION_TIME, textsize);
+                            editText = createEditText(split[0].length()-4, InputType.TYPE_CLASS_DATETIME | InputType.TYPE_DATETIME_VARIATION_DATE, textsize);
+                            editText2 = createEditText(split[1].length()-2, InputType.TYPE_CLASS_DATETIME | InputType.TYPE_DATETIME_VARIATION_TIME, textsize);
+                            EditText editText3 = createEditText(split[0].length()-4, InputType.TYPE_CLASS_DATETIME | InputType.TYPE_DATETIME_VARIATION_DATE, textsize);
+                            EditText editText4 = createEditText(split[1].length()-2, InputType.TYPE_CLASS_DATETIME | InputType.TYPE_DATETIME_VARIATION_TIME, textsize);
                             editText.setHint(split[0]);
                             editText2.setHint(split[1]);
                             editText3.setHint(split[0]);
@@ -207,7 +207,7 @@ public class WidgetFactory {
                             }
                             layout.addView(editText);
                             layout.addView(editText2);
-                            layout.addView(createTextView("-", textsize));
+                            layout.addView(createTextView(" - ", textsize));
                             layout.addView(editText3);
                             layout.addView(editText4);
                             if(oc) {
@@ -578,7 +578,8 @@ public class WidgetFactory {
         layout.addView(createTextView(label, textsize));
         EditText editText = createEditText(ems, type, textsize);
         editText.setText(text);
-        createTextWatcher(editText, s -> onChange.accept(s));
+        if(onChange != null)
+            createTextWatcher(editText, s -> onChange.accept(s));
         layout.addView(editText);
         return layout;
     }

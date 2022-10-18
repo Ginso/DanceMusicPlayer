@@ -6,6 +6,38 @@
     android:layout_height="match_parent"
     tools:background="@color/library_back_color">
 
+    <TextView
+        android:id="@+id/generator"
+        android:layout_width="0dp"
+        android:layout_height="46dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="24dp"
+        android:background="@drawable/ripple_effect"
+        android:fontFamily="@font/hevetica_font"
+        android:gravity="center_vertical"
+        android:paddingStart="4dp"
+        android:paddingEnd="46dp"
+        android:text="Playlist Generator"
+        android:textColor="@color/FlatWhite"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/generator_icon"
+        android:layout_width="46dp"
+        android:layout_height="0dp"
+        android:padding="12dp"
+        android:src="@drawable/right_light"
+        app:layout_constraintBottom_toBottomOf="@id/generator"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintEnd_toEndOf="@id/generator"
+        app:layout_constraintTop_toTopOf="@id/generator"
+        app:tint="@color/FlatWhite" />
+
     <com.ldt.springback.view.SpringBackLayout
         android:id="@+id/springBackLayout"
         android:layout_width="0dp"
@@ -13,7 +45,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@id/generator_icon">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_view"

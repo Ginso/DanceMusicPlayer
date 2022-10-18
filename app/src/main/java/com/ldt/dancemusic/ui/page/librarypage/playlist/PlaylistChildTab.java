@@ -20,6 +20,7 @@ import com.ldt.dancemusic.R;
 import com.ldt.dancemusic.interactors.PlaylistClickListener;
 import com.ldt.dancemusic.ui.MusicServiceActivity;
 import com.ldt.dancemusic.ui.page.MusicServiceFragment;
+import com.ldt.dancemusic.ui.page.subpages.GeneratorFragment;
 import com.ldt.dancemusic.ui.page.subpages.singleplaylist.SinglePlaylistFragment;
 import com.ldt.dancemusic.loader.medialoader.PlaylistLoader;
 import com.ldt.dancemusic.model.Playlist;
@@ -27,6 +28,7 @@ import com.ldt.dancemusic.ui.widget.fragmentnavigationcontroller.NavigationFragm
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class PlaylistChildTab extends MusicServiceFragment implements PlaylistClickListener {
     public static final String TAG = "PlaylistChildTab";
@@ -89,6 +91,13 @@ public class PlaylistChildTab extends MusicServiceFragment implements PlaylistCl
     @Override
     public void onMediaStoreChanged() {
         refreshData();
+    }
+
+    @OnClick(R.id.generator)
+    public void openGenerator() {
+        Fragment parentFragment = getParentFragment();
+        if (parentFragment instanceof NavigationFragment)
+            ((NavigationFragment) parentFragment).getNavigationController().presentFragment(GeneratorFragment.newInstance());
     }
 
 }
