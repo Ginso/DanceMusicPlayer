@@ -247,8 +247,8 @@ public class WidgetFactory {
                                     try {d2 = format.parse(s2).getTime();} catch(Exception e) {}
                                     onClick.accept(new Long[]{d1, d2}, false);
                                 };
-                                createDateWatcher(editText, format, 16, c);
-                                createDateWatcher(editText2, format, 16, c);
+                                createDateWatcher(editText, format, formatString.length(), c);
+                                createDateWatcher(editText2, format, formatString.length(), c);
                             }
                         }
                         return layout;

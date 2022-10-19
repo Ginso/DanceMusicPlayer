@@ -81,6 +81,7 @@ public class Song implements Parcelable {
     }
     public String getAlbum() { return tags.optString(_ALBUM, albumName); }
     public String getArtist() { return tags.optString(_ARTIST, artistName); }
+    public long getDuration() {return duration;}
 
     public String getString(String key) {
         if(key.equals(_TITLE)) return getTitle();
@@ -94,9 +95,10 @@ public class Song implements Parcelable {
     }
     public Date getDate(String key) {
         if(key.equals(_DATE)) return getDateModified();
-        if(key.equals(_DURATION)) return new Date(duration);
+        if(key.equals(_DURATION)) return new Date(duration-3600000);
         return new Date(tags.optLong(key, 0));
     }
+
     public boolean getBool(String key) { return tags.optBoolean(key, false);}
     public double getDouble(String key) { return tags.optDouble(key, 0);}
 
