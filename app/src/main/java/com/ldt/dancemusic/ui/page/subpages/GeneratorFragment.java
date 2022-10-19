@@ -115,7 +115,10 @@ public class GeneratorFragment extends NavigationFragment {
         mWeights.removeAllViews();
         final int m = mWidgetFactory.scale(30);
         if (balanced) {
-            mWeights.addView(mWidgetFactory.createEditText("Songs per dance", String.valueOf(songsPerDance), 2, InputType.TYPE_CLASS_NUMBER, 20, s -> songsPerDance = Integer.parseInt(s)));
+            mWeights.addView(mWidgetFactory.createEditText("Songs per dance", String.valueOf(songsPerDance), 2, InputType.TYPE_CLASS_NUMBER, 20,
+                    s -> {
+                        if (!s.isEmpty()) songsPerDance = Integer.parseInt(s);
+            }));
             CheckBox checkBox = mWidgetFactory.createCheckBox("fixed order", ordered, b -> {
                 ordered = b;
                 fillWeightsLayout();
@@ -259,7 +262,10 @@ public class GeneratorFragment extends NavigationFragment {
                     String s = ((EditText) weightViews.get(dance.title)).getText().toString();
                     n = s.isEmpty() ? 0 : Integer.valueOf(s);
                 }
-                if (n <= 0) continue;
+                if (n <= 0) {
+                    filtered.remove(dance.title);
+                    continue;
+                }
                 List<Song> songs = filtered.get(dance.title);
                 if (songs.size() < n) {
                     Toast.makeText(getContext(), "insufficient songs for " + dance.title, Toast.LENGTH_LONG).show();
@@ -318,36 +324,87 @@ public class GeneratorFragment extends NavigationFragment {
                         last[i] = i;
                     }
                     int idx = numDances;
-                    for(int j = 1; j < songsPerDance; j++) {
+                    for (int j = 1; j < songsPerDance; j++) {
                         List<Integer> temp = new ArrayList<>();
                         for (int i = 0; i < numDances; i++) temp.add(i);
                         Collections.shuffle(temp);
-                        while(!temp.isEmpty()) {
+                        while (!temp.isEmpty()) {
                             for (int n = 0; n < numDances; n++) {
-                                if(idx-last[n] == max) {
+                                if (idx - last[n] == max) {
                                     playlist.add(filtered.get(filteredDances.get(n).title).get(j));
-                                    temp.remove((Integer)n);
-                                    last[n]=idx;
+                                    temp.remove((Integer) n);
+                                    last[n] = idx;
                                     break;
                                 }
                             }
-                            if(idx < playlist.size()) idx++;
+                            if (idx < playlist.size()) idx++;
                             else {
-                               while(true) {
-                                   int n = temp.remove(0);
-                                   if(idx-last[n]<min) temp.add(n);
-                                   else {
-                                       playlist.add(filtered.get(filteredDances.get(n).title).get(j));
-                                       last[n]=idx++;
-                                       break;
-                                   }
-                               }
+                                while (true) {
+                                    int n = temp.remove(0);
+                                    if (idx - last[n] < min) temp.add(n);
+                                    else {
+                                        playlist.add(filtered.get(filteredDances.get(n).title).get(j));
+                                        last[n] = idx++;
+                                        break;
+                                    }
+                                }
                             }
                         }
                     }
                 }
             } else {
-                // todo
+                List<String> filteredDances = new ArrayList<>(filtered.keySet());
+                int numDances = filteredDances.size();
+
+                int[] wanted = new int[numDances];
+                int[] have = new int[numDances];
+                Arrays.fill(have, 0);
+                double[] ratios = new double[numDances];
+                int sum = 0;
+
+                for (int i = 0; i < numDances; i++) {
+                    int n = filtered.get(filteredDances.get(i)).size();
+                    wanted[i] = n;
+                    sum += n;
+                }
+                for (int i = 0; i < numDances; i++) ratios[i] = sum/(wanted[i]+1.0);
+                boolean preventDoubles = true;
+                while(true) {
+                    int count = 0;
+                    int last = -1;
+                    while (playlist.size() < sum) {
+                        double min = sum;
+                        List<Integer> next = new ArrayList<>();
+                        for (int i = 0; i < numDances; i++) {
+                            if (preventDoubles && last == i) continue;
+                            double x = (have[i] + 1) * ratios[i]; // next position if evenly spread
+                            if (x < min) {
+                                min = x;
+                                next.clear();
+                            }
+                            if (x == min) next.add(i);
+                        }
+                        // use the one(s) whose next calculated position is closest
+                        Collections.shuffle(next);
+                        for (int i : next) {
+                            if (have[i] == wanted[i]) continue;
+                            playlist.add(filtered.get(filteredDances.get(i)).remove(0));
+                            have[i]++;
+                            last = i;
+                        }
+                        count++;
+                        if (count == sum * 2) break; // prevent infty loops
+                    }
+                    if (playlist.size() == sum) break;
+                    else {
+                        if(preventDoubles) //try again without
+                            preventDoubles = false;
+                        else { // i think this can't happen, but just to be sure...
+                            Toast.makeText(getContext(), "Something went wrong", Toast.LENGTH_LONG).show();
+                            return;
+                        }
+                    }
+                }
             }
 
             CreatePlaylistDialog.create(playlist).show(getActivity().getSupportFragmentManager(), "ADD_TO_PLAYLIST");

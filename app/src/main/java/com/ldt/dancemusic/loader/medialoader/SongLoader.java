@@ -60,7 +60,7 @@ public class SongLoader {
 
     public static File tagsFile;
 
-    public static List<Song> allSongs = new ArrayList<>();
+    public static ArrayList<Song> allSongs = new ArrayList<>();
     public static List<Dance> allDances = new ArrayList<>();
     public static Map<String, Song.Tag> allTags = new HashMap<>();
     public static List<String> tagNames = new ArrayList<>();
@@ -266,13 +266,19 @@ public class SongLoader {
 
     @NonNull
     public static ArrayList<Song> getAllSongs(@NonNull Context context) {
-        Cursor cursor = makeSongCursor(context, null, null, PreferenceUtil.getInstance().getRootFolder(null));
-        return getSongs(cursor);
+        if(allSongs == null) {
+            Cursor cursor = makeSongCursor(context, null, null, PreferenceUtil.getInstance().getRootFolder(null));
+            allSongs = getSongs(cursor);
+        }
+        return allSongs;
     }
 
     public static ArrayList<Song> getAllSongs(Context context, String sortOrder) {
-        Cursor  cursor = makeSongCursor(context, null, null,sortOrder);
-        return getSongs(cursor);
+        if(allSongs == null) {
+            Cursor  cursor = makeSongCursor(context, null, null,sortOrder);
+            allSongs = getSongs(cursor);
+        }
+        return allSongs;
     }
 
     @NonNull

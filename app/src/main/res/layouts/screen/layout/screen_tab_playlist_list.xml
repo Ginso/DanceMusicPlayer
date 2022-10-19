@@ -20,7 +20,7 @@
         android:paddingEnd="46dp"
         android:text="Playlist Generator"
         android:textColor="@color/FlatWhite"
-        android:textSize="16sp"
+        android:textSize="24sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
