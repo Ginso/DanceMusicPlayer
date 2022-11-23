@@ -27,7 +27,7 @@ class VisualSeekBarParser implements ProgressListener {
     protected int mMaxGain, mMinGain;
     protected int[] mFrameGain;
 
-    private int mNumberFrameInAPen;
+    private double mNumberFrameInAPen;
     int mNumberFrameAppearInScreen;
     int mNumberPensAppearInScreen;
 
@@ -134,7 +134,7 @@ class VisualSeekBarParser implements ProgressListener {
         double secondsInScreen = (getDeclaredDuration() / 1000f) / 4f;
         //Log.d(TAG, "calculateSound: duration  = "+duration+", sis = "+ secondsInScreen);
         mNumberFrameAppearInScreen = (int) (mNumFrames * secondsInScreen / mParseDuration);
-        mNumberFrameInAPen = mNumberFrameAppearInScreen / mNumberPensAppearInScreen;
+        mNumberFrameInAPen = (double)mNumberFrameAppearInScreen / mNumberPensAppearInScreen;
         double re = (mNumFrames + 0.0f) / mNumberFrameInAPen;
         mTotalPens = (re == ((int) re)) ? (int) re : ((int) re + 1);
 

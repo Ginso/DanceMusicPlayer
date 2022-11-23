@@ -27,6 +27,7 @@ import com.ldt.dancemusic.App;
 import com.ldt.dancemusic.R;
 import com.ldt.dancemusic.loader.medialoader.SongLoader;
 import com.ldt.dancemusic.model.Song;
+import com.ldt.dancemusic.ui.dialog.ConfirmDialog;
 import com.ldt.dancemusic.ui.page.MusicServiceNavigationFragment;
 import com.ldt.dancemusic.ui.page.librarypage.LibraryTabFragment;
 import com.ldt.dancemusic.ui.page.subpages.FilterConfigurationFragment;
@@ -391,12 +392,12 @@ public class SettingTabFragment extends MusicServiceNavigationFragment implement
     @OnClick(R.id.import_tags)
     public void importLogs() {
         if(!checkRoot()) return;
-        alert("Warning: this will overwrite all existing tags", () -> {
+        new ConfirmDialog("Warning: this will overwrite all existing tags", "Ok", (dialog, action) -> {
             Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
             intent.addCategory(Intent.CATEGORY_OPENABLE);
             intent.setType("application/json");
             startActivityForResult(intent, IMPORT);
-        }, null);
+        }).show(getActivity().getSupportFragmentManager(), "IMPORT_TAGS");
     }
 
     @OnClick(R.id.export_tags)
@@ -483,34 +484,6 @@ public class SettingTabFragment extends MusicServiceNavigationFragment implement
     @OnClick(R.id.configureSonglist)
     void goToSonglistConfiguration() {
         getNavigationController().presentFragment(SonglistConfigurationFragment.newInstance());
-    }
-
-    @BindView(R.id.alertView) LinearLayout alertView;
-    @BindView(R.id.alertTitle) TextView alertText;
-    @BindView(R.id.alertBackground) View alertBackground;
-    Runnable onOk;
-    Runnable onCancel;
-
-    void alert(String msg, Runnable onOk, Runnable onCancel) {
-        this.onOk = onOk;
-        this.onCancel = onCancel;
-        alertText.setText(msg);
-        alertView.setVisibility(View.VISIBLE);
-        alertBackground.setVisibility(View.VISIBLE);
-    }
-
-    @OnClick(R.id.alertOk)
-    public void onAlertOk() {
-        if(onOk != null) onOk.run();
-        alertView.setVisibility(View.GONE);
-        alertBackground.setVisibility(View.GONE);
-    }
-
-    @OnClick(R.id.alertCancel)
-    public void onAlertCancel() {
-        if(onCancel != null) onCancel.run();
-        alertView.setVisibility(View.GONE);
-        alertBackground.setVisibility(View.GONE);
     }
 
     public boolean checkRoot() {

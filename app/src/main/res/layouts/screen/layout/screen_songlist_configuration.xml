@@ -56,21 +56,77 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent">
-                <TextView
+                <Spinner
+                    android:id="@+id/picker"
                     android:layout_width="wrap_content"
-                    android:layout_height="46dp"
-                    android:layout_marginStart="24dp"
-                    android:layout_marginTop="24dp"
-                    android:layout_marginEnd="24dp"
-                    android:background="@drawable/ripple_effect"
-                    android:fontFamily="@font/hevetica_font"
-                    android:gravity="center_vertical"
-                    android:paddingStart="4dp"
-                    android:paddingEnd="46dp"
-                    android:text="Layout"
-                    android:textColor="@color/FlatWhite"
-                    android:textSize="36sp"
-                    android:textStyle="bold" />
+                    android:layout_height="wrap_content"/>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <Button
+                        android:id="@+id/renameLayout"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/songlist_configuration_buttons_textsize"
+                        android:text="@string/rename"/>
+                    <Button
+                        android:id="@+id/deleteLayout"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/songlist_configuration_buttons_textsize"
+                        android:layout_marginLeft="10dp"
+                        android:text="@string/delete_action"/>
+                    <Button
+                        android:id="@+id/newLayout"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/songlist_configuration_buttons_textsize"
+                        android:layout_marginLeft="10dp"
+                        android:text="new"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="46dp"
+                        android:background="@drawable/ripple_effect"
+                        android:fontFamily="@font/hevetica_font"
+                        android:gravity="center_vertical"
+                        android:text="Use in"
+                        android:textColor="@color/FlatWhite"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
+                    <Button
+                        android:id="@+id/useInSongs"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/songlist_configuration_buttons_textsize"
+                        android:layout_marginLeft="10dp"
+                        android:text="@string/songs"/>
+                    <Button
+                        android:id="@+id/useInPlaylists"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/songlist_configuration_buttons_textsize"
+                        android:layout_marginLeft="10dp"
+                        android:text="@string/playlists"/>
+                    <Button
+                        android:id="@+id/useInDance"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/songlist_configuration_buttons_textsize"
+                        android:layout_marginLeft="10dp"
+                        android:text="@string/dances"/>
+                </LinearLayout>
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1px"
+                    android:background="@color/FlatWhite"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"/>
                 <HorizontalScrollView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
@@ -102,7 +158,6 @@
                     </LinearLayout>
                 </HorizontalScrollView>
                 <View
-                    android:id="@+id/divider2"
                     android:layout_width="match_parent"
                     android:layout_height="1px"
                     android:background="@color/FlatWhite"

@@ -25,6 +25,7 @@ import com.ldt.dancemusic.ui.CardLayerController;
 import com.ldt.dancemusic.ui.page.librarypage.LibraryPagerAdapter;
 import com.ldt.dancemusic.ui.page.librarypage.LibraryTabFragment;
 import com.ldt.dancemusic.ui.page.subpages.DancePagerFragment;
+import com.ldt.dancemusic.ui.page.subpages.GeneratorFragment;
 import com.ldt.dancemusic.ui.page.subpages.singleplaylist.SinglePlaylistFragment;
 import com.ldt.dancemusic.ui.widget.fragmentnavigationcontroller.NavigationFragment;
 
@@ -93,6 +94,21 @@ public class NavigationUtil {
             if (fragment != null)
                 fragment.getNavigationController().presentFragment(SinglePlaylistFragment.newInstance(playlist,null));
             navigateToBackStackController(appActivity);
+        }
+    }
+
+    public static void updateAll(Activity activity) {
+        LibraryTabFragment libraryTab = getLibraryTab(activity);
+        LibraryPagerAdapter pagerAdapter = libraryTab.getPagerAdapter();
+        pagerAdapter.getSongChildTab().refreshData();
+        pagerAdapter.getDanceChildTab().refreshData();
+        NavigationFragment topFragment = libraryTab.getNavigationController().getTopFragment();
+        if(topFragment instanceof SinglePlaylistFragment) {
+            ((SinglePlaylistFragment)topFragment).refreshData();
+        } else if(topFragment instanceof DancePagerFragment) {
+            ((DancePagerFragment)topFragment).refreshData();
+        } else if(topFragment instanceof GeneratorFragment) {
+            ((GeneratorFragment)topFragment).updatePlaylist();
         }
     }
 

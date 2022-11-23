@@ -45,6 +45,10 @@ public final class PreferenceUtil {
 
     public static final String SHOW_HINTS = "show_hints";
 
+    public static final String LAYOUT_SONGS = "layout_songs";
+    public static final String LAYOUT_PLAYLIST = "layout_playlist";
+    public static final String LAYOUT_DANCE = "layout_dance";
+
 
     private static PreferenceUtil sInstance;
 
@@ -69,6 +73,16 @@ public final class PreferenceUtil {
             sInstance = new PreferenceUtil(App.getInstance().getApplicationContext());
         }
         return sInstance;
+    }
+
+    public String getString(String key, String def) {
+        return mPreferences.getString(key, def);
+    }
+
+    public void setString(String key, String val) {
+        SharedPreferences.Editor editor = mPreferences.edit();
+        editor.putString(key, val);
+        editor.apply();
     }
 
     public void registerOnSharedPreferenceChangedListener(SharedPreferences.OnSharedPreferenceChangeListener sharedPreferenceChangeListener) {

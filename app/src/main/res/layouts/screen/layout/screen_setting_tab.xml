@@ -381,7 +381,7 @@
                     android:layout_marginStart="24dp"
                     android:layout_marginTop="16dp"
                     android:layout_marginEnd="24dp"
-                    android:text="Show Hints"
+                    android:text="Show Tips"
                     android:textSize="16sp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/showOnLock" />
@@ -392,69 +392,6 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.core.widget.NestedScrollView>
-
-        <View
-            android:id="@+id/alertBackground"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="#C444"
-            android:clickable="true"
-            android:visibility="gone"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"/>
-
-        <LinearLayout
-            android:id="@+id/alertView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_margin="20sp"
-            android:background="#888"
-            android:visibility="gone"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent">
-            <TextView
-                android:id="@+id/alertTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="24dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="24dp"
-                android:fontFamily="@font/hevetica_font"
-                android:gravity="center_vertical"
-                android:layout_gravity="center"
-                android:paddingStart="4dp"
-                android:paddingEnd="4dp"
-                android:text="Warning: This will overwrite your current tags"
-                android:textColor="#f00"
-                android:textSize="16sp"
-                android:textStyle="bold" />
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_margin="20sp"
-                android:orientation="horizontal">
-                <Button
-                    android:id="@+id/alertOk"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="OK"/>
-                <View
-                    android:layout_width="30sp"
-                    android:layout_height="1px"/>
-                <Button
-                    android:id="@+id/alertCancel"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/cancel"/>
-            </LinearLayout>
-        </LinearLayout>
-
         <androidx.core.widget.NestedScrollView
             android:id="@+id/hintsView"
             android:layout_width="match_parent"

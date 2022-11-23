@@ -66,7 +66,7 @@ public class SongChildTab extends MusicServiceFragment implements PreviewRandomP
 
 
 
-    private final SongChildAdapter mAdapter = new SongChildAdapter();
+    private final SongChildAdapter mAdapter = new SongChildAdapter(PreferenceUtil.LAYOUT_SONGS);
 //    PreviewRandomPlayAdapter mPreviewAdapter;
 
     public SongChildAdapter getAdapter() {

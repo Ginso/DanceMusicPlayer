@@ -4,12 +4,13 @@ apply plugin: 'kotlin-android'
 
 android {
     compileSdkVersion 31
+    ndkVersion '25.1.8937393'
     defaultConfig {
         applicationId "com.ldt.dancemusic"
         minSdkVersion 26
         targetSdkVersion 31
-        versionCode 7
-        versionName '1.2.5'
+        versionCode 11
+        versionName '1.0'
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         renderscriptTargetApi 29
         renderscriptSupportModeEnabled true
@@ -29,6 +30,9 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            ndk {
+                debugSymbolLevel 'FULL'
+            }
         }
     }
     productFlavors {

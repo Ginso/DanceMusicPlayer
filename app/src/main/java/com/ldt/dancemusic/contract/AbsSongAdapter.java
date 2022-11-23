@@ -70,11 +70,11 @@ import butterknife.OnClick;
 
 public abstract class AbsSongAdapter extends AbsMediaAdapter<AbsBindAbleHolder, Song> implements SongPreviewListener {
     private static final String TAG = "AbsSongAdapter";
+    private String usage;
 
-    public AbsSongAdapter() {
+    public AbsSongAdapter(String usage) {
         super();
-
-
+        this.usage = usage;
     }
 
     @Override
@@ -398,7 +398,7 @@ public abstract class AbsSongAdapter extends AbsMediaAdapter<AbsBindAbleHolder, 
             Log.d(TAG, "bind");
             mSong = song;
             root.removeAllViews();
-            JSONObject scheme = SonglistConfigurationFragment.getConfiguration();
+            JSONObject scheme = SonglistConfigurationFragment.getConfigurationFor(usage);
             WidgetFactory widgetFactory = new WidgetFactory(getContext());
             try {
                 int type = scheme.getInt(Constants.FIELD_TYPE);

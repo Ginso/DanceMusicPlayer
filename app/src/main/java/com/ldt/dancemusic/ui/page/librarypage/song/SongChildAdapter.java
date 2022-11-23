@@ -51,13 +51,20 @@ public class SongChildAdapter extends AbsSongAdapter
 
     private static final String TAG = "SongChildAdapter";
 
-    public SongChildAdapter() {
-        super();
+    public SongChildAdapter(String usage) {
+        super(usage);
+        mShowHeader = true;
+    }
+
+    public SongChildAdapter(boolean showHeader, String usage) {
+        super(usage);
+        this.mShowHeader = showHeader;
     }
 
     public int mRandomItem = 0;
     private Random mRandom = new Random();
     public SortHolder sortHolder;
+    private boolean mShowHeader;
 
     @Override
     protected void onDataSet() {
@@ -81,7 +88,7 @@ public class SongChildAdapter extends AbsSongAdapter
 
     @Override
     public int getItemViewType(int position) {
-       if(position==0) return R.layout.item_sort_song_child;
+       if(position==0 && mShowHeader) return R.layout.item_sort_song_child;
        return R.layout.item_dancesong_bigger;
     }
 
@@ -92,12 +99,12 @@ public class SongChildAdapter extends AbsSongAdapter
 
     @Override
     protected int getDataPosition(int itemHolderPosition) {
-        return itemHolderPosition - 1;
+        return mShowHeader ? itemHolderPosition - 1 : itemHolderPosition;
     }
 
     @Override
     public int getItemCount() {
-        return getData().size() + 1;
+        return getData().size() + (mShowHeader ? 1 : 0);
     }
 
 

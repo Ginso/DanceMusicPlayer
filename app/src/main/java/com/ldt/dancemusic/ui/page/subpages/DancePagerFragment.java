@@ -21,6 +21,7 @@ import com.ldt.dancemusic.model.Dance;
 import com.ldt.dancemusic.model.Song;
 import com.ldt.dancemusic.ui.page.MusicServiceNavigationFragment;
 import com.ldt.dancemusic.ui.page.librarypage.song.SongChildAdapter;
+import com.ldt.dancemusic.util.PreferenceUtil;
 
 import java.util.List;
 
@@ -118,7 +119,7 @@ public class DancePagerFragment extends MusicServiceNavigationFragment {
     @BindView(R.id.recycler_view)
     RecyclerView mRecyclerView;
 
-    private final SongChildAdapter mAdapter = new SongChildAdapter();
+    private final SongChildAdapter mAdapter = new SongChildAdapter(PreferenceUtil.LAYOUT_DANCE);
 
     @Override
     public void onDestroyView() {

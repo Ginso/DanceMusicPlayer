@@ -187,9 +187,9 @@ public class WidgetFactory {
                             format = new SimpleDateFormat(formatString);
                             SimpleDateFormat format1 = new SimpleDateFormat(split[0]);
                             SimpleDateFormat format2 = new SimpleDateFormat(split[1]);
-                            editText = createEditText(split[0].length()-4, InputType.TYPE_CLASS_DATETIME | InputType.TYPE_DATETIME_VARIATION_DATE, textsize);
+                            editText = createEditText(split[0].length()-5, InputType.TYPE_CLASS_DATETIME | InputType.TYPE_DATETIME_VARIATION_DATE, textsize);
                             editText2 = createEditText(split[1].length()-2, InputType.TYPE_CLASS_DATETIME | InputType.TYPE_DATETIME_VARIATION_TIME, textsize);
-                            EditText editText3 = createEditText(split[0].length()-4, InputType.TYPE_CLASS_DATETIME | InputType.TYPE_DATETIME_VARIATION_DATE, textsize);
+                            EditText editText3 = createEditText(split[0].length()-5, InputType.TYPE_CLASS_DATETIME | InputType.TYPE_DATETIME_VARIATION_DATE, textsize);
                             EditText editText4 = createEditText(split[1].length()-2, InputType.TYPE_CLASS_DATETIME | InputType.TYPE_DATETIME_VARIATION_TIME, textsize);
                             editText.setHint(split[0]);
                             editText2.setHint(split[1]);

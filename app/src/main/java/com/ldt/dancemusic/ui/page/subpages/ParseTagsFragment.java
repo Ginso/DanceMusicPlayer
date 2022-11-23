@@ -153,18 +153,10 @@ public class ParseTagsFragment extends NavigationFragment {
                 }
             }
         });
+        SongLoader.loadDances();
         SongLoader.saveAllSongs();
         Toast.makeText(getContext(), "finished", Toast.LENGTH_LONG).show();
-        LibraryTabFragment libraryTab = NavigationUtil.getLibraryTab(getActivity());
-        LibraryPagerAdapter pagerAdapter = libraryTab.getPagerAdapter();
-        pagerAdapter.getSongChildTab().refreshData();
-        pagerAdapter.getDanceChildTab().refreshData();
-        NavigationFragment topFragment = libraryTab.getNavigationController().getTopFragment();
-        if(topFragment instanceof SinglePlaylistFragment) {
-            ((SinglePlaylistFragment)topFragment).refreshData();
-        } else if(topFragment instanceof DancePagerFragment) {
-            ((DancePagerFragment)topFragment).refreshData();
-        }
+        NavigationUtil.updateAll(getActivity());
     }
 
     void parse(List<Song> songs, BiConsumer<Song,JSONObject> consumer) {

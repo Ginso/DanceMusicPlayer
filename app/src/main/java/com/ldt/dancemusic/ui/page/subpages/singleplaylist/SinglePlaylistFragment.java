@@ -39,6 +39,7 @@ import com.ldt.dancemusic.ui.widget.fragmentnavigationcontroller.PresentStyle;
 import com.ldt.dancemusic.R;
 
 import com.ldt.dancemusic.model.Playlist;
+import com.ldt.dancemusic.util.PreferenceUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,7 +66,7 @@ public class SinglePlaylistFragment extends MusicServiceNavigationFragment imple
     @BindView(R.id.swipe_refresh)
     SwipeRefreshLayout mSwipeRefresh;
 
-    private final SongChildAdapter mAdapter = new SongChildAdapter();
+    private final SongChildAdapter mAdapter = new SongChildAdapter(false, PreferenceUtil.LAYOUT_PLAYLIST);
     public SongChildAdapter getAdapter() {
         return mAdapter;
     }

@@ -19,6 +19,7 @@ import androidx.annotation.Nullable;
 import com.ldt.dancemusic.R;
 import com.ldt.dancemusic.loader.medialoader.SongLoader;
 import com.ldt.dancemusic.model.Song;
+import com.ldt.dancemusic.ui.dialog.CheckboxDialog;
 import com.ldt.dancemusic.ui.widget.fragmentnavigationcontroller.NavigationFragment;
 
 import java.util.Map;
@@ -35,10 +36,6 @@ public class TagsFragment extends NavigationFragment {
     @BindView(R.id.root) View mRoot;
     @BindView(R.id.predefinedTags) LinearLayout predefinedTags;
     @BindView(R.id.customTags) LinearLayout customTags;
-    @BindView(R.id.alertTitle) TextView alertText;
-    @BindView(R.id.containerBackground) View containerBackground;
-    @BindView(R.id.alertView) LinearLayout alertContainer;
-    @BindView(R.id.alertCheckbox) CheckBox alertCheckbox;
     @BindView(R.id.tagSpinner) Spinner spinner;
     @BindView(R.id.editText) EditText newTagName;
     @BindView(R.id.netTagArgLbl) TextView newTagArgLbl;
@@ -106,9 +103,10 @@ public class TagsFragment extends NavigationFragment {
                 String format = getResources().getString(R.string.deleteTag);
                 String text = String.format(format, tag.name);
                 currentTag = tag;
-                alertText.setText(text);
-                alertContainer.setVisibility(View.VISIBLE);
-                containerBackground.setVisibility(View.VISIBLE);
+                new CheckboxDialog(text, "Delete saved info for this tag", "Delete", checked -> {
+                    SongLoader.removeTag(currentTag, checked);
+                    addCustomTags();
+                }).show(getActivity().getSupportFragmentManager(), "DELETE_TAG");
             }
         });
 
@@ -134,19 +132,6 @@ public class TagsFragment extends NavigationFragment {
         return textView;
     }
 
-    @OnClick(R.id.alertOk)
-    public void delete() {
-        SongLoader.removeTag(currentTag, alertCheckbox.isChecked());
-        alertContainer.setVisibility(View.GONE);
-        containerBackground.setVisibility(View.GONE);
-        addCustomTags();
-    }
-
-    @OnClick(R.id.alertCancel)
-    public void cancel() {
-        alertContainer.setVisibility(View.GONE);
-        containerBackground.setVisibility(View.GONE);
-    }
 
     @Override
     public void onDestroyView() {

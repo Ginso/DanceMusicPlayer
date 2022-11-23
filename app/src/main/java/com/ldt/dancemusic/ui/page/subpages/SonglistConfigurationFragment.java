@@ -1,5 +1,6 @@
 package com.ldt.dancemusic.ui.page.subpages;
 
+import android.app.Dialog;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.InputType;
@@ -7,22 +8,32 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.fragment.app.DialogFragment;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.ldt.dancemusic.R;
 import com.ldt.dancemusic.loader.medialoader.SongLoader;
 import com.ldt.dancemusic.model.Song;
+import com.ldt.dancemusic.ui.dialog.ConfirmDialog;
+import com.ldt.dancemusic.ui.dialog.TextInputDialog;
 import com.ldt.dancemusic.ui.page.librarypage.LibraryPagerAdapter;
 import com.ldt.dancemusic.ui.page.librarypage.LibraryTabFragment;
 import com.ldt.dancemusic.ui.page.subpages.singleplaylist.SinglePlaylistFragment;
 import com.ldt.dancemusic.ui.widget.fragmentnavigationcontroller.NavigationFragment;
 import com.ldt.dancemusic.util.Constants;
 import com.ldt.dancemusic.util.NavigationUtil;
+import com.ldt.dancemusic.util.PreferenceUtil;
 import com.ldt.dancemusic.util.WidgetFactory;
 
 import org.json.JSONArray;
@@ -40,6 +51,7 @@ import java.util.Random;
 import java.util.function.Consumer;
 
 import butterknife.BindView;
+import butterknife.BindViews;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
@@ -51,34 +63,53 @@ import static android.widget.LinearLayout.VERTICAL;
 
 public class SonglistConfigurationFragment extends NavigationFragment {
 
-    
-
-
-    public static JSONObject getConfiguration() {
+    private static JSONObject getAllConfigurations() {
         try {
             String content = new String(Files.readAllBytes(file.toPath()));
-            JSONObject arr = new JSONObject(content);
-            return arr;
+            JSONObject o = new JSONObject(content);
+            return o;
         } catch (Exception e) {
             e.printStackTrace();
         }
+        JSONObject root = new JSONObject();
         try {
-            return createLineObject(HORIZONTAL, MATCH_PARENT, 70,
+            JSONObject layout = createLineObject(HORIZONTAL, MATCH_PARENT, 70,
                     createTagObject(Song._DURATION, 6, 50, 14, "%s"),
                     createLineObject(VERTICAL,70, WRAP_CONTENT,
-                        createTagObject(Song._TPM, 0, WRAP_CONTENT, 14, "%s TPM"),
-                        createTagObject(Song._RATING, 1, WRAP_CONTENT, 14, "%s")
+                            createTagObject(Song._TPM, 0, WRAP_CONTENT, 14, "%s TPM"),
+                            createTagObject(Song._RATING, 1, WRAP_CONTENT, 14, "%s")
                     ),
                     createLineObject(VERTICAL, MATCH_PARENT, WRAP_CONTENT,
                             createTagObject(Song._TITLE, 0, WRAP_CONTENT,14, "%s"),
                             createTagObject(Song._ARTIST, 0, WRAP_CONTENT,12, "%s")
                     )
             );
+            root.put("default", layout);
         } catch (JSONException e) {
             e.printStackTrace();
         }
+        return root;
+    }
+
+
+    private static JSONObject getConfiguration(String name, JSONObject layouts) {
+        try {
+
+            JSONObject o = layouts == null ? getAllConfigurations() : layouts;
+            if(o.has(name)) return o.getJSONObject(name);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         return new JSONObject();
     }
+
+    public static JSONObject getConfigurationFor(String usage) {
+        String name = PreferenceUtil.getInstance().getString(usage, "default");
+        return getConfiguration(name, null);
+    }
+
+
 
     private static JSONObject createTagObject(String tag, int type, int width, int textsize, String format) throws JSONException {
         JSONObject o = new JSONObject();
@@ -112,15 +143,21 @@ public class SonglistConfigurationFragment extends NavigationFragment {
     @BindView(R.id.preview) LinearLayout preview;
     @BindView(R.id.scheme) LinearLayout schemeLayout;
     @BindView(R.id.configuration) LinearLayout configuration;
+    @BindView(R.id.picker) Spinner picker;
+    @BindView(R.id.deleteLayout) Button deleteBtn;
+    @BindViews({R.id.useInSongs, R.id.useInPlaylists, R.id.useInDance}) Button[] usageButtons;
 
     int selectedLine = -1;
-    JSONObject scheme = null;
+    JSONObject allLayouts = null;
+    JSONObject currentLayout = null;
+    String layoutName = "default";
     WidgetFactory widgetFactory;
     int indentSize;
     final Map<String, Song.Tag> allTags = SongLoader.getAllTags();
     final ArrayList<String> tags = new ArrayList<>(allTags.keySet());
     List<Song> previewSongs = new ArrayList<>();
     Random random = new Random();
+    final String[] usages = {PreferenceUtil.LAYOUT_SONGS, PreferenceUtil.LAYOUT_PLAYLIST, PreferenceUtil.LAYOUT_DANCE};
 
     @Nullable
     @Override
@@ -137,14 +174,122 @@ public class SonglistConfigurationFragment extends NavigationFragment {
         mUnbinder = ButterKnife.bind(this,view);
         widgetFactory = new WidgetFactory(getContext());
         indentSize = widgetFactory.scale(30);
-        scheme = getConfiguration();
-        loadRandomPreview();
+        allLayouts = getAllConfigurations();
+        layoutName = allLayouts.keys().next();
+        currentLayout = getConfiguration(layoutName, allLayouts);
+        loadPicker();
+        loadUsage();
         loadScheme();
+        loadRandomPreview();
+    }
+
+    void loadPicker() {
+        final List<String> layouts = new ArrayList<>();
+        allLayouts.keys().forEachRemaining(layouts::add);
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), R.layout.spinner_layout, layouts);
+        picker.setAdapter(adapter);
+        picker.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String name = layouts.get(position);
+                if(name.equals(layoutName)) return;
+                layoutName = name;
+                currentLayout = getConfiguration(name, allLayouts);
+                loadUsage();
+                loadScheme();
+                loadRandomPreview();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+        picker.setSelection(layouts.indexOf(layoutName));
+        deleteBtn.setEnabled(layouts.size() > 1);
+        loadUsage();
+    }
+
+    void loadUsage() {
+        for(int i = 0; i < usages.length; i++) {
+            String name = PreferenceUtil.getInstance().getString(usages[i], "default");
+            usageButtons[i].setEnabled(!name.equals(layoutName));
+        }
+    }
+
+    @OnClick(R.id.renameLayout)
+    void renameLayout() {
+        new TextInputDialog("Rename Layout " + layoutName, "Rename", "Name", (materialDialog, charSequence) -> {
+            final String name = charSequence.toString().trim();
+            if (name.isEmpty()) {
+                Toast.makeText(getContext(), "name cannot be empty", Toast.LENGTH_LONG).show();
+                return;
+            }
+            if(allLayouts.has(name)) {
+                Toast.makeText(getContext(), "A Layout with that name already exists", Toast.LENGTH_LONG).show();
+                return;
+            }
+            try {
+
+                for(String key : usages) {
+                    if(PreferenceUtil.getInstance().getString(key, "default").equals(layoutName))
+                        PreferenceUtil.getInstance().setString(key, name);
+                }
+                allLayouts.remove(layoutName);
+                layoutName = name;
+                allLayouts.put(name, currentLayout);
+                loadPicker();
+                save();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }).show(getActivity().getSupportFragmentManager(), "RENAME_LAYOUT");
+    }
+
+    @OnClick(R.id.newLayout)
+    void createLayout() {
+        new TextInputDialog("New Layout", "Create", "Name", (materialDialog, charSequence) -> {
+            final String name = charSequence.toString().trim();
+            if (name.isEmpty()) {
+                Toast.makeText(getContext(), "name cannot be empty", Toast.LENGTH_LONG).show();
+                return;
+            }
+            if(allLayouts.has(name)) {
+                Toast.makeText(getContext(), "A Layout with that name already exists", Toast.LENGTH_LONG).show();
+                return;
+            }
+            try {
+                layoutName = name;
+                currentLayout = new JSONObject(currentLayout.toString());
+                allLayouts.put(name, currentLayout);
+                loadPicker();
+                save();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }).show(getActivity().getSupportFragmentManager(), "CREATE_LAYOUT");
+    }
+
+    @OnClick(R.id.deleteLayout)
+    void deleteLayout() {
+        new ConfirmDialog("Delete Layout " + layoutName, "Delete", (dialog, action) -> {
+            allLayouts.remove(layoutName);
+            String first = allLayouts.keys().next();
+            for(String key : new String[] {PreferenceUtil.LAYOUT_SONGS, PreferenceUtil.LAYOUT_PLAYLIST, PreferenceUtil.LAYOUT_DANCE}) {
+                if(PreferenceUtil.getInstance().getString(key, "default").equals(layoutName))
+                    PreferenceUtil.getInstance().setString(key, first);
+            }
+            layoutName = first;
+            loadPicker();
+            currentLayout = getConfiguration(layoutName, allLayouts);
+            loadScheme();
+        }).show(getActivity().getSupportFragmentManager(), "DELETE_LAYOUT");;
     }
 
     void loadScheme() {
         schemeLayout.removeAllViews();
-        addToScheme(scheme, null,0);
+        addToScheme(currentLayout, null,0);
     }
 
     @OnClick(R.id.title2)
@@ -162,14 +307,20 @@ public class SonglistConfigurationFragment extends NavigationFragment {
     void updatePreview() {
         preview.removeAllViews();
         for(Song song:previewSongs) {
-            widgetFactory.loadView(scheme, preview, song, true);
+            widgetFactory.loadView(currentLayout, preview, song, true);
         }
 
     }
 
-    
+    @OnClick(R.id.useInSongs) void useInSongs() {useIn(0);}
+    @OnClick(R.id.useInPlaylists) void useInPlaylists() {useIn(1);}
+    @OnClick(R.id.useInDance) void useInDance() {useIn(2);}
 
-
+    void useIn(int i) {
+        PreferenceUtil.getInstance().setString(usages[i], layoutName);
+        usageButtons[i].setEnabled(false);
+        NavigationUtil.updateAll(getActivity());
+    }
 
     void addToScheme(JSONObject o, JSONArray parent, int indent) {
         try {
@@ -478,21 +629,14 @@ public class SonglistConfigurationFragment extends NavigationFragment {
 
     void save() {
         try {
-            Files.write(file.toPath(), scheme.toString().getBytes());
+
+            Files.write(file.toPath(), allLayouts.toString().getBytes());
         } catch (IOException e) {
             e.printStackTrace();
         }
         loadScheme();
         updatePreview();
-        LibraryTabFragment libraryTab = NavigationUtil.getLibraryTab(getActivity());
-        LibraryPagerAdapter pagerAdapter = libraryTab.getPagerAdapter();
-        pagerAdapter.getSongChildTab().refreshData();
-        NavigationFragment topFragment = libraryTab.getNavigationController().getTopFragment();
-        if(topFragment instanceof SinglePlaylistFragment) {
-            ((SinglePlaylistFragment)topFragment).refreshData();
-        } else if(topFragment instanceof DancePagerFragment) {
-            ((DancePagerFragment)topFragment).refreshData();
-        }
+        NavigationUtil.updateAll(getActivity());
     }
 
 
@@ -513,7 +657,6 @@ public class SonglistConfigurationFragment extends NavigationFragment {
     public void onSetStatusBarMargin(int value) {
         mStatusBar.getLayoutParams().height = value;
     }
-
 
 
 }

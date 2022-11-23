@@ -3,6 +3,7 @@ package com.ldt.dancemusic.ui.page.subpages;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.InputType;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -257,13 +258,44 @@ public class FilterConfigurationFragment extends NavigationFragment {
             if (selectedLine < 0) return;
             final JSONArray line = lines.getJSONArray(selectedLine);
             final List<String> tagNames = SongLoader.getTagNames();
-            selectedLineContainer.addView(widgetFactory.createButton("Remove Line", v -> {
+            LinearLayout btnLine = widgetFactory.createLinearLayout(WRAP_CONTENT, WRAP_CONTENT, HORIZONTAL);
+            widgetFactory.modifyParams(btnLine, p -> p.gravity = Gravity.CENTER);
+            if(selectedLine > 0)
+                btnLine.addView(widgetFactory.createButton("↑", v -> {
+                    try {
+                        JSONArray upper = lines.getJSONArray(selectedLine-1);
+                        lines.put(selectedLine-1, line);
+                        lines.put(selectedLine, upper);
+                        save();
+                        selectedLine -= 1;
+                        updateLines();
+                        loadLine();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }));
+            if(selectedLine < lines.length()-1)
+                btnLine.addView(widgetFactory.createButton("↓", v -> {
+                    try {
+                        JSONArray lower = lines.getJSONArray(selectedLine+1);
+                        lines.put(selectedLine+1, line);
+                        lines.put(selectedLine, lower);
+                        save();
+                        selectedLine += 1;
+                        updateLines();
+                        loadLine();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }));
+            btnLine.addView(widgetFactory.createButton("Remove Line", v -> {
                 lines.remove(selectedLine);
                 save();
                 selectedLine = -1;
                 updateLines();
                 selectedLineContainer.removeAllViews();
             }));
+            selectedLineContainer.addView(btnLine);
             for (int i = 0; i < line.length(); i++) {
                 final int idx = i;
                 LinearLayout btns = widgetFactory.createLinearLayout(WRAP_CONTENT, WRAP_CONTENT, HORIZONTAL);

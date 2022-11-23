@@ -19,7 +19,7 @@
     <string name="app_widget_card_name">Phonograph - Card</string>
     <string name="app_widget_classic_name">Phonograph - Classic</string>
     <string name="app_widget_small_name">Phonograph - Small</string>
-    <string name="dances">Tanzmusik</string>
+    <string name="dances">Dances</string>
     <string name="audio_focus_denied">Audio focus denied.</string>
     <string name="back_description">Back to previous screen</string>
     <string name="bool">True/False</string>

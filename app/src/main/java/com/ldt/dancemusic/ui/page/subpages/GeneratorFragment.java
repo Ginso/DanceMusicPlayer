@@ -3,12 +3,14 @@ package com.ldt.dancemusic.ui.page.subpages;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.InputType;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -18,6 +20,11 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.view.OnApplyWindowInsetsListener;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.flexbox.AlignItems;
 import com.google.android.flexbox.FlexboxLayout;
@@ -26,8 +33,10 @@ import com.ldt.dancemusic.loader.medialoader.SongLoader;
 import com.ldt.dancemusic.model.Dance;
 import com.ldt.dancemusic.model.Song;
 import com.ldt.dancemusic.ui.dialog.CreatePlaylistDialog;
+import com.ldt.dancemusic.ui.page.librarypage.song.SongChildAdapter;
 import com.ldt.dancemusic.ui.widget.fragmentnavigationcontroller.NavigationFragment;
 import com.ldt.dancemusic.util.Constants;
+import com.ldt.dancemusic.util.PreferenceUtil;
 import com.ldt.dancemusic.util.WidgetFactory;
 
 import java.util.ArrayList;
@@ -61,7 +70,14 @@ public class GeneratorFragment extends NavigationFragment {
     @BindView(R.id.weights)
     LinearLayout mWeights;
     @BindView(R.id.filter)
-    FlexboxLayout mFilter;
+    FlexboxLayout mFilterFlex;
+    @BindView(R.id.filter2)
+    LinearLayout mFilterLinear;
+    @BindView(R.id.recycler_view)
+    RecyclerView mRecyclerView;
+    @BindView(R.id.save)
+    Button mSaveButton;
+    @BindView(R.id.duration) TextView mDuration;
 
     boolean balanced = true;
     boolean ordered = false;
@@ -70,9 +86,15 @@ public class GeneratorFragment extends NavigationFragment {
     JSONArray filter;
     Map<String, View> weightViews = new HashMap<>();
     List<Dance> dances = SongLoader.allDances;
+    ArrayList<Song> playlist;
+    ViewGroup mFilter;
 
     public static GeneratorFragment newInstance() {
         return new GeneratorFragment();
+    }
+    private final SongChildAdapter mAdapter = new SongChildAdapter(false, PreferenceUtil.LAYOUT_PLAYLIST);
+    public SongChildAdapter getAdapter() {
+        return mAdapter;
     }
 
     @Nullable
@@ -84,10 +106,34 @@ public class GeneratorFragment extends NavigationFragment {
     private Unbinder mUnbinder;
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mAdapter.init(requireContext());
+    }
+
+    @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mUnbinder = ButterKnife.bind(this, view);
+        ViewCompat.setOnApplyWindowInsetsListener(view, new OnApplyWindowInsetsListener() {
+            @Override
+            public WindowInsetsCompat onApplyWindowInsets(View v, WindowInsetsCompat insets) {
+
+                if (mRecyclerView != null) {
+                    mRecyclerView.setPadding(insets.getSystemWindowInsetLeft(),
+                            insets.getSystemWindowInsetTop(),
+                            insets.getSystemWindowInsetRight(),
+                            (int) (insets.getSystemWindowInsetBottom() + v.getResources().getDimension(R.dimen.bottom_back_stack_spacing)));
+                }
+                return ViewCompat.onApplyWindowInsets(v, insets);
+            }
+        });
+        mRecyclerView.setAdapter(mAdapter);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false));
         mWidgetFactory = new WidgetFactory(getContext(), 14);
+        DisplayMetrics displayMetrics = getContext().getResources().getDisplayMetrics();
+        mFilter = (displayMetrics.widthPixels < mWidgetFactory.scale(550)) ? mFilterLinear : mFilterFlex;
+
         List<String> tagNames = SongLoader.getTagNames();
         Map<String, Song.Tag> allTags = SongLoader.getAllTags();
         filter = new JSONArray();
@@ -164,9 +210,16 @@ public class GeneratorFragment extends NavigationFragment {
                 final JSONObject o = filter.getJSONObject(i);
                 String tagName = o.getString(Constants.FIELD_TAG);
                 Song.Tag tag = allTags.get(tagName);
-                FlexboxLayout.LayoutParams p = new FlexboxLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT);
-                p.leftMargin = margin;
-                p.setAlignSelf(AlignItems.CENTER);
+
+                ViewGroup.LayoutParams p;
+                if(mFilter instanceof FlexboxLayout) {
+                    p = new FlexboxLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT);
+                    ((FlexboxLayout.LayoutParams)p).setAlignSelf(AlignItems.CENTER);
+                    ((FlexboxLayout.LayoutParams)p).rightMargin = margin;
+                } else {
+                    p = new LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT);
+                    ((LinearLayout.LayoutParams)p).rightMargin = margin;
+                }
                 if (tag.type == Song.Tag.Type.RATING) {
                     LinearLayout line = new LinearLayout(getContext());
                     line.setOrientation(HORIZONTAL);
@@ -183,6 +236,7 @@ public class GeneratorFragment extends NavigationFragment {
                         if (v != selected) {
                             try {
                                 o.put("value", v);
+                                fillFilterLayout();
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
@@ -267,7 +321,7 @@ public class GeneratorFragment extends NavigationFragment {
                     continue;
                 }
                 List<Song> songs = filtered.get(dance.title);
-                if (songs.size() < n) {
+                if (songs == null || songs.size() < n) {
                     Toast.makeText(getContext(), "insufficient songs for " + dance.title, Toast.LENGTH_LONG).show();
                     return;
                 }
@@ -302,7 +356,7 @@ public class GeneratorFragment extends NavigationFragment {
                     filtered.put(dance.title, songs2);
                 }
             }
-            ArrayList<Song> playlist = new ArrayList<>();
+            playlist = new ArrayList<>();
             if (balanced) {
                 List<Dance> filteredDances = dances.stream()
                         .filter(d -> ((CheckBox) weightViews.get(d.title)).isChecked())
@@ -407,11 +461,29 @@ public class GeneratorFragment extends NavigationFragment {
                 }
             }
 
-            CreatePlaylistDialog.create(playlist).show(getActivity().getSupportFragmentManager(), "ADD_TO_PLAYLIST");
+            updatePlaylist();
+            mSaveButton.setEnabled(true);
+            long s = 0;
+            for(Song song:playlist) s += song.getDuration();
+            s /= 1000;
+            long h = s/3600;
+            s %= 3600;
+            long min = s/60;
+            s %= 60;
+            mDuration.setText(String.format("Duration: %02d:%02d:%02d", h, min, s));
 
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
+    }
+
+    public void updatePlaylist() {
+        mAdapter.setData(playlist);
+    }
+
+    @OnClick(R.id.save)
+    void save() {
+        CreatePlaylistDialog.create(playlist).show(getActivity().getSupportFragmentManager(), "ADD_TO_PLAYLIST");
     }
 
     @Override
@@ -420,6 +492,7 @@ public class GeneratorFragment extends NavigationFragment {
             mUnbinder.unbind();
             mUnbinder = null;
         }
+        mAdapter.destroy();
         super.onDestroyView();
     }
 

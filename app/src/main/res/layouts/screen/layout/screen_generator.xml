@@ -88,15 +88,15 @@
             <TextView
                 android:id="@+id/filter_desc"
                 android:layout_width="0dp"
-                android:layout_height="46dp"
+                android:layout_height="wrap_content"
                 android:layout_marginStart="24dp"
                 android:layout_marginTop="24dp"
                 android:layout_marginEnd="24dp"
+                android:paddingStart="4dp"
+                android:paddingEnd="46dp"
                 android:background="@drawable/ripple_effect"
                 android:fontFamily="@font/hevetica_font"
                 android:gravity="center_vertical"
-                android:paddingStart="4dp"
-                android:paddingEnd="46dp"
                 android:text="Filter the songs from which to choose"
                 android:textColor="@color/FlatWhite"
                 android:textSize="24sp"
@@ -114,29 +114,85 @@
                 app:layout_constraintTop_toBottomOf="@id/filter_desc">
 
             </com.google.android.flexbox.FlexboxLayout>
+            <HorizontalScrollView
+                android:id="@+id/filterContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginEnd="24dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/filter">
+                <LinearLayout
+                    android:id="@+id/filter2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"/>
+            </HorizontalScrollView>
 
             <View
                 android:id="@+id/divider2"
                 android:layout_width="match_parent"
                 android:layout_height="1px"
                 android:background="@color/FlatWhite"
-                app:layout_constraintTop_toBottomOf="@id/filter"
+                app:layout_constraintTop_toBottomOf="@id/filterContainer"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"/>
-
-
 
             <Button
                 android:id="@+id/create"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="24dp"
+                android:layout_marginTop="20dp"
                 android:text="create"
                 app:layout_constraintTop_toBottomOf="@id/divider2"
-                app:layout_constraintStart_toStartOf="parent">
+                app:layout_constraintStart_toStartOf="parent"/>
 
-            </Button>
+            <Button
+                android:id="@+id/save"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:text="save"
+                android:enabled="false"
+                app:layout_constraintTop_toTopOf="@id/create"
+                app:layout_constraintStart_toEndOf="@id/create"/>
 
+            <TextView
+                android:id="@+id/duration"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:background="@drawable/ripple_effect"
+                android:fontFamily="@font/hevetica_font"
+                android:gravity="center_vertical"
+                android:text=""
+                android:textColor="@color/FlatWhite"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                app:layout_constraintTop_toTopOf="@id/create"
+                app:layout_constraintBottom_toBottomOf="@id/create"
+                app:layout_constraintStart_toEndOf="@id/save" />
+
+            <com.ldt.dancemusic.ui.widget.view.MPRecyclerView
+                android:id="@+id/recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:overScrollMode="never"
+                android:paddingBottom="@dimen/bottom_back_stack_spacing"
+                app:fastScrollAutoHide="true"
+                android:clipToPadding="false"
+                app:fastScrollAutoHideDelay="1500"
+                app:fastScrollPopupBackgroundSize="88dp"
+                app:fastScrollPopupBgColor="@color/flatOrange"
+                app:fastScrollPopupPosition="adjacent"
+                app:fastScrollPopupTextColor="@android:color/primary_text_dark"
+                app:fastScrollPopupTextSize="46sp"
+                app:fastScrollThumbColor="@color/flatOrange"
+                tools:listitem="@layout/item_dancesong_bigger"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/create" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
 
