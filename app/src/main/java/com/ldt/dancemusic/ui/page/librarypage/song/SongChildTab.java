@@ -148,7 +148,7 @@ public class SongChildTab extends MusicServiceFragment implements PreviewRandomP
 
     @Override
     public void onMediaStoreChanged() {
-        SongLoader.allSongs = null;
+        SongLoader.loadAllSongs(getContext());
         refreshData();
     }
 
@@ -180,18 +180,21 @@ public class SongChildTab extends MusicServiceFragment implements PreviewRandomP
             searchTagsContainer.setVisibility(View.VISIBLE);
             searchTagsLayout.removeAllViews();
             searchTagsLayout.addView(widgetFactory.createTextView("Search in:"));
-            List<String> allTags = SongLoader.getTagNames();
+            List<String> allTagNames = SongLoader.getAllTagNames();
+            Map<String, Song.Tag> allTags = SongLoader.getAllTags();
 
             final int margin = widgetFactory.scale(10);
-            for(final String tag:allTags) {
-                final TextView tv = widgetFactory.modifyParams(widgetFactory.createTextView(tag + (searchTags.contains(tag) ? " ✓" : "")), p -> p.topMargin = margin);
+            for(final String tagName:allTagNames) {
+                Song.Tag tag = allTags.get(tagName);
+                if(tag.type != Song.Tag.Type.STRING) continue;
+                final TextView tv = widgetFactory.modifyParams(widgetFactory.createTextView(tagName + (searchTags.contains(tagName) ? " ✓" : "")), p -> p.topMargin = margin);
                 tv.setOnClickListener(v -> {
-                    if(searchTags.contains(tag)) {
-                        searchTags.remove(tag);
-                        tv.setText(tag);
+                    if(searchTags.contains(tagName)) {
+                        searchTags.remove(tagName);
+                        tv.setText(tagName);
                     } else {
-                        searchTags.add(tag);
-                        tv.setText(tag + " ✓");
+                        searchTags.add(tagName);
+                        tv.setText(tagName + " ✓");
                     }
                     PreferenceUtil.getInstance().setSearchTags(searchTags);
                 });

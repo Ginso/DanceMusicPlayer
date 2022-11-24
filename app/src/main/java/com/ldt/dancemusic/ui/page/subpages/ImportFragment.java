@@ -268,7 +268,7 @@ public class ImportFragment extends NavigationFragment {
             songInfo.put("songs", songs);
             SongLoader.saveTagFile(songInfo);
             SongLoader.resetJSON();
-            SongLoader.loadTags();
+            SongLoader.loadTags(getContext());
             NavigationUtil.getLibraryTab(getActivity()).refreshData();
             Toast.makeText(getContext(), "import finished", Toast.LENGTH_SHORT).show();
         } catch (Exception e) {

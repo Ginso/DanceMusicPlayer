@@ -306,7 +306,10 @@ public class SonglistConfigurationFragment extends NavigationFragment {
 
     void updatePreview() {
         preview.removeAllViews();
+        long sum = 0;
         for(Song song:previewSongs) {
+            song.durationSum = sum;
+            sum += song.duration;
             widgetFactory.loadView(currentLayout, preview, song, true);
         }
 

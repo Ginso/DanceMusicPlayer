@@ -17,9 +17,6 @@ import com.google.android.flexbox.FlexboxLayout;
 import com.ldt.dancemusic.R;
 import com.ldt.dancemusic.loader.medialoader.SongLoader;
 import com.ldt.dancemusic.model.Song;
-import com.ldt.dancemusic.ui.page.librarypage.LibraryPagerAdapter;
-import com.ldt.dancemusic.ui.page.librarypage.LibraryTabFragment;
-import com.ldt.dancemusic.ui.page.subpages.singleplaylist.SinglePlaylistFragment;
 import com.ldt.dancemusic.ui.widget.fragmentnavigationcontroller.NavigationFragment;
 import com.ldt.dancemusic.util.NavigationUtil;
 
@@ -71,7 +68,7 @@ public class ParseTagsFragment extends NavigationFragment {
 
         tags.put("*", new Song.Tag("", Song.Tag.Type.NONE));
         Map<String, Song.Tag> allTags = SongLoader.getAllTags();
-        for(String tagName:SongLoader.getTagNames()) {
+        for(String tagName:SongLoader.getAllTagNames()) {
             Song.Tag tag = allTags.get(tagName);
             Button btn = new Button(getContext());
             FlexboxLayout.LayoutParams params = new FlexboxLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -106,12 +103,13 @@ public class ParseTagsFragment extends NavigationFragment {
         previewLayout.removeAllViews();
         List<Song> songs = new ArrayList<>();
         Random random = new Random();
-        if(SongLoader.allSongs.size() <= 10 ) songs = SongLoader.allSongs;
+        ArrayList<Song> allSongs = SongLoader.getAllSongs(getContext());
+        if(allSongs.size() <= 10 ) songs = allSongs;
         else {
             for (int i = 0; i < 10; i++) {
                 while (true) {
-                    int n = random.nextInt(SongLoader.allSongs.size());
-                    Song song = SongLoader.allSongs.get(n);
+                    int n = random.nextInt(allSongs.size());
+                    Song song = allSongs.get(n);
                     if (!songs.contains(song)) {
                         songs.add(song);
                         break;
@@ -142,7 +140,7 @@ public class ParseTagsFragment extends NavigationFragment {
 
     @OnClick(R.id.go)
     void go() {
-        parse(SongLoader.allSongs, (song, json) -> {
+        parse(SongLoader.getAllSongs(getContext()), (song, json) -> {
             Iterator<String> it = json.keys();
             while(it.hasNext()) {
                 String key = it.next();
@@ -153,7 +151,7 @@ public class ParseTagsFragment extends NavigationFragment {
                 }
             }
         });
-        SongLoader.loadDances();
+        SongLoader.loadDances(getContext());
         SongLoader.saveAllSongs();
         Toast.makeText(getContext(), "finished", Toast.LENGTH_LONG).show();
         NavigationUtil.updateAll(getActivity());

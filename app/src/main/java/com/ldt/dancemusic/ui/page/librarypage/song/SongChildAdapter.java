@@ -1,6 +1,7 @@
 package com.ldt.dancemusic.ui.page.librarypage.song;
 
 import android.os.Handler;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
@@ -67,6 +68,16 @@ public class SongChildAdapter extends AbsSongAdapter
     private boolean mShowHeader;
 
     @Override
+    protected void onDataChanged() {
+        super.onDataChanged();
+        long sum = 0;
+        for (Song song : getData()) {
+            song.durationSum = sum;
+            sum += song.duration;
+        }
+    }
+
+    @Override
     protected void onDataSet() {
         super.onDataSet();
         randomize();
@@ -82,14 +93,14 @@ public class SongChildAdapter extends AbsSongAdapter
     @Override
     protected void onMenuItemClick(int positionInData) {
         OptionBottomSheet
-                .newInstance(mOptionRes,getData().get(positionInData))
-                .show(((AppCompatActivity)getContext()).getSupportFragmentManager(), "song_popup_menu");
+                .newInstance(mOptionRes, getData().get(positionInData))
+                .show(((AppCompatActivity) getContext()).getSupportFragmentManager(), "song_popup_menu");
     }
 
     @Override
     public int getItemViewType(int position) {
-       if(position==0 && mShowHeader) return R.layout.item_sort_song_child;
-       return R.layout.item_dancesong_bigger;
+        if (position == 0 && mShowHeader) return R.layout.item_sort_song_child;
+        return R.layout.item_dancesong_bigger;
     }
 
     @Override
@@ -111,9 +122,9 @@ public class SongChildAdapter extends AbsSongAdapter
     @NotNull
     @Override
     public AbsBindAbleHolder onCreateViewHolder(@NotNull ViewGroup viewGroup, int viewType) {
-        View v = LayoutInflater.from(viewGroup.getContext()).inflate(viewType,viewGroup,false);
+        View v = LayoutInflater.from(viewGroup.getContext()).inflate(viewType, viewGroup, false);
 
-        switch(viewType) {
+        switch (viewType) {
             case R.layout.item_sort_song_child:
                 return new SortHolder(v);
             case R.layout.item_dancesong_bigger:
@@ -125,7 +136,7 @@ public class SongChildAdapter extends AbsSongAdapter
 
     @Override
     public void onBindViewHolder(@NotNull AbsBindAbleHolder itemHolder, int position) {
-        if(itemHolder instanceof SortHolder) {
+        if (itemHolder instanceof SortHolder) {
             sortHolder = ((SortHolder) itemHolder);
             sortHolder.bind(null);
         } else
@@ -134,9 +145,9 @@ public class SongChildAdapter extends AbsSongAdapter
 
 
     public void randomize() {
-        if(getData().isEmpty()) return;
+        if (getData().isEmpty()) return;
         mRandomItem = mRandom.nextInt(getData().size());
-        if(mCallBack!=null) mCallBack.onFirstItemCreated(getData().get(mRandomItem));
+        if (mCallBack != null) mCallBack.onFirstItemCreated(getData().get(mRandomItem));
     }
 
     public SongChildAdapter setCallBack(PreviewRandomPlayAdapter.FirstItemCallBack callBack) {
@@ -153,26 +164,26 @@ public class SongChildAdapter extends AbsSongAdapter
     public void shuffle() {
         final Handler handler = new Handler();
         handler.postDelayed(() -> {
-            MusicPlayerRemote.openQueue(getData(), mRandomItem,true);
+            MusicPlayerRemote.openQueue(getData(), mRandomItem, true);
             //MusicPlayer.playAll(mContext, mSongIDs, mRandomItem, -1, Util.IdType.NA, false);
-            Handler handler1 = new Handler() ;
+            Handler handler1 = new Handler();
             handler1.postDelayed(() -> {
                 notifyItemChanged(getMediaHolderPosition(mMediaPlayDataItem));
                 notifyItemChanged(getMediaHolderPosition(mRandomItem));
                 mMediaPlayDataItem = mRandomItem;
                 randomize();
-            },50);
-        },100);
+            }, 50);
+        }, 100);
     }
 
 
     @NonNull
     @Override
     public String getSectionName(int position) {
-        if(position==0) return "A";
-        if(getData().get(position-1).getTitle().isEmpty())
-        return "A";
-        return getData().get(position-1).getTitle().substring(0,1);
+        if (position == 0) return "A";
+        if (getData().get(position - 1).getTitle().isEmpty())
+            return "A";
+        return getData().get(position - 1).getTitle().substring(0, 1);
     }
 
     @Override
@@ -257,22 +268,24 @@ public class SongChildAdapter extends AbsSongAdapter
             mSortOrderListener.onFilterChanged(takt, rating);
         }*/
 
-        @BindView(R.id.sortFilterHeaders) LinearLayout root;
+        @BindView(R.id.sortFilterHeaders)
+        LinearLayout root;
         JSONArray headerLines;
         List<Pair<String, Boolean>> sort;
 
         WidgetFactory widgetFactory;
+
         public SortHolder(View view) {
             super(view);
             widgetFactory = new WidgetFactory(getContext());
-            ButterKnife.bind(this,view);
+            ButterKnife.bind(this, view);
             sort = new ArrayList<>();
         }
 
 
         @Override
         public void bind(Object object) {
-            if(headerLines == null) {
+            if (headerLines == null) {
                 headerLines = FilterConfigurationFragment.getConfiguration();
                 updateLines();
             }
@@ -287,19 +300,19 @@ public class SongChildAdapter extends AbsSongAdapter
         public void updateLines() {
             root.removeAllViews();
             try {
-                for(int i = 0; i < headerLines.length(); i++) {
+                for (int i = 0; i < headerLines.length(); i++) {
                     int finalI = i;
                     JSONArray line = headerLines.getJSONArray(i);
-                    LinearLayout lineLayout = widgetFactory.createLinearLayout(MATCH_PARENT, WRAP_CONTENT,HORIZONTAL);
+                    LinearLayout lineLayout = widgetFactory.createLinearLayout(MATCH_PARENT, WRAP_CONTENT, HORIZONTAL);
                     root.addView(lineLayout);
                     lineLayout.addView(widgetFactory.createFiller());
-                    for(int j = 0; j < line.length(); j++) {
+                    for (int j = 0; j < line.length(); j++) {
                         int finalJ = j;
                         final JSONObject o = line.getJSONObject(j);
                         View filterView = widgetFactory.createFilterView(o, (val, reload) -> {
                             boolean sort = setValue(finalI, finalJ, val);
                             updateSongs(sort);
-                            if(reload) updateLines();
+                            if (reload) updateLines();
                         });
                         lineLayout.addView(filterView);
                         lineLayout.addView(widgetFactory.createFiller());
@@ -314,16 +327,16 @@ public class SongChildAdapter extends AbsSongAdapter
             try {
                 JSONArray line = headerLines.getJSONArray(i);
                 JSONObject o = line.getJSONObject(j);
-                if(val instanceof Integer[]) {
-                    Integer[] arr = (Integer[])val;
+                if (val instanceof Integer[]) {
+                    Integer[] arr = (Integer[]) val;
                     o.put("value", arr[0]);
                     o.put("value2", arr[1]);
-                } else if(val instanceof Double[]) {
-                    Double[] arr = (Double[])val;
+                } else if (val instanceof Double[]) {
+                    Double[] arr = (Double[]) val;
                     o.put("value", arr[0]);
                     o.put("value2", arr[1]);
-                } else if(val instanceof Long[]) {
-                    Long[] arr = (Long[])val;
+                } else if (val instanceof Long[]) {
+                    Long[] arr = (Long[]) val;
                     o.put("value", arr[0]);
                     o.put("value2", arr[1]);
                 } else {
@@ -359,21 +372,21 @@ public class SongChildAdapter extends AbsSongAdapter
                         String tagName = obj.getString(Constants.FIELD_TAG);
                         Song.Tag tag = tagMap.get(tagName);
                         if (obj.getBoolean(Constants.FIELD_FILTER)) {
-                            if(!sortOnly) {
+                            if (!sortOnly) {
                                 Object val1 = obj.opt("value");
                                 Object val2 = obj.opt("value2");
-                                if(val1 != null || val2 != null)
+                                if (val1 != null || val2 != null)
                                     stream = stream.filter(tag.getFilter(val1, val2));
                             }
                         } else {
-                            if(!tagName.equals(sorter))
+                            if (!tagName.equals(sorter))
                                 obj.put("value", 0);
                         }
                     }
                 }
 
-                for(Pair<String, Boolean> p:sort) {
-                    if(!tagMap.containsKey(p.first)) continue;
+                for (Pair<String, Boolean> p : sort) {
+                    if (!tagMap.containsKey(p.first)) continue;
                     Song.Tag tag = tagMap.get(p.first);
                     stream = stream.sorted(tag.getComparator(p.second));
                 }

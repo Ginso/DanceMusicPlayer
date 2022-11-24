@@ -257,7 +257,7 @@ public class FilterConfigurationFragment extends NavigationFragment {
             selectedLineContainer.removeAllViews();
             if (selectedLine < 0) return;
             final JSONArray line = lines.getJSONArray(selectedLine);
-            final List<String> tagNames = SongLoader.getTagNames();
+            final List<String> tagNames = SongLoader.getAllTagNames();
             LinearLayout btnLine = widgetFactory.createLinearLayout(WRAP_CONTENT, WRAP_CONTENT, HORIZONTAL);
             widgetFactory.modifyParams(btnLine, p -> p.gravity = Gravity.CENTER);
             if(selectedLine > 0)

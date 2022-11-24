@@ -193,7 +193,7 @@ public class SinglePlaylistFragment extends MusicServiceNavigationFragment imple
             SinglePlaylistViewModel.State state = _event == null ? null : _event.getReliable().getData();
             mHeaderAdapter.setData(state);
             if(state != null) {
-                final List<Song> allSongs = SongLoader.allSongs;
+                final List<Song> allSongs = SongLoader.getAllSongs(getContext());
                 List<Song> songs = state.songs.stream().map(song -> {
                     for (Song s : allSongs) if (song.data.equals(s.data)) return s;
                     return null;

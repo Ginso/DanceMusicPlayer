@@ -392,7 +392,7 @@ public class WidgetFactory {
 
         final int margin = scale(20);
         for(String tagName:allTags.keySet()) {
-            if(tagName.equals(Song._DURATION) || tagName.equals(Song._DATE)) continue;
+            if(tagName.equals(Song._DURATION) || tagName.equals(Song._DATE) || tagName.equals(Song._DURATION_SUM)) continue;
             final Song.Tag tag = allTags.get(tagName);
             LinearLayout line = modifyParams(createLinearLayout(WRAP_CONTENT, WRAP_CONTENT, HORIZONTAL), p ->p.topMargin=margin);
             layout.addView(line);

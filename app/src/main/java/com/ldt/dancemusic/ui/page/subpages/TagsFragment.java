@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
@@ -89,7 +88,7 @@ public class TagsFragment extends NavigationFragment {
         mLeftLayout.removeAllViews();
         mRightLayout.removeAllViews();
         mButtonsLayout.removeAllViews();
-        for(int i = 7; i < SongLoader.getTagNames().size(); i++) {
+        for(int i = 7; i < SongLoader.getAllTagNames().size(); i++) {
             addCustomTag(SongLoader.getTag(i));
         }
     }
@@ -186,7 +185,7 @@ public class TagsFragment extends NavigationFragment {
 
         String nameLC = name.trim().toLowerCase();
         Map<String, Song.Tag> allTags = SongLoader.getAllTags();
-        for(String tagName:SongLoader.getTagNames()) {
+        for(String tagName:SongLoader.getAllTagNames()) {
             Song.Tag tag = allTags.get(tagName);
             if(tag.name.toLowerCase().equals(nameLC)) {
                 Toast.makeText(getContext(), "Name already exists", Toast.LENGTH_LONG).show();

@@ -1,20 +1,15 @@
 package com.ldt.dancemusic.ui.page.subpages;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.text.InputType;
 import android.util.DisplayMetrics;
-import android.util.Log;
-import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -51,13 +46,10 @@ import java.util.stream.Stream;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import butterknife.OnItemSelected;
 import butterknife.Unbinder;
 
-import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 import static android.widget.LinearLayout.HORIZONTAL;
-import static android.widget.LinearLayout.VERTICAL;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -85,7 +77,7 @@ public class GeneratorFragment extends NavigationFragment {
     int songsPerDance = 5;
     JSONArray filter;
     Map<String, View> weightViews = new HashMap<>();
-    List<Dance> dances = SongLoader.allDances;
+    List<Dance> dances = SongLoader.getAllDances(getContext());
     ArrayList<Song> playlist;
     ViewGroup mFilter;
 
@@ -134,7 +126,7 @@ public class GeneratorFragment extends NavigationFragment {
         DisplayMetrics displayMetrics = getContext().getResources().getDisplayMetrics();
         mFilter = (displayMetrics.widthPixels < mWidgetFactory.scale(550)) ? mFilterLinear : mFilterFlex;
 
-        List<String> tagNames = SongLoader.getTagNames();
+        List<String> tagNames = SongLoader.getAllTagNames();
         Map<String, Song.Tag> allTags = SongLoader.getAllTags();
         filter = new JSONArray();
         for (String tagName : tagNames) {

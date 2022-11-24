@@ -39,23 +39,6 @@ public class TopAndRecentlyPlayedTracksLoader {
     }
 
     @NonNull
-    public static ArrayList<Song> getNotRecentlyPlayedTracks
-(@NonNull Context context) {
-        ArrayList<Song> allSongs = SongLoader.getSongs(
-            SongLoader.makeSongCursor(
-                context,
-                null, null,
-                MediaStore.Audio.Media.DATE_ADDED + " ASC"));
-
-        ArrayList<Song> recentlyPlayedSongs = SongLoader.getSongs(
-            makeRecentTracksCursorAndClearUpDatabase(context));
-
-        allSongs.removeAll(recentlyPlayedSongs);
-
-        return allSongs;
-    }
-
-    @NonNull
     public static ArrayList<Song> getTopTracks(@NonNull Context context) {
         return SongLoader.getSongs(makeTopTracksCursorAndClearUpDatabase(context));
     }

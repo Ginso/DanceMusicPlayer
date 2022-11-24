@@ -44,8 +44,8 @@ public class Constants {
             "dd.MM.yy", //1
             "dd.MM.yyyy hh:mm", //2
             "dd.MM.yy hh:mm", //3
-            "hh:mm", //4
-            "hh:mm:ss", //5
+            "HH:mm", //4
+            "HH:mm:ss", //5
             "mm:ss" //6
     };
 

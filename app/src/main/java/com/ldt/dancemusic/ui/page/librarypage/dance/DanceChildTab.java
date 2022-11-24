@@ -101,7 +101,7 @@ public class DanceChildTab extends MusicServiceFragment implements DanceAdapter.
 
 
     public void refreshData() {
-        mAdapter.setData(SongLoader.allDances);
+        mAdapter.setData(SongLoader.getAllDances(getContext()));
 
     }
 

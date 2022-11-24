@@ -28,6 +28,7 @@ public abstract class AbsDataAdapter<VH extends AbsBindAbleHolder, I> extends Re
         }
 
         onDataSet();
+        onDataChanged();
         notifyDataSetChanged();
     }
 
@@ -38,7 +39,12 @@ public abstract class AbsDataAdapter<VH extends AbsBindAbleHolder, I> extends Re
                 mDisplayedData.addAll(data);
             }
         }
+        onDataChanged();
         notifyDataSetChanged();
+    }
+
+    protected void onDataChanged() {
+
     }
 
     @Override
