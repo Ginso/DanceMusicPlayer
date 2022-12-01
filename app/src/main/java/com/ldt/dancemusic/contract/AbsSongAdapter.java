@@ -378,8 +378,8 @@ public abstract class AbsSongAdapter extends AbsMediaAdapter<AbsBindAbleHolder, 
 
         private Song mSong;
 
-        @BindView(R.id.root) LinearLayout root;
-        int backgroundColor = 0;
+        @BindView(R.id.root) protected LinearLayout root;
+        protected int backgroundColor = 0;
 
         public DanceSongHolder(View view) {
             super(view);
@@ -432,7 +432,7 @@ public abstract class AbsSongAdapter extends AbsMediaAdapter<AbsBindAbleHolder, 
             bindTheme();
         }
 
-        void bindTheme() {
+        protected void bindTheme() {
             bindMediaPlayState();
         }
 

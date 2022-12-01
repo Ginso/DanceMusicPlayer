@@ -24,7 +24,7 @@ public class Song implements Parcelable {
 
     public static final String _DATE = "last_modified";
     public static final String _DURATION = "duration";
-    public static final String _DURATION_SUM = "duration_sum";
+    public static final String _PLAYING_AFTER = "playing_after";
 
     public static final String _TITLE = "title";
     public static final String _YEAR = "year";
@@ -98,7 +98,7 @@ public class Song implements Parcelable {
     public Date getDate(String key) {
         if(key.equals(_DATE)) return getDateModified();
         if(key.equals(_DURATION)) return new Date(duration);
-        if(key.equals(_DURATION_SUM))
+        if(key.equals(_PLAYING_AFTER))
             return new Date(durationSum-3600000);
         return new Date(tags.optLong(key, 0));
     }

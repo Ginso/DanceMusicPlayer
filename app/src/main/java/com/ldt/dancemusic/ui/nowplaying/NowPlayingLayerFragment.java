@@ -48,7 +48,9 @@ import com.ldt.dancemusic.ui.bottomsheet.OptionBottomSheet;
 import com.ldt.dancemusic.ui.widget.avsb.AudioVisualSeekBar;
 import com.ldt.dancemusic.util.Tool;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -239,7 +241,7 @@ public class NowPlayingLayerFragment extends CardLayerFragment implements MusicS
             ((RippleDrawable) mPrevButton.getBackground()).setColor(ColorStateList.valueOf(Tool.getBaseColor()));
             ((RippleDrawable) mMenuButton.getBackground()).setColor(ColorStateList.valueOf(Tool.getBaseColor()));
             ((RippleDrawable) mNextButton.getBackground()).setColor(ColorStateList.valueOf(Tool.getBaseColor()));
-            ((RippleDrawable) mPlaylistTitle.getBackground()).setColor(ColorStateList.valueOf(Tool.getBaseColor()));
+            ((RippleDrawable) mDance.getBackground()).setColor(ColorStateList.valueOf(Tool.getBaseColor()));
         }
         onColorPaletteReady(Tool.ColorOne, Tool.ColorTwo, Tool.AlphaOne, Tool.AlphaTwo);
     }
@@ -422,8 +424,8 @@ public class NowPlayingLayerFragment extends CardLayerFragment implements MusicS
 
     @BindView(R.id.title)
     TextView mTitle;
-    @BindView(R.id.playlist_title)
-    TextView mPlaylistTitle;
+    @BindView(R.id.dance)
+    TextView mDance;
     @BindView(R.id.button_right)
     ImageView mButtonRight;
     @BindView(R.id.prev_button)
@@ -434,13 +436,6 @@ public class NowPlayingLayerFragment extends CardLayerFragment implements MusicS
     @BindView(R.id.play_pause_button)
     ImageView mPlayPauseButton;
 
-    @OnClick(R.id.playlist_title)
-    void popUpPlayingList() {
-        Activity activity = getActivity();
-        if (activity instanceof AppActivity) {
-            ((AppActivity) getActivity()).popUpPlaylistTab();
-        }
-    }
 
     private void updatePlayingSongInfo() {
         Song song = MusicPlayerRemote.getCurrentSong();
@@ -451,7 +446,7 @@ public class NowPlayingLayerFragment extends CardLayerFragment implements MusicS
             return;
         }
         mTitle.setText(String.format("%s %s %s", song.getTitle(), getString(R.string.middle_dot), song.getArtist()));
-
+        mDance.setText(song.getString(Song._DANCE));
 
         String path = song.data;
         long duration = song.duration;
@@ -605,20 +600,8 @@ public class NowPlayingLayerFragment extends CardLayerFragment implements MusicS
     }
 
     private void setTextTime(long pos, long duration) {
-        int minute = (int) (pos / 1000 / 60);
-        int second = (int) (pos / 1000 - minute * 60);
-        int dur_minute = (int) (duration / 1000 / 60);
-        int dur_second = (int) (duration / 1000 - dur_minute * 60);
-
-        String text = "";
-        if (minute < 10) text += "0";
-        text += minute + ":";
-        if (second < 10) text += "0";
-        text += second + " | ";
-        if (dur_minute < 10) text += "0";
-        text += dur_minute + ":";
-        if (dur_second < 10) text += "0";
-        text += dur_second;
+        SimpleDateFormat format = new SimpleDateFormat("mm:ss");
+        String text = String.format("%s | %s", format.format(new Date(pos)), format.format(new Date(duration)));
         if (mConstraintRoot.getProgress() != 0) {
             mTimeTextView.setText(text);
             //Log.d(TAG, "setTextTime: "+text);

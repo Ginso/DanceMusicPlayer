@@ -14,7 +14,6 @@ import com.ldt.dancemusic.App;
 import com.ldt.dancemusic.model.Dance;
 import com.ldt.dancemusic.model.Song;
 import com.ldt.dancemusic.provider.BlacklistStore;
-import com.ldt.dancemusic.service.MusicPlayerRemote;
 import com.ldt.dancemusic.util.PreferenceUtil;
 
 import org.json.JSONArray;
@@ -117,14 +116,14 @@ public class SongLoader {
         try {
             allTags = new HashMap<>();
             JSONArray tagArr = new JSONArray();
-            addTag(new Song.Tag(Song._DURATION, Song.Tag.Type.DATETIME,6), tagArr, false);
-            addTag(new Song.Tag(Song._DURATION_SUM, Song.Tag.Type.DATETIME,5), tagArr, false);
-            addTag(new Song.Tag(Song._DATE, Song.Tag.Type.DATETIME,2), tagArr, false);
-            addTag(new Song.Tag(Song._ALBUM, Song.Tag.Type.STRING), tagArr, false);
-            addTag(new Song.Tag(Song._ARTIST, Song.Tag.Type.STRING), tagArr, false);
-            addTag(new Song.Tag(Song._DANCE, Song.Tag.Type.STRING), tagArr, false);
-            addTag(new Song.Tag(Song._TITLE, Song.Tag.Type.STRING), tagArr, false);
-            addTag(new Song.Tag(Song._YEAR, Song.Tag.Type.INT), tagArr, false);
+            addTag(new Song.Tag(Song._DURATION, Song.Tag.Type.DATETIME,6), null, false);
+            addTag(new Song.Tag(Song._PLAYING_AFTER, Song.Tag.Type.DATETIME,5), null, false);
+            addTag(new Song.Tag(Song._DATE, Song.Tag.Type.DATETIME,2), null, false);
+            addTag(new Song.Tag(Song._TITLE, Song.Tag.Type.STRING), null, false);
+            addTag(new Song.Tag(Song._ARTIST, Song.Tag.Type.STRING), null, false);
+            addTag(new Song.Tag(Song._ALBUM, Song.Tag.Type.STRING), null, false);
+            addTag(new Song.Tag(Song._DANCE, Song.Tag.Type.STRING), null, false);
+            addTag(new Song.Tag(Song._YEAR, Song.Tag.Type.INT), null, false);
             addTag(new Song.Tag(Song._RATING, Song.Tag.Type.RATING, 5), tagArr, true);
             addTag(new Song.Tag(Song._TPM, Song.Tag.Type.FLOAT,1), tagArr, true);
             json.put("tags", tagArr);
@@ -141,11 +140,15 @@ public class SongLoader {
         if(custom) {
             if(fixedNames.contains(tag.name))
                 return;
-            if(!customNames.contains(tag.name))
+            if(!customNames.contains(tag.name)) {
                 customNames.add(tag.name);
-        } else fixedNames.add(tag.name);
+                tagNames.add(tag.name);
+            }
+        } else {
+            fixedNames.add(tag.name);
+            tagNames.add(tag.name);
+        }
         allTags.put(tag.name, tag);
-        tagNames.add(tag.name);
         if(tagArr != null) tagArr.put(tag.toJSON());
     }
 

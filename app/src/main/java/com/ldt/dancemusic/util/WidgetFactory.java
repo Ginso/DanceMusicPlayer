@@ -6,7 +6,6 @@ import android.graphics.BlendModeColorFilter;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.Typeface;
-import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.text.Editable;
 import android.text.InputType;
@@ -387,12 +386,17 @@ public class WidgetFactory {
         layout.removeAllViews();
 
         Map<String, Song.Tag> allTags = SongLoader.getAllTags();
-        
-        layout.addView(createTextView("Note: These changes will not be written to the audio file itself, but stored for this app"));
+        List<String> allTagNames = new ArrayList<>();
+        allTagNames.addAll(SongLoader.getCustomTagNames());
+        allTagNames.addAll(SongLoader.getFixedTagNames());
+
+        TextView textView = createTextView("Note: These changes will not be written to the audio file itself, but stored for this app", defaultTextSize-8);
+        textView.setMaxLines(Integer.MAX_VALUE);
+        layout.addView(textView);
 
         final int margin = scale(20);
-        for(String tagName:allTags.keySet()) {
-            if(tagName.equals(Song._DURATION) || tagName.equals(Song._DATE) || tagName.equals(Song._DURATION_SUM)) continue;
+        for(String tagName:allTagNames) {
+            if(tagName.equals(Song._DURATION) || tagName.equals(Song._DATE) || tagName.equals(Song._PLAYING_AFTER)) continue;
             final Song.Tag tag = allTags.get(tagName);
             LinearLayout line = modifyParams(createLinearLayout(WRAP_CONTENT, WRAP_CONTENT, HORIZONTAL), p ->p.topMargin=margin);
             layout.addView(line);

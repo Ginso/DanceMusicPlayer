@@ -108,7 +108,7 @@ public class NavigationUtil {
         } else if(topFragment instanceof DancePagerFragment) {
             ((DancePagerFragment)topFragment).refreshData();
         } else if(topFragment instanceof GeneratorFragment) {
-            ((GeneratorFragment)topFragment).updatePlaylist();
+            ((GeneratorFragment)topFragment).updatePlaylist(false);
         }
     }
 

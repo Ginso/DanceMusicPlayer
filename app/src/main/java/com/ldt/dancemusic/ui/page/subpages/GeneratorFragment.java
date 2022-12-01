@@ -1,5 +1,6 @@
 package com.ldt.dancemusic.ui.page.subpages;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.InputType;
 import android.util.DisplayMetrics;
@@ -24,9 +25,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.flexbox.AlignItems;
 import com.google.android.flexbox.FlexboxLayout;
 import com.ldt.dancemusic.R;
+import com.ldt.dancemusic.contract.AbsBindAbleHolder;
+import com.ldt.dancemusic.contract.AbsSongAdapter;
 import com.ldt.dancemusic.loader.medialoader.SongLoader;
 import com.ldt.dancemusic.model.Dance;
 import com.ldt.dancemusic.model.Song;
+import com.ldt.dancemusic.service.MusicPlayerRemote;
 import com.ldt.dancemusic.ui.dialog.CreatePlaylistDialog;
 import com.ldt.dancemusic.ui.page.librarypage.song.SongChildAdapter;
 import com.ldt.dancemusic.ui.widget.fragmentnavigationcontroller.NavigationFragment;
@@ -36,10 +40,13 @@ import com.ldt.dancemusic.util.WidgetFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -51,6 +58,7 @@ import butterknife.Unbinder;
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 import static android.widget.LinearLayout.HORIZONTAL;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -70,6 +78,14 @@ public class GeneratorFragment extends NavigationFragment {
     @BindView(R.id.save)
     Button mSaveButton;
     @BindView(R.id.duration) TextView mDuration;
+    @BindView(R.id.flexLayout2) FlexboxLayout mActionBar;
+    @BindView(R.id.replace)
+    Button mReplaceButton;
+    @BindView(R.id.remove)
+    Button mRemoveButton;
+    @BindView(R.id.swap)
+    Button mSwapButton;
+
 
     boolean balanced = true;
     boolean ordered = false;
@@ -84,8 +100,8 @@ public class GeneratorFragment extends NavigationFragment {
     public static GeneratorFragment newInstance() {
         return new GeneratorFragment();
     }
-    private final SongChildAdapter mAdapter = new SongChildAdapter(false, PreferenceUtil.LAYOUT_PLAYLIST);
-    public SongChildAdapter getAdapter() {
+    private final GeneratorAdapter mAdapter = new GeneratorAdapter();
+    public GeneratorAdapter getAdapter() {
         return mAdapter;
     }
 
@@ -267,6 +283,8 @@ public class GeneratorFragment extends NavigationFragment {
         }
     }
 
+    Map<String, List<Song>> filtered;
+
     @OnClick(R.id.create)
     void create() {
         try {
@@ -299,7 +317,8 @@ public class GeneratorFragment extends NavigationFragment {
                 Toast.makeText(getContext(), "Only one tag is allowed be set to 'highest'", Toast.LENGTH_LONG).show();
                 return;
             }
-            Map<String, List<Song>> filtered = stream.collect(Collectors.groupingBy(s -> s.getString(Song._DANCE)));
+            filtered = stream.collect(Collectors.groupingBy(s -> s.getString(Song._DANCE)));
+            Map<String, List<Song>> remainingMap = new HashMap<>();
             for (Dance dance : dances) {
                 int n;
                 if (balanced) {
@@ -320,11 +339,13 @@ public class GeneratorFragment extends NavigationFragment {
                 if (ratings.isEmpty()) {
                     Collections.shuffle(songs);
                     filtered.put(dance.title, songs.subList(0, n));
+                    remainingMap.put(dance.title, new ArrayList<>(songs.subList(n,songs.size())));
                 } else {
                     String name = ratings.get(0);
                     songs.sort((s1, s2) -> s2.getInt(name) - s1.getInt(name));
                     List<Song> songs2 = new ArrayList<>();
                     List<Song> songs3 = new ArrayList<>();
+                    List<Song> remaining = new ArrayList<>();
                     int r = songs.get(0).getInt(name);
                     for (Song song : songs) {
                         int r2 = song.getInt(name);
@@ -332,20 +353,21 @@ public class GeneratorFragment extends NavigationFragment {
                             if (songs2.size() + songs3.size() >= n) {
                                 Collections.shuffle(songs3);
                                 while (songs2.size() < n) songs2.add(songs3.remove(0));
-                                break;
-                            }
-                            songs2.addAll(songs3);
+                                remaining.addAll(songs3);
+                            } else songs2.addAll(songs3);
                             songs3.clear();
                             r = r2;
                         }
                         songs3.add(song);
                     }
+                    Collections.shuffle(songs3);
                     if (songs2.size() < n) {
-                        Collections.shuffle(songs3);
                         while (songs2.size() < n) songs2.add(songs3.remove(0));
                     }
+                    remaining.addAll(songs3);
                     Collections.shuffle(songs2);
                     filtered.put(dance.title, songs2);
+                    remainingMap.put(dance.title, remaining);
                 }
             }
             playlist = new ArrayList<>();
@@ -357,7 +379,7 @@ public class GeneratorFragment extends NavigationFragment {
                 if (ordered || numDances < 3) {
                     for (int i = 0; i < songsPerDance; i++)
                         for (Dance dance : filteredDances)
-                            playlist.add(filtered.get(dance.title).get(i));
+                            playlist.add(filtered.get(dance.title).remove(0));
 
 
                 } else {
@@ -366,7 +388,7 @@ public class GeneratorFragment extends NavigationFragment {
                     int[] last = new int[numDances];
                     for (int i = 0; i < numDances; i++) {
                         Dance dance = filteredDances.get(i);
-                        playlist.add(filtered.get(dance.title).get(0));
+                        playlist.add(filtered.get(dance.title).remove(0));
                         last[i] = i;
                     }
                     int idx = numDances;
@@ -377,7 +399,7 @@ public class GeneratorFragment extends NavigationFragment {
                         while (!temp.isEmpty()) {
                             for (int n = 0; n < numDances; n++) {
                                 if (idx - last[n] == max) {
-                                    playlist.add(filtered.get(filteredDances.get(n).title).get(j));
+                                    playlist.add(filtered.get(filteredDances.get(n).title).remove(0));
                                     temp.remove((Integer) n);
                                     last[n] = idx;
                                     break;
@@ -389,7 +411,7 @@ public class GeneratorFragment extends NavigationFragment {
                                     int n = temp.remove(0);
                                     if (idx - last[n] < min) temp.add(n);
                                     else {
-                                        playlist.add(filtered.get(filteredDances.get(n).title).get(j));
+                                        playlist.add(filtered.get(filteredDances.get(n).title).remove(0));
                                         last[n] = idx++;
                                         break;
                                     }
@@ -399,6 +421,7 @@ public class GeneratorFragment extends NavigationFragment {
                     }
                 }
             } else {
+                Map<String, List<Song>> copies = new HashMap<>();
                 List<String> filteredDances = new ArrayList<>(filtered.keySet());
                 int numDances = filteredDances.size();
 
@@ -415,9 +438,11 @@ public class GeneratorFragment extends NavigationFragment {
                 }
                 for (int i = 0; i < numDances; i++) ratios[i] = sum/(wanted[i]+1.0);
                 boolean preventDoubles = true;
+
                 while(true) {
                     int count = 0;
                     int last = -1;
+                    for(String key:filtered.keySet()) copies.put(key, new ArrayList<>(filtered.get(key)));
                     while (playlist.size() < sum) {
                         double min = sum;
                         List<Integer> next = new ArrayList<>();
@@ -434,7 +459,7 @@ public class GeneratorFragment extends NavigationFragment {
                         Collections.shuffle(next);
                         for (int i : next) {
                             if (have[i] == wanted[i]) continue;
-                            playlist.add(filtered.get(filteredDances.get(i)).remove(0));
+                            playlist.add(copies.get(filteredDances.get(i)).remove(0));
                             have[i]++;
                             last = i;
                         }
@@ -451,26 +476,37 @@ public class GeneratorFragment extends NavigationFragment {
                         }
                     }
                 }
+                filtered = copies;
             }
+            for(String dance:filtered.keySet()) {
+                filtered.get(dance).addAll(remainingMap.get(dance));
+            }
+            updatePlaylist(true);
 
-            updatePlaylist();
-            mSaveButton.setEnabled(true);
-            long s = 0;
-            for(Song song:playlist) s += song.getDuration();
-            s /= 1000;
-            long h = s/3600;
-            s %= 3600;
-            long min = s/60;
-            s %= 60;
-            mDuration.setText(String.format("Duration: %02d:%02d:%02d", h, min, s));
 
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public void updatePlaylist() {
+    public void updatePlaylist(boolean clearSelection) {
         mAdapter.setData(playlist);
+        mSaveButton.setEnabled(true);
+        long s = 0;
+        for(Song song:playlist) s += song.getDuration();
+        s /= 1000;
+        long h = s/3600;
+        s %= 3600;
+        long min = s/60;
+        s %= 60;
+        mDuration.setText(String.format("Duration: %02d:%02d:%02d", h, min, s));
+        mActionBar.setVisibility(View.VISIBLE);
+        if(clearSelection) {
+            mAdapter.clearSelection();
+            mReplaceButton.setEnabled(false);
+            mRemoveButton.setEnabled(false);
+            mSwapButton.setEnabled(false);
+        }
     }
 
     @OnClick(R.id.save)
@@ -496,6 +532,118 @@ public class GeneratorFragment extends NavigationFragment {
     @OnClick(R.id.back_button)
     void back() {
         getNavigationController().dismissFragment();
+    }
+
+    @OnClick(R.id.replace)
+    void replace() {
+        List<Integer> selected = mAdapter.getSelected();
+        ArrayList<Song> copy = new ArrayList<>(playlist);
+        for(int i:selected) {
+            Song song = playlist.get(i);
+            String dance = song.getString(Song._DANCE);
+            List<Song> remaining = filtered.get(dance);
+            if(remaining.isEmpty()) {
+                Toast.makeText(getContext(), "insufficient songs for " + dance, Toast.LENGTH_LONG).show();
+                return;
+            }
+            copy.set(i, remaining.remove(0));
+        }
+        playlist = copy;
+        updatePlaylist(false);
+    }
+
+    @OnClick(R.id.remove)
+    void remove() {
+        List<Integer> selected = mAdapter.getSelected();
+        ArrayList<Song> pl = new ArrayList<>();
+        for(int i = 0; i < playlist.size(); i++) {
+            if(selected.contains(i)) continue;
+            pl.add(playlist.get(i));
+        }
+        playlist = pl;
+        updatePlaylist(true);
+    }
+
+    @OnClick(R.id.swap)
+    void swap() {
+        List<Integer> selected = mAdapter.getSelected();
+        Integer idx1 = selected.get(0);
+        Song s1 = playlist.get(idx1);
+        Integer idx2 = selected.get(1);
+        Song s2 = playlist.get(idx2);
+        playlist.set(idx1, s2);
+        playlist.set(idx2, s1);
+        updatePlaylist(false);
+    }
+
+
+
+    public class GeneratorAdapter extends SongChildAdapter {
+
+        Set<Integer> selected = new HashSet<>();
+
+        public GeneratorAdapter() {
+            super(false,PreferenceUtil.LAYOUT_PLAYLIST);
+        }
+
+        @Override
+        protected void onDataSet() {
+            super.onDataSet();
+        }
+
+        public void clearSelection() {
+            selected.clear();
+        }
+
+        public List<Integer> getSelected() {
+            List<Integer> copy = new ArrayList<>();
+            copy.addAll(selected);
+            copy = copy.stream().sorted().collect(Collectors.toList());
+            return copy;
+        }
+
+        @Override
+        protected void onMenuItemClick(int positionInData) {
+
+        }
+
+        @NotNull
+        @Override
+        public AbsBindAbleHolder onCreateViewHolder(@NotNull ViewGroup viewGroup, int viewType) {
+            View v = LayoutInflater.from(viewGroup.getContext()).inflate(viewType, viewGroup, false);
+            return new DanceItemHolder(v);
+        }
+
+        public class DanceItemHolder extends SongChildAdapter.DanceSongHolder {
+            public DanceItemHolder(View view) {
+                super(view);
+            }
+
+            @Override
+            public void onClick(View view) {
+                int dataPosition = getDataPosition(getBindingAdapterPosition());
+                if(selected.contains(dataPosition)) {
+                    selected.remove(dataPosition);
+                    WidgetFactory.setBackground(root, backgroundColor);
+                } else {
+                    selected.add(dataPosition);
+                    WidgetFactory.setBackground(root, Color.parseColor("#AA00FFFF"));
+                }
+                int n = selected.size();
+                mReplaceButton.setEnabled(n > 0);
+                mRemoveButton.setEnabled(n > 0);
+                mSwapButton.setEnabled(n == 2);
+            }
+
+            @Override
+            protected void bindTheme() {
+                int dataPosition = getDataPosition(getBindingAdapterPosition());
+                WidgetFactory.setBackground(root, selected.contains(dataPosition) ? Color.parseColor("#AA00FFFF") : backgroundColor);
+            }
+        }
+
+
+
     }
 
 }

@@ -21,6 +21,7 @@ import com.ldt.dancemusic.model.Song;
 import com.ldt.dancemusic.ui.dialog.CheckboxDialog;
 import com.ldt.dancemusic.ui.widget.fragmentnavigationcontroller.NavigationFragment;
 
+import java.util.List;
 import java.util.Map;
 
 import butterknife.BindView;
@@ -66,9 +67,10 @@ public class TagsFragment extends NavigationFragment {
         mUnbinder = ButterKnife.bind(this,view);
         LinearLayout left = (LinearLayout) predefinedTags.getChildAt(0);
         LinearLayout right = (LinearLayout) predefinedTags.getChildAt(1);
-        for(int i = 0; i < 7; i++) {
-            Song.Tag tag = SongLoader.getTag(i);
-            addTextView(tag, left, right);
+        Map<String, Song.Tag> allTags = SongLoader.getAllTags();
+        List<String> fixedTagNames = SongLoader.getFixedTagNames();
+        for(String name:fixedTagNames) {
+            addTextView(allTags.get(name), left, right);
         }
 
         mLeftLayout = (LinearLayout) customTags.getChildAt(0);
@@ -88,8 +90,10 @@ public class TagsFragment extends NavigationFragment {
         mLeftLayout.removeAllViews();
         mRightLayout.removeAllViews();
         mButtonsLayout.removeAllViews();
-        for(int i = 7; i < SongLoader.getAllTagNames().size(); i++) {
-            addCustomTag(SongLoader.getTag(i));
+        Map<String, Song.Tag> allTags = SongLoader.getAllTags();
+        List<String> customTagNames = SongLoader.getCustomTagNames();
+        for(String name:customTagNames) {
+            addCustomTag(allTags.get(name));
         }
     }
 

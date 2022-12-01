@@ -8,7 +8,7 @@
 
     <dimen name="md_bottom_sheet_separator_top_margin">7dp</dimen>
     <dimen name="bottom_navigation_height">57dp</dimen>
-    <dimen name="now_laying_height_in_minimize_mode">50dp</dimen>
+    <dimen name="now_laying_height_in_minimize_mode">70dp</dimen>
     <dimen name="bottom_back_stack_spacing">200dp</dimen>
     <dimen name="item_song_child_height">54dp</dimen>
     <dimen name="max_radius_layer">18dp</dimen>

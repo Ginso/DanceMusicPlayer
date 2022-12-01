@@ -399,6 +399,7 @@ public class SongChildAdapter extends AbsSongAdapter
 
     }
 
+    // not in use
     public class ItemHolder extends AbsSongAdapter.SongHolder {
         public ItemHolder(View view) {
             super(view);

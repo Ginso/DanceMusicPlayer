@@ -70,7 +70,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="24dp"
-                android:background="#000000"
                 android:orientation="vertical"
                 app:layout_constraintTop_toBottomOf="@id/weight_desc"
                 app:layout_constraintStart_toStartOf="parent"
@@ -137,42 +136,84 @@
                 app:layout_constraintTop_toBottomOf="@id/filterContainer"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"/>
-
-            <Button
-                android:id="@+id/create"
-                android:layout_width="wrap_content"
+            <com.google.android.flexbox.FlexboxLayout
+                android:id="@+id/flexLayout"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="24dp"
-                android:layout_marginTop="20dp"
-                android:text="create"
-                app:layout_constraintTop_toBottomOf="@id/divider2"
-                app:layout_constraintStart_toStartOf="parent"/>
+                app:flexWrap="wrap"
+                android:layout_marginTop="10dp"
+                android:layout_marginStart="14dp"
+                android:layout_marginEnd="14dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/divider2">
 
-            <Button
-                android:id="@+id/save"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="24dp"
-                android:text="save"
-                android:enabled="false"
-                app:layout_constraintTop_toTopOf="@id/create"
-                app:layout_constraintStart_toEndOf="@id/create"/>
+                <Button
+                    android:id="@+id/create"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:text="create"/>
 
-            <TextView
-                android:id="@+id/duration"
-                android:layout_width="0dp"
+                <Button
+                    android:id="@+id/save"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:text="save"
+                    android:enabled="false"/>
+
+                <TextView
+                    android:id="@+id/duration"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/ripple_effect"
+                    android:fontFamily="@font/hevetica_font"
+                    android:gravity="center_vertical"
+                    android:layout_margin="10dp"
+                    android:text=""
+                    android:textColor="@color/FlatWhite"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+            </com.google.android.flexbox.FlexboxLayout>
+
+            <com.google.android.flexbox.FlexboxLayout
+                android:id="@+id/flexLayout2"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="24dp"
-                android:background="@drawable/ripple_effect"
-                android:fontFamily="@font/hevetica_font"
-                android:gravity="center_vertical"
-                android:text=""
-                android:textColor="@color/FlatWhite"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                app:layout_constraintTop_toTopOf="@id/create"
-                app:layout_constraintBottom_toBottomOf="@id/create"
-                app:layout_constraintStart_toEndOf="@id/save" />
+                android:visibility="gone"
+                app:flexWrap="wrap"
+                android:layout_marginTop="10dp"
+                android:layout_marginStart="14dp"
+                android:layout_marginEnd="14dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/flexLayout">
+
+                <Button
+                    android:id="@+id/replace"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:text="replace"
+                    android:enabled="false"/>
+
+                <Button
+                    android:id="@+id/remove"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:text="remove"
+                    android:enabled="false"/>
+
+                <Button
+                    android:id="@+id/swap"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:text="swap"
+                    android:enabled="false"/>
+
+            </com.google.android.flexbox.FlexboxLayout>
 
             <com.ldt.dancemusic.ui.widget.view.MPRecyclerView
                 android:id="@+id/recycler_view"
@@ -192,7 +233,7 @@
                 tools:listitem="@layout/item_dancesong_bigger"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/create" />
+                app:layout_constraintTop_toBottomOf="@id/flexLayout2" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
 
